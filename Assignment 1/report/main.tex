@@ -1,0 +1,394 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{caption}
+\emergencystretch=3em
+\sloppy
+
+\definecolor{codebg}{RGB}{245,245,245}
+\lstset{
+  backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  language=Python,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  numbers=left,
+  numberstyle=\tiny,
+  xleftmargin=1.5em
+}
+
+\title{Simulation and Performance Analysis of a Direct-Mapped\\
+Instruction and Data Cache}
+\author{Sudarshan Sudhakar \\ Roll No: CS23B2007}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This report describes the design and evaluation of a Python-based cache
+simulator that models a direct-mapped Instruction Cache (I-Cache) and
+Data Cache (D-Cache) for a system with a 64K-word main memory, a 2K-word
+cache, a 16-word block size, and 32-bit words/addresses. Three
+representative memory access patterns -- sequential, repeated, and
+strided -- are simulated for both instruction and data streams. For each
+run the simulator reports total accesses, cache lookups, hits, misses,
+hit rate, and miss rate, and further decomposes every miss into
+Compulsory (Cold), Conflict, and Capacity categories using the
+Hill--Smith three-C classification method. The results are used to
+discuss how spatial and temporal locality, together with the
+direct-mapped placement policy, govern cache efficiency.
+\end{abstract}
+
+\tableofcontents
+
+% =====================================================================
+\section{System Specification}
+% =====================================================================
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ll}
+\toprule
+Parameter & Value \\
+\midrule
+Main memory size       & 64K words ($2^{16}$ words) \\
+Cache size (each of I-Cache, D-Cache) & 2K words ($2^{11}$ words) \\
+Block size              & 16 words ($2^4$ words) \\
+Word size               & 32 bits \\
+Address size            & 32 bits \\
+Mapping scheme          & Direct Mapped \\
+\bottomrule
+\end{tabular}
+\caption{Given system parameters}
+\end{table}
+
+\subsection{Derived Cache Geometry}
+
+Number of lines (blocks) in the cache:
+\[
+\text{Lines} = \frac{\text{Cache size}}{\text{Block size}} = \frac{2048}{16} = 128 \text{ lines}
+\]
+
+Since the cache is direct mapped, a 32-bit word address is split into
+three fields -- \emph{Tag}, \emph{Index}, and \emph{Offset}:
+
+\[
+\text{Offset bits} = \log_2(16) = 4, \qquad
+\text{Index bits} = \log_2(128) = 7, \qquad
+\text{Tag bits} = 32 - 7 - 4 = 21
+\]
+
+\begin{table}[H]
+\centering
+\begin{tabular}{l p{3.2cm} p{3.2cm} p{3.6cm}}
+\toprule
+Field & Tag & Index & Offset \\
+\midrule
+Width (bits) & 21 & 7 & 4 \\
+Purpose & identifies which memory block & selects the 1-of-128 cache line & selects the word within a 16-word block \\
+\bottomrule
+\end{tabular}
+\caption{Address decomposition used by the simulator (\texttt{cache.decompose})}
+\end{table}
+
+\textbf{Assumption:} the assignment specifies a single ``2K-word cache''
+but asks that both an I-Cache and a D-Cache be modelled. We interpret
+this as a Harvard-style organisation in which the I-Cache and the
+D-Cache are two \emph{independent} caches, each built to the given
+specification (2K words, direct mapped, 16-word blocks). They are
+simulated completely independently -- an instruction access can never
+hit or evict a line in the D-Cache and vice versa.
+
+% =====================================================================
+\section{Simulator Design}
+% =====================================================================
+
+The simulator is written in Python 3 and organised into three modules:
+
+\begin{itemize}[leftmargin=1.6em]
+  \item \texttt{cache.py} -- the direct-mapped cache model, the address
+        decomposition logic, and the three-C (Cold/Conflict/Capacity)
+        miss classifier.
+  \item \texttt{patterns.py} -- generators that produce the address
+        streams for the three required access patterns, for
+        instructions and for data.
+  \item \texttt{simulator.py} -- the driver that runs every
+        pattern$\times$\{instruction, data\} combination through a
+        fresh cache instance, prints a formatted report, and dumps the
+        results to \texttt{results/results.json}.
+\end{itemize}
+
+\subsection{Direct-Mapped Cache Model}
+
+Each cache is represented by two parallel arrays of length 128 (one
+entry per line): a \texttt{valid} bit and a \texttt{tag}. On every
+access the address is decomposed into (tag, index, offset); the
+\texttt{index} selects a single candidate line, and \emph{exactly one}
+tag comparison (one ``lookup'') is performed:
+
+\begin{itemize}[leftmargin=1.6em]
+  \item If the line is valid and its stored tag matches $\Rightarrow$ \textbf{hit}.
+  \item Otherwise $\Rightarrow$ \textbf{miss}; the block is loaded into
+        that line (allocate-on-miss), overwriting whatever was
+        previously resident there.
+\end{itemize}
+
+Because a direct-mapped cache checks only one line per access, the
+number of \emph{cache lookups} reported below is always equal to the
+number of accesses (one tag comparison per access) -- this is
+structurally different from a set-associative cache, where a single
+access can require several parallel tag comparisons.
+
+\subsection{Classifying Misses into Cold / Conflict / Capacity}
+
+We use the standard Hill--Smith ``Three-C'' method, implemented in
+\texttt{ThreeCClassifier}:
+
+\begin{enumerate}[leftmargin=1.6em]
+  \item \textbf{Cold (Compulsory) miss} -- the referenced memory block
+        has never been accessed before in this run. Such a miss would
+        occur even in an infinite cache and is unavoidable on first
+        touch.
+  \item A reference \textbf{fully-associative LRU cache} of the
+        \emph{same capacity} (128 blocks) is run in parallel, purely
+        as a measuring stick.
+        \begin{itemize}
+          \item If the direct-mapped cache misses, the block is not
+                cold, but the reference LRU cache \emph{also} misses on
+                it $\Rightarrow$ \textbf{Capacity miss} (the working set
+                genuinely exceeds the cache's total capacity, so no
+                placement policy could have avoided this miss).
+          \item If the direct-mapped cache misses but the reference LRU
+                cache \emph{hits} $\Rightarrow$ \textbf{Conflict miss}
+                (the miss is an artefact of direct-mapped placement --
+                two blocks competing for the same index evicted each
+                other, even though the overall working set would have
+                fit).
+        \end{itemize}
+\end{enumerate}
+
+Every miss produced by the direct-mapped cache is assigned to exactly
+one of these three buckets, and the simulator asserts
+$\text{Cold}+\text{Conflict}+\text{Capacity} = \text{Total misses}$
+after every run as a self-check.
+
+\subsection{Access Patterns Simulated}
+
+All addresses are 32-bit \emph{word} addresses into the 64K-word memory.
+Instruction streams are generated in the region starting at word~0,
+data streams in a disjoint region starting at word $0{\times}8000$
+(32768), purely so the two are easy to reason about independently; the
+caches themselves are simulated completely separately regardless.
+
+\begin{enumerate}[leftmargin=1.6em]
+\item \textbf{Sequential (spatial locality).} 4096 consecutive word
+      addresses (256 cache blocks, i.e. 2$\times$ the cache's 128-line
+      capacity), modelling straight-line instruction execution or a
+      linear array scan with no reuse.
+
+\item \textbf{Repeated (temporal locality).} Two sub-cases:
+      \begin{itemize}
+        \item \emph{Fits in cache}: a 32-word instruction loop body
+              (2 blocks) executed 200 times, and a 16-word data
+              window (1 block) reused 500 times -- both comfortably
+              smaller than the 128-line cache.
+        \item \emph{Exceeds cache capacity}: a 3072-word (192-block,
+              1.5$\times$ capacity) instruction working set and a
+              4096-word (256-block, 2$\times$ capacity) data working
+              set, each swept 4 times, to show what happens when a
+              ``hot loop'' is actually too large to stay resident.
+      \end{itemize}
+
+\item \textbf{Strided.} Fixed-stride sweeps with stride
+      $\in\{2,4,16\}$ words over 1024 accesses, showing spatial
+      locality eroding as the stride grows (stride 16 = one full
+      block, i.e. zero reuse within a block). A fourth, dedicated
+      \emph{conflict-demonstration} case round-robins across 4
+      addresses spaced exactly one cache-size (2048 words) apart, 256
+      times -- these four blocks alias to the very same cache index,
+      which isolates \textbf{conflict misses} from capacity effects
+      (a fully-associative cache of equal size would need only 4 of
+      its 128 lines to hold this entire working set).
+\end{enumerate}
+
+% =====================================================================
+\section{Results}
+% =====================================================================
+
+All figures below are the direct, un-edited output of
+\texttt{simulator.py} (see \texttt{results/results.json}).
+
+\subsection{Sequential Access Pattern}
+\input{tables.tex}
+
+% tables.tex emits 4 \begin{table}...\end{table} blocks in order:
+% sequential, repeated, strided(2/4/16), strided conflict-demo.
+% Section headers below annotate where each one lands only in prose.
+
+\subsection*{Repeated Access Pattern}
+See Table~\ref{tab:repeated} above.
+
+\subsection*{Strided Access Pattern}
+See Tables~\ref{tab:strided} and~\ref{tab:conflict-demo} above.
+
+% =====================================================================
+\section{Analysis and Discussion}
+% =====================================================================
+
+\subsection{Sequential Access (Table~\ref{tab:sequential})}
+
+Both caches show an identical \textbf{93.75\% hit rate}. With a 16-word
+block, every block delivers 1 miss followed by 15 hits as long as the
+stream never revisits an evicted block -- exactly $256/4096 = 6.25\%$
+miss rate. Every single miss is classified as \textbf{Cold}; there is
+no conflict or capacity component because each of the 256 blocks
+touched is accessed exactly once and then abandoned, so nothing is ever
+evicted and re-requested. This is the textbook signature of
+\emph{spatial locality}: large blocks amortise the fixed cost of a
+miss over many subsequent hits, and the hit rate is entirely
+determined by the block size ($\frac{15}{16}=93.75\%$), independent of
+cache size or associativity.
+
+\subsection{Repeated Access (Table~\ref{tab:repeated})}
+
+\textbf{Working set within capacity.} With only 2 (I) or 1 (D) blocks
+being swept repeatedly, hit rates reach \textbf{99.97\%} and
+\textbf{99.99\%}: the entire working set is loaded once (a handful of
+cold misses) and then serviced from the cache for hundreds of
+iterations. This is the purest demonstration of \emph{temporal
+locality} -- exactly the loop / loop-carried-variable scenario the
+pattern is meant to model.
+
+\textbf{Working set exceeding capacity.} Once the swept region grows
+past the cache's 128-line capacity (192 blocks for I, 256 blocks for
+D), the hit rate falls to 95.31\% / 93.75\% and, critically, the miss
+breakdown now contains a large \textbf{Capacity} component (384 and
+768 misses respectively) on top of the unavoidable cold misses -- with
+\emph{zero} conflict misses. Because the sweep revisits blocks in the
+same round-robin order every pass, a fully-associative LRU cache of
+equal size thrashes in exactly the same way as the direct-mapped
+cache, so every non-cold miss here is attributable purely to
+insufficient capacity, not to index collisions. This isolates the
+effect the assignment asks about: a loop or array that is individually
+``hot'' but simply too large to fit will thrash regardless of how
+clever the placement policy is.
+
+\subsection{Strided Access (Tables~\ref{tab:strided}, \ref{tab:conflict-demo})}
+
+\textbf{Increasing stride erodes spatial locality.} For a plain
+strided sweep with no revisits, the hit rate falls monotonically as
+stride increases: $87.50\%\to75.00\%\to0.00\%$ for stride
+$2\to4\to16$. With a 16-word block, a stride of 2 still lands 8 of the
+16 words in each block before moving to the next block (7 hits after
+the first miss on the block, so with count 1024 that is
+$\tfrac{1}{2}\cdot 1{,}024$ block-touches down to 128 unique blocks,
+each contributing 1 cold miss and 7 hits); stride 4 similarly halves
+the reuse again; and once the stride equals the block size (16), every
+single access lands in a brand-new block, spatial locality is
+completely destroyed, and the miss rate hits \textbf{100\%}. As with
+the sequential pattern, every miss here is classified as Cold --
+nothing is ever revisited, so there is nothing for a
+conflict/capacity distinction to act on.
+
+\textbf{Isolating conflict misses.} The dedicated
+conflict-demonstration case (Table~\ref{tab:conflict-demo}) makes the
+cost of direct mapping explicit: only 4 blocks are ever touched (4
+cold misses), and this tiny working set would trivially fit in
+\emph{any} cache with $\geq 4$ lines of \emph{any} associativity. Yet
+because all 4 addresses are exactly one cache size (2048 words) apart,
+they map to the \emph{same} index and continuously evict one another.
+The result is a \textbf{100\% miss rate} with 1020 of the 1024 misses
+classified as pure \textbf{Conflict} misses -- the single largest
+source of avoidable misses observed in this study, and one that a
+capacity argument alone cannot explain (the reference fully-associative
+cache of equal total size hits almost every time). This is precisely
+the scenario direct-mapped caches are known to handle poorly, and is
+the reason set-associative caches exist.
+
+\subsection{Instruction Cache vs.\ Data Cache}
+
+Across every pattern, the I-Cache and D-Cache results are structurally
+identical in shape (same hit/miss ratios, same 3C breakdown), because
+both caches use the same geometry and are driven by address streams
+constructed with the same access pattern (only the base address
+differs). This is an expected artefact of testing the two caches with
+synthetic streams; in a real workload the I-Cache would additionally
+be shaped by branch behaviour (taken/not-taken changes sequential
+fetch into effectively strided/discontinuous access) while the D-Cache
+would be shaped by the specific data structures being manipulated
+(arrays $\to$ sequential/strided, scalars and loop counters $\to$
+repeated). The simulator's independent I/D modelling reflects a
+Harvard-style split cache, where instruction fetch pressure can never
+evict useful data, and vice versa -- avoiding the interference that
+would occur in a shared unified cache.
+
+\subsection{Locality of Reference and Cache Mapping -- Summary}
+
+\begin{itemize}[leftmargin=1.6em]
+\item \textbf{Spatial locality} (exploited by block size) is the
+      dominant factor for sequential and low-stride access: hit rate
+      is essentially $1 - \frac{1}{\text{words per block used}}$, and
+      degrades sharply once the access stride approaches or exceeds
+      the block size.
+\item \textbf{Temporal locality} (exploited by cache capacity and
+      residency) is the dominant factor for repeated/loop-style
+      access, \emph{provided the working set fits inside the cache}.
+      When it doesn't, capacity misses appear regardless of placement
+      policy.
+\item \textbf{Cache mapping policy} (direct-mapped vs.\ associative)
+      only becomes visible once addresses \emph{alias} onto the same
+      index. The conflict-demonstration experiment shows this can be
+      catastrophic (100\% miss rate) even for a working set that is
+      trivially small relative to total cache capacity -- the defining
+      weakness of direct mapping relative to set-associative or
+      fully-associative organisations.
+\end{itemize}
+
+% =====================================================================
+\section{Conclusion}
+% =====================================================================
+
+The simulator confirms, with concrete measurements, the standard
+qualitative predictions of cache theory for a direct-mapped
+organisation: sequential access performance is governed by block size
+(spatial locality), repeated access performance is governed by whether
+the working set fits within cache capacity (temporal locality), and
+strided access exposes both a gradual loss of spatial locality as
+stride grows and, in the worst case (addresses aliasing to the same
+index), severe conflict misses that no amount of spare cache capacity
+can prevent. Because the I-Cache and D-Cache are modelled as
+independent direct-mapped structures, instruction and data traffic
+never interfere with one another, isolating each pattern's effect
+cleanly. These results motivate the two classic remedies covered in a
+computer organisation course: larger/well-chosen block sizes to
+capture more spatial locality, and higher associativity (or software
+techniques such as array padding/blocking) to eliminate pathological
+conflict misses like the one demonstrated in
+Table~\ref{tab:conflict-demo}.
+
+% =====================================================================
+\appendix
+\section{Source Code}
+% =====================================================================
+
+The complete, runnable source (\texttt{cache.py}, \texttt{patterns.py},
+\texttt{simulator.py}, \texttt{generate\_report\_tables.py}) is
+submitted alongside this report in the \texttt{src/} directory, and the
+raw JSON results in \texttt{results/results.json}. The core cache
+model and 3C classifier are reproduced below for reference.
+
+\lstinputlisting[caption={\texttt{cache.py} -- direct-mapped cache model and 3C classifier}]{../src/cache.py}
+
+\end{document}

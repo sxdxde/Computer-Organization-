@@ -1,0 +1,69 @@
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+Cache / Case & Acc. & Lookups & Hits & Misses & Hit\% & Miss\% & Cold & Conflict & Capacity \\
+\midrule
+I-Cache (sequential) & 4096 & 4096 & 3840 & 256 & 93.75\% & 6.25\% & 256 & 0 & 0 \\
+D-Cache (sequential) & 4096 & 4096 & 3840 & 256 & 93.75\% & 6.25\% & 256 & 0 & 0 \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Sequential access pattern -- I-Cache and D-Cache results}
+\label{tab:sequential}
+\end{table}
+
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+Cache / Case & Acc. & Lookups & Hits & Misses & Hit\% & Miss\% & Cold & Conflict & Capacity \\
+\midrule
+I-Cache (working set fits in cache) & 6400 & 6400 & 6398 & 2 & 99.97\% & 0.03\% & 2 & 0 & 0 \\
+D-Cache (working set fits in cache) & 8000 & 8000 & 7999 & 1 & 99.99\% & 0.01\% & 1 & 0 & 0 \\
+I-Cache (working set $>$ cache capacity) & 12288 & 12288 & 11712 & 576 & 95.31\% & 4.69\% & 192 & 0 & 384 \\
+D-Cache (working set $>$ cache capacity) & 16384 & 16384 & 15360 & 1024 & 93.75\% & 6.25\% & 256 & 0 & 768 \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Repeated (temporal locality) access pattern -- I-Cache and D-Cache results}
+\label{tab:repeated}
+\end{table}
+
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+Cache / Case & Acc. & Lookups & Hits & Misses & Hit\% & Miss\% & Cold & Conflict & Capacity \\
+\midrule
+I-Cache (stride = 2) & 1024 & 1024 & 896 & 128 & 87.50\% & 12.50\% & 128 & 0 & 0 \\
+D-Cache (stride = 2) & 1024 & 1024 & 896 & 128 & 87.50\% & 12.50\% & 128 & 0 & 0 \\
+I-Cache (stride = 4) & 1024 & 1024 & 768 & 256 & 75.00\% & 25.00\% & 256 & 0 & 0 \\
+D-Cache (stride = 4) & 1024 & 1024 & 768 & 256 & 75.00\% & 25.00\% & 256 & 0 & 0 \\
+I-Cache (stride = 16) & 1024 & 1024 & 0 & 1024 & 0.00\% & 100.00\% & 1024 & 0 & 0 \\
+D-Cache (stride = 16) & 1024 & 1024 & 0 & 1024 & 0.00\% & 100.00\% & 1024 & 0 & 0 \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Strided access pattern (stride = 2, 4, 16 words) -- I-Cache and D-Cache results}
+\label{tab:strided}
+\end{table}
+
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+Cache / Case & Acc. & Lookups & Hits & Misses & Hit\% & Miss\% & Cold & Conflict & Capacity \\
+\midrule
+I-Cache (index-aliasing conflict demo) & 1024 & 1024 & 0 & 1024 & 0.00\% & 100.00\% & 4 & 1020 & 0 \\
+D-Cache (index-aliasing conflict demo) & 1024 & 1024 & 0 & 1024 & 0.00\% & 100.00\% & 4 & 1020 & 0 \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Strided access, conflict-demonstration case -- 4 addresses exactly one cache-size (2048 words) apart, round-robined 256 times}
+\label{tab:conflict-demo}
+\end{table}
