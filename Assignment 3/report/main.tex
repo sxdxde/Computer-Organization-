@@ -1,0 +1,554 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{caption}
+\emergencystretch=3em
+\sloppy
+
+\definecolor{codebg}{RGB}{245,245,245}
+\lstset{
+  backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  language=Python,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  numbers=left,
+  numberstyle=\tiny,
+  xleftmargin=1.5em
+}
+
+\title{Exp-03: Multi-Level Cache Design\\
+\large Workload-Driven Analysis of a Three-Level (L1/L2/L3) Cache Hierarchy}
+\author{Sudarshan Sudhakar \\ Roll No: CS23B2007}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This report simulates a three-level cache hierarchy (L1 32\,KB, L2 256\,KB,
+L3 2\,MB, all with 64\,B lines, backed by a 64\,MB / 26-bit DRAM) driven by a
+single four-phase synthetic workload -- embedding lookup, matrix
+multiplication, streaming activation, and output projection -- run as one
+continuous instruction stream without clearing the caches between phases.
+Three associativity configurations are compared: the assignment baseline
+(L1 1-way, L2 2-way, L3 4-way), a ``raise everything'' configuration
+(2/4/8-way), and an L1-focused configuration (4/4/8-way) that isolates
+whether extra L1 associativity specifically matters. All numbers reported
+below are the direct, unedited output of the accompanying simulator
+(\texttt{cache\_sim.py}); every table is generated automatically from that
+run and \texttt{\textbackslash input}ed here verbatim. The central finding
+is that associativity's effect is highly phase-dependent and can move
+misses \emph{between} levels rather than eliminate them outright: raising
+L1 associativity resolves a severe, address-aliasing-induced conflict-miss
+storm in two of the four phases, but simultaneously starves the higher
+levels of the very reuse traffic that used to pad their hit rate, making L2
+and L3 \emph{miss rate} rise sharply even while total DRAM traffic and
+overall AMAT both improve. This motivates the report's final
+recommendation and its explicit warning against reading hit rate alone as
+a proxy for performance.
+\end{abstract}
+
+\tableofcontents
+
+% =====================================================================
+\section{Cache Hierarchy and System Parameters}
+% =====================================================================
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ll}
+\toprule
+Parameter & Value \\
+\midrule
+Main memory (DRAM) capacity & 64 MB \\
+Address size                & 26 bits (byte-addressable) \\
+DRAM latency                & 100 cycles \\
+Cache line size (all levels)& 64 B (fixed throughout the experiment) \\
+\bottomrule
+\end{tabular}
+\caption{Main memory parameters}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lllll}
+\toprule
+Level & Capacity & Line size & Baseline mapping & Latency \\
+\midrule
+L1 & 32 KB & 64 B & Direct mapped (1-way) & 1 cycle \\
+L2 & 256 KB & 64 B & 2-way & 5 cycles \\
+L3 & 2 MB & 64 B & 4-way & 20 cycles \\
+\bottomrule
+\end{tabular}
+\caption{Baseline cache hierarchy}
+\end{table}
+
+Every request is looked up strictly in CPU $\to$ L1 $\to$ L2 $\to$ L3 $\to$
+DRAM order (Section~\ref{sec:sim} describes the simulator's enforcement of
+this). When a block is found at L2, it is filled into L1; when found at
+L3, it is filled into both L2 and L1; when it must be fetched from DRAM,
+it is filled into all three levels. \textbf{Latency model / stated
+assumption:} the simulator uses a cumulative, serial-probe latency model
+-- an access that misses in L1 and hits in L2 costs
+$L1_{\text{lat}}+L2_{\text{lat}}=6$ cycles, one that falls through to DRAM
+costs $1+5+20+100=126$ cycles, and so on. This is a simplifying but
+standard assumption for a simulator at this level of abstraction, and is
+applied identically to every configuration, so it does not bias the
+comparison between configurations.
+
+% =====================================================================
+\section{Simulator Design}
+\label{sec:sim}
+% =====================================================================
+
+The entire simulator, workload generator, experiment driver, and
+result/plot writer live in a single file, \texttt{cache\_sim.py}, organised
+into clearly separated sections:
+
+\begin{itemize}[leftmargin=1.6em]
+  \item \textbf{\texttt{Cache}} -- a generic $N$-way set-associative cache
+        with true LRU replacement. \texttt{access(addr)} is a genuine
+        demand access (counted as hit/miss); \texttt{fill(addr)} inserts a
+        line without counting a hit/miss, modelling the ``fill upper
+        levels'' step of the hierarchy diagram.
+  \item \textbf{\texttt{MultiLevelCache}} -- wires three \texttt{Cache}
+        instances into the mandated CPU $\to$ L1 $\to$ L2 $\to$ L3
+        $\to$ DRAM order, filling upper levels on every hit below L1 and
+        accumulating hit/miss counts, DRAM accesses, and total cycles.
+  \item \textbf{Phase address generators} -- four Python generators
+        (\texttt{phase1\_addresses} .. \texttt{phase4\_addresses})
+        that lazily yield the byte-address stream for each workload
+        phase, so tens of millions of addresses never need to be
+        materialised as a list in memory.
+  \item \textbf{Experiment driver} (\texttt{run\_config},
+        \texttt{main}) -- runs the complete four-phase workload once per
+        configuration through a single, never-cleared
+        \texttt{MultiLevelCache} instance, snapshotting hit/miss counters
+        before and after every phase to derive phase-wise deltas.
+  \item \textbf{Output} -- JSON (\texttt{raw\_results.json}), two CSV
+        tables matching the exact layout requested in the assignment
+        (\texttt{phase\_wise\_results.csv}, \texttt{config\_summary.csv}),
+        an append-only \texttt{master\_ledger.csv} (every run is logged
+        with a timestamp, never overwritten), a \texttt{tables.tex}
+        fragment (auto-generated LaTeX tables, \texttt{\textbackslash
+        input}ed directly into this report -- see
+        Sections~\ref{sec:baseline}--\ref{sec:results}), and four
+        matplotlib plots.
+\end{itemize}
+
+All addresses across all four phases live in the same 26-bit / 64\,MB
+address space -- there is no other address space available on this
+system. Phase~1's embedding table alone is exactly 64\,MB
+($1{,}048{,}576$ entries $\times$ 64\,B), i.e.\ it occupies the
+\emph{entire} address space by construction (Section~\ref{sec:phases}), so
+Phases 2--4 necessarily reuse addresses Phase~1 already touched, in the
+same way a real allocator reuses heap space once the embedding stage no
+longer needs it. Within each phase, arrays are placed at fixed,
+non-overlapping offsets so the phase-internal access pattern is
+unambiguous. Where a variable is loop-invariant across a loop's innermost
+index (e.g.\ \texttt{C[i][j]} across the $k$-loop in Phase~2, or
+\texttt{Y[b][o]} across the $k$-loop in Phase~4), the simulator models the
+standard register-allocated behaviour: the accumulator lives in a register
+across the inner loop and is written back to memory once, rather than
+issuing a redundant load/store on every iteration. This is exactly what a
+real compiler emits for this code and keeps the address-stream size
+tractable without altering any of the spatial/strided/temporal properties
+the experiment is actually about (those live entirely in the
+\texttt{A}/\texttt{B} and \texttt{X}/\texttt{W} traffic).
+
+% =====================================================================
+\section{Workload: Four Phases}
+\label{sec:phases}
+% =====================================================================
+
+All four phases run back-to-back as a single instruction stream; the cache
+is \emph{not} cleared between phases, so each phase inherits whatever
+state the previous phase left behind.
+
+\subsection{Phase 1 -- Embedding / Lookup}
+A $1{,}048{,}576 \times 16$ embedding table (4~B per value) $=$ exactly
+64\,MB, so each entry is exactly one 64\,B cache line. $50{,}000$ lookups
+are generated from a fixed-seed stream that mixes three components per the
+spec's own example (\texttt{17, 2048, 91, 17, 8192, 2048, 503, 91, ...}):
+a 5\% chance of an immediate repeat of the previous index, a 35\% chance
+of drawing from a small 64-entry ``hot'' pool (temporal reuse), and 60\%
+uniformly random draws across all $1{,}048{,}576$ entries (irregular,
+weak-spatial-locality traffic). Each lookup issues 16 four-byte reads
+(one per value in the entry).
+
+\subsection{Phase 2 -- Matrix / Tensor Computation}
+$C = A \times B$, all $256\times256$ (256\,KB each, 768\,KB total), $ijk$
+loop order. \texttt{A[i][k]} is read sequentially as $k$ advances (strong
+spatial locality). \texttt{B[k][j]} is read with a stride of
+$256\times4=1024$\,B as $k$ advances (poor spatial locality -- one cache
+line touched per access, only 4 of its 64 bytes used), but the
+\emph{same} 256 addresses of a given column are revisited on every pass of
+the outer $i$-loop (256 times total) -- strong temporal locality,
+\emph{if} the cache can hold the working set across that gap.
+\texttt{C[i][j]} is accumulated in-register (Section~\ref{sec:sim}) and
+written once per $(i,j)$.
+
+\subsection{Phase 3 -- Activation Processing}
+$\texttt{output[i]} = \text{activation}(\texttt{input[i]})$ over
+$N=1{,}048{,}576$ elements (4\,MB input $+$ 4\,MB output $=$ 8\,MB,
+exceeding even L3). Purely sequential/streaming: every address is touched
+exactly once, so spatial locality is strong (15 hits after every 16-word
+line's first miss) but temporal locality is essentially absent.
+
+\subsection{Phase 4 -- Output / Projection}
+A batched linear projection $Y = X W$, with $X$: $512\times128$ (256\,KB),
+$W$: $128\times32$ (16\,KB), $Y$: $512\times32$ (64\,KB). \texttt{X[b][:]}
+is reused across all 32 output columns for a given batch row (temporal
+reuse); \texttt{W[o][:]} is reused across all 512 batch rows (heavy
+temporal reuse of a small, easily-cacheable array); \texttt{Y[b][o]} is
+written once per $(b,o)$ at a stride of $32\times4=128$\,B (strided,
+essentially no reuse within the phase).
+
+% =====================================================================
+\section{Access-Pattern and Locality Analysis (Predictions Before Running)}
+% =====================================================================
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{p{2.1cm}p{2.6cm}p{2.6cm}p{3.2cm}p{4.5cm}}
+\toprule
+Phase & Dominant pattern & Spatial locality & Temporal locality & Expected hierarchy behaviour \\
+\midrule
+Embedding & Irregular / random, with a hot-pool component & Weak (each 64\,B entry is one line -- no locality \emph{between} distinct lookups) & Some (hot pool, occasional immediate repeat) & High cache pressure; most first-touches should miss all the way to DRAM since the table (64\,MB) vastly exceeds every level; hot-pool hits should mostly land in L1/L2. \\
+Matrix & Sequential (A) + strided (B) + repeated (B across $i$) & Strong for A, weak for B & Strong for B \emph{if} it survives in cache across the $i$-loop & L1 (32\,KB) is far smaller than B (256\,KB) alone, so L1 should show high miss rate regardless of associativity (a capacity problem); L2/L3 (256\,KB / 2\,MB) are large enough to hold B or all of A+B+C, so associativity should matter there. \\
+Activation & Pure streaming & Strong (line reuse only) & Essentially none & Every line is compulsory; increasing cache size or associativity should not reduce DRAM traffic much, since nothing is ever revisited long-range -- a good test of ``does spatial locality alone justify caching.'' \\
+Projection & Sequential (X,W) + reused (W heavily, X moderately) + strided (Y) & Strong for X/W & Strong for W (reused 512$\times$), moderate for X (reused 32$\times$) & W (16\,KB) should live comfortably in L1; X (256\,KB) should mostly live in L2/L3; associativity should matter wherever conflicting lines alias onto the same set. \\
+\bottomrule
+\end{tabular}
+\caption{Predicted access-pattern properties, before running the simulator}
+\end{table}
+
+% =====================================================================
+\section{Cache Hierarchy Configurations Tested}
+\label{sec:baseline}
+% =====================================================================
+
+Three complete configurations were run, each keeping line size and
+capacities fixed and changing only associativity (the only variable the
+assignment permits):
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lccl}
+\toprule
+Configuration & L1 & L2 & L3 \\
+\midrule
+A -- Baseline   & 1-way & 2-way & 4-way \\
+B -- High assoc.& 2-way & 4-way & 8-way \\
+C -- L1 focus   & 4-way & 4-way & 8-way \\
+\bottomrule
+\end{tabular}
+\caption{Configurations tested}
+\end{table}
+
+\textbf{Rationale.} Configuration A is the assignment's own baseline and
+the reference point for everything else. Configuration B asks the
+broadest possible question -- ``if every level gets more ways, does the
+whole workload get faster?'' -- and is a fair, literal test of the
+hypothesis that the baseline's associativity is too low across the board.
+Configuration C deliberately keeps L2 and L3 \emph{identical to B} and
+changes only L1 (2-way $\to$ 4-way), so that the B-vs-C comparison isolates
+the marginal value of L1 associativity specifically, independent of any
+L2/L3 change -- something the A-vs-B comparison cannot do cleanly, since A
+and B differ at all three levels simultaneously. This matters: several of
+the findings below (Section~\ref{sec:analysis}) depend on being able to
+tell whether an effect came from L1 or from L2/L3, and only the B-vs-C
+pair gives a clean answer to that.
+
+% =====================================================================
+\section{Baseline Results}
+\label{sec:results}
+% =====================================================================
+
+Table~\ref{tab:phase-A_baseline} below (auto-generated from the actual
+run) gives Configuration A's phase-wise breakdown; the full three-way
+comparison follows in Section~\ref{sec:comparison}.
+
+\input{../results/tables.tex}
+
+% =====================================================================
+\section{Experimental Results}
+\label{sec:comparison}
+% =====================================================================
+
+Table~\ref{tab:config-comparison} (above, from \texttt{tables.tex})
+summarises the complete four-phase workload for all three configurations.
+The headline numbers:
+
+\begin{itemize}[leftmargin=1.6em]
+\item Total workload size is identical across configurations: $40{,}727{,}808$
+      CPU accesses.
+\item DRAM accesses are essentially flat: $165{,}390$ (A) vs.\ $165{,}394$
+      (B) vs.\ $165{,}395$ (C) -- a difference of five accesses out of
+      165 thousand, i.e.\ noise.
+\item AMAT drops from $3.976$ cycles/access (A) to $3.789$ (B) and
+      $3.789$ (C) -- a $\sim$4.7\% improvement, entirely from B onward;
+      C adds essentially nothing over B ($3.789178 \to 3.789064$,
+      a 0.003\% change).
+\item Total workload cycles: $161{,}916{,}333$ (A) $\to$ $154{,}324{,}928$
+      (B) $\to$ $154{,}320{,}263$ (C).
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{../results/plots/config_comparison.png}
+\caption{Overall miss rate by level (left) and overall AMAT (right), across
+the three configurations.}
+\label{fig:config-comparison}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{../results/plots/phase_miss_rates.png}
+\caption{Per-phase, per-level miss rate for each configuration. Note how
+L2/L3 miss rate in Activation and Projection \emph{rises} from A to B/C
+even as overall performance improves -- discussed in
+Section~\ref{sec:analysis}.}
+\label{fig:phase-miss-rates}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{../results/plots/dram_accesses_per_phase.png}
+\caption{DRAM accesses per phase. Unlike the miss-rate figure above, this
+one is nearly flat across configurations within every phase -- the true
+signal of whether a configuration change actually reduced expensive
+main-memory traffic.}
+\label{fig:dram-per-phase}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{../results/plots/amat_per_phase.png}
+\caption{Per-phase AMAT across configurations.}
+\label{fig:amat-per-phase}
+\end{figure}
+
+% =====================================================================
+\section{Important Observations}
+\label{sec:analysis}
+% =====================================================================
+
+\subsection{Observation 1 -- A genuine, quantifiable conflict-miss storm, fixed by 2-way L1}
+
+In the Activation phase, \texttt{input} is based at address 0 and
+\texttt{output} is based at address $4\,\text{MB}$. $4\,\text{MB}$ is
+\emph{exactly} $128\times$ the 32\,KB L1 size, so for every matching
+offset, the input line and the output line map to the \emph{identical}
+L1 set. With a direct-mapped (1-way) L1, the interleaved
+\texttt{input[i]}, \texttt{output[i]} accesses evict each other on
+\emph{every single access}: Configuration A shows an L1 miss rate of
+exactly $100.00\%$ for this phase. Moving to a 2-way L1 (Configuration B)
+is sufficient to hold both aliasing lines in the same set simultaneously
+-- L1 miss rate collapses to $6.25\%$ (the theoretical floor: 1 compulsory
+miss per 16-word line, per stream). This is about as clean a
+demonstration of a conflict miss, and of associativity fixing it, as this
+kind of simulator can produce -- it costs nothing in capacity (both lines
+still fit trivially in 2 ways) and the fix is complete after just one
+extra way.
+
+\subsection{Observation 2 -- The same fix moves the miss burden \emph{up}, not away}
+
+The obvious follow-on question: L2's miss rate for the same phase was only
+$6.25\%$ under the baseline -- why does it jump to $100\%$ once L1 becomes
+2-way? Because L2 only ever sees what L1 forwards. Under the baseline, L1
+misses on \emph{every} access, so L2 sees the full $2{,}097{,}152$-access
+stream and gets to exploit the ``15 hits after 1 miss'' pattern itself
+($131{,}072$ misses out of $2{,}097{,}152$ accesses $= 6.25\%$). Once L1
+absorbs that pattern (Observation 1), only the $131{,}072$ genuinely
+first-ever-touched lines are forwarded to L2 at all -- and because this
+phase is pure streaming with zero long-range reuse, \emph{every one of
+those forwarded accesses is a compulsory miss at L2 too}: $131{,}072$
+misses out of $131{,}072$ accesses $=100\%$. The same mechanism reproduces
+in Phase 4 (Projection): L2 accesses drop from $74{,}279 \to 5{,}476 \to
+5{,}376$ across A/B/C, converging exactly on $5{,}376$ -- the true
+compulsory-miss floor for that phase's unique line count ($4096$ for X
+$+\;256$ for W $+\;1024$ for Y). \textbf{The number of L2 misses barely
+moves (roughly constant $\approx 131{,}072$ / $\approx 5{,}376$ across all
+three configurations) while L2's own \emph{miss rate} swings from
+single digits to 100\%.} This is the report's central methodological
+warning: a rising miss-rate percentage at an upper cache level, on its
+own, tells you nothing about whether the hierarchy got worse -- you have
+to look at the absolute traffic and the end-to-end DRAM/cycle counts
+together (Figure~\ref{fig:dram-per-phase} vs.\ Figure~\ref{fig:phase-miss-rates}).
+
+\subsection{Observation 3 -- Increasing associativity does not fix a pure capacity problem}
+
+In the Matrix phase, L1 miss rate is essentially unchanged by
+associativity: $50.41\%$ (A, 1-way) vs.\ $50.31\%$ (B, 2-way) vs.\
+$50.31\%$ (C, 4-way) -- a difference of a tenth of a percentage point.
+This is expected: B alone is 256\,KB, eight times larger than the entire
+32\,KB L1, so no amount of associativity lets L1 retain useful fractions
+of B across the $i$-loop -- this is a \emph{capacity} miss, not a
+conflict miss, and associativity is architecturally the wrong tool for
+it. At L3 (2\,MB, large enough to hold the whole 768\,KB working set),
+associativity \emph{does} help: L3 miss rate for Matrix falls from
+$4.32\%$ (4-way) to $2.89\%$ (8-way) -- consistent with these now being
+genuine conflict misses that extra ways can resolve, because the data
+actually fits.
+
+\subsection{Observation 4 -- A configuration that helps the whole workload can hurt one phase}
+
+Matrix-phase cycles alone are \emph{worse} under Configuration B
+($127{,}710{,}088$ cycles) than under the baseline
+($125{,}117{,}428$ cycles) -- a genuine regression of about 2.1\%. L2
+absolute miss count for Matrix rises sharply from A to B/C
+($278{,}208 \to 415{,}603$), and although L3 misses fall slightly
+($12{,}005\to11{,}995$), the extra accesses that now have to pay the full
+L1+L2+L3 latency chain (26 cycles) instead of stopping at L2 (6 cycles)
+outweigh that small L3 saving. If Matrix were evaluated in isolation, the
+baseline would be the right choice. But across the \emph{complete}
+four-phase workload, B still wins decisively ($154.3$M vs.\ $161.9$M total
+cycles) because Embedding, Activation, and Projection all improve enough
+to more than absorb Matrix's regression. This is a direct, measured
+answer to the assignment's own question: \emph{a configuration that helps
+one phase is not necessarily best for the complete workload, and vice
+versa} -- only a full-workload evaluation can tell you which effect
+dominates.
+
+\subsection{Observation 5 -- Diminishing returns from L1 4-way over 2-way}
+
+Configuration C (L1 4-way) is, for every phase and overall, statistically
+indistinguishable from Configuration B (L1 2-way): overall AMAT differs by
+$0.003\%$ ($3.789178$ vs.\ $3.789064$), and overall DRAM accesses differ by
+exactly one access ($165{,}394$ vs.\ $165{,}395$). Two extra L1 ways buy
+essentially nothing once the dominant conflict pattern (Observation 1,
+which only needed 2 ways to resolve) is already fixed -- the remaining
+misses in every phase are capacity or compulsory misses that no amount of
+L1 associativity can touch.
+
+% =====================================================================
+\section{Architectural Explanation of These Observations}
+% =====================================================================
+
+Read together, Observations 1--5 trace exactly the causal chain the
+assignment asks for: \emph{Workload Phase $\to$ Memory Access Pattern
+$\to$ Locality $\to$ Cache Mapping $\to$ Hit/Miss Behaviour $\to$ Level at
+which data is found $\to$ Memory Access Cost $\to$ Overall Performance.}
+
+\begin{itemize}[leftmargin=1.6em]
+\item The \emph{access pattern} of a phase (streaming vs.\ strided vs.\
+      irregular-with-reuse) determines whether a miss, once it happens, is
+      \emph{fixable by associativity at all}. Activation's
+      input/output aliasing (Observation 1) is a pure conflict miss --
+      associativity fixes it completely with 2 ways. Matrix's L1 pressure
+      from B (Observation 3) is a pure capacity miss -- no amount of
+      associativity fixes it; only a bigger L1 would.
+\item Because the hierarchy is strictly ordered (Section~\ref{sec:sim}),
+      whichever level first satisfies a request determines both its
+      latency \emph{and} which addresses the level above it will ever be
+      asked to serve. This is what produces Observation 2: making L1
+      better at absorbing local reuse literally changes L2's input
+      distribution, not just L2's hit rate on a fixed distribution. Miss
+      \emph{rate} at an inner level is therefore not a stable, comparable
+      quantity across configurations -- miss \emph{count} and downstream
+      DRAM traffic are.
+\item Total workload performance is a sum over phases with very different
+      access patterns, so a change that is a net win for the sum (B vs.\
+      A) can still be a net loss for an individual phase (Observation 4).
+      Any hierarchy decision made by looking at one phase's numbers in
+      isolation risks exactly this trap.
+\item Returns from added associativity are not linear: the first extra
+      way (1-way $\to$ 2-way at L1) resolved a 100\%-miss pathology
+      outright; the next two ways (2-way $\to$ 4-way) resolved essentially
+      nothing further (Observation 5), because the remaining misses were
+      never conflict misses to begin with.
+\end{itemize}
+
+% =====================================================================
+\section{Recommended Configuration}
+% =====================================================================
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ll}
+\toprule
+Level & Recommended associativity \\
+\midrule
+L1 & 2-way \\
+L2 & 4-way \\
+L3 & 8-way \\
+\bottomrule
+\end{tabular}
+\caption{Recommended hierarchy -- Configuration B}
+\end{table}
+
+This is \emph{not} the configuration with the highest hit rate at any
+individual level -- Configuration C has a marginally lower L1 miss rate
+than B at every phase, and neither B nor C has the highest \emph{L2} hit
+rate (that belongs to the baseline, Configuration A, for exactly the
+reasons in Observation 2). The recommendation is B specifically because:
+
+\begin{enumerate}[leftmargin=1.6em]
+\item It captures essentially all of the measured improvement over the
+      baseline ($161.9\text{M}\to154.3\text{M}$ total cycles, $\sim$4.7\%
+      faster AMAT), driven almost entirely by eliminating the Activation-phase
+      conflict-miss pathology in Observation~1 -- a real, reproducible fix,
+      not an artefact of the workload.
+\item Pushing L1 to 4-way (Configuration C) is not worthwhile: it adds
+      real hardware cost (twice the tag comparators and a wider mux at
+      the level accessed on \emph{every} cycle, where 1-cycle latency is
+      hardest to hold) for a $0.003\%$ AMAT change (Observation~5). This
+      is squarely the kind of trade-off the assignment warns against
+      rewarding on hit-rate grounds alone.
+\item The Matrix-phase regression under B (Observation~4) is real but
+      small in absolute terms (2.1\% within that phase) and is more than
+      paid for by the other three phases; a configuration chosen to avoid
+      it (i.e.\ the baseline) would give up the much larger win elsewhere.
+\end{enumerate}
+
+% =====================================================================
+\section{One Surprising Result}
+% =====================================================================
+
+The most counter-intuitive result in this study is Observation~2: giving
+L1 more associativity \emph{increased} L2's own miss rate in two of the
+four phases -- in Activation, from $6.25\%$ to $100\%$ -- while DRAM
+traffic for that same phase barely moved ($118{,}517 \to 118{,}552$
+accesses) and overall performance improved. Before running this
+experiment, the intuitive expectation was that a ``better'' cache
+configuration should make miss rates go down at every level, or at worst
+stay flat. What it actually taught: a cache level's miss rate is a
+measurement of \emph{the traffic it happens to receive}, not an
+absolute property of the workload -- and in a strict inclusive-fill
+hierarchy, every level upstream can silently change what traffic a level
+downstream ever sees. A 100\% miss rate at L2 sounds alarming in
+isolation, but here it was actually a symptom of L1 doing its job well
+(only forwarding accesses L1 genuinely could not have served), not
+evidence that L2 was failing. This is precisely why the assignment insists
+on reporting absolute DRAM accesses and AMAT alongside miss-rate
+percentages, rather than optimizing miss rate at any single level as an
+end in itself.
+
+% =====================================================================
+\appendix
+\section{Source Code}
+% =====================================================================
+
+The complete, runnable, single-file source
+(\texttt{cache\_sim.py}) is submitted alongside this report; running
+\texttt{python3 cache\_sim.py} regenerates every table, CSV, JSON file,
+and plot referenced above from scratch (fixed random seed, so the numbers
+are exactly reproducible). It is reproduced in full below.
+
+\lstinputlisting[caption={\texttt{cache\_sim.py} -- complete simulator, workload generators, experiment driver, and output writers}]{../cache_sim.py}
+
+\end{document}

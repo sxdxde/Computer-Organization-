@@ -1,0 +1,63 @@
+\begin{table}[H]
+\centering
+\begin{tabular}{lrrrrrr}
+\toprule
+Phase & L1 Miss\% & L2 Miss\% & L3 Miss\% & DRAM Accesses & Cycles & AMAT \\
+\midrule
+Embedding & 4.26 & 87.57 & 98.93 & 29,492 & 4,515,650 & 5.64 \\
+Matrix & 50.41 & 1.64 & 4.32 & 12,005 & 125,117,428 & 3.72 \\
+Activation & 100.00 & 6.25 & 90.42 & 118,517 & 27,056,052 & 12.90 \\
+Projection & 1.76 & 7.24 & 100.00 & 5,376 & 5,227,203 & 1.24 \\
+\bottomrule
+\end{tabular}
+\caption{Phase-wise results, Configuration A\_baseline}
+\label{tab:phase-A_baseline}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lrrrrrr}
+\toprule
+Phase & L1 Miss\% & L2 Miss\% & L3 Miss\% & DRAM Accesses & Cycles & AMAT \\
+\midrule
+Embedding & 3.99 & 93.43 & 98.91 & 29,471 & 4,502,500 & 5.63 \\
+Matrix & 50.31 & 2.46 & 2.89 & 11,995 & 127,710,088 & 3.80 \\
+Activation & 6.25 & 100.00 & 90.45 & 118,552 & 17,229,152 & 8.22 \\
+Projection & 0.13 & 98.17 & 100.00 & 5,376 & 4,883,188 & 1.16 \\
+\bottomrule
+\end{tabular}
+\caption{Phase-wise results, Configuration B\_high\_assoc}
+\label{tab:phase-B_high_assoc}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lrrrrrr}
+\toprule
+Phase & L1 Miss\% & L2 Miss\% & L3 Miss\% & DRAM Accesses & Cycles & AMAT \\
+\midrule
+Embedding & 3.86 & 96.85 & 98.58 & 29,471 & 4,499,355 & 5.62 \\
+Matrix & 50.31 & 2.46 & 2.89 & 11,995 & 127,708,968 & 3.80 \\
+Activation & 6.25 & 100.00 & 90.45 & 118,553 & 17,229,252 & 8.22 \\
+Projection & 0.13 & 100.00 & 100.00 & 5,376 & 4,882,688 & 1.16 \\
+\bottomrule
+\end{tabular}
+\caption{Phase-wise results, Configuration C\_L1\_focus}
+\label{tab:phase-C_L1_focus}
+\end{table}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lcrrrrrr}
+\toprule
+Config & Ways (L1/L2/L3) & L1 Miss\% & L2 Miss\% & L3 Miss\% & DRAM Acc. & AMAT & Cycles \\
+\midrule
+A\_baseline & 1/2/4 & 47.02 & 2.32 & 37.21 & 165,390 & 3.98 & 161,916,333 \\
+B\_high\_assoc & 2/4/8 & 41.95 & 3.41 & 28.43 & 165,394 & 3.79 & 154,324,928 \\
+C\_L1\_focus & 4/4/8 & 41.94 & 3.41 & 28.42 & 165,395 & 3.79 & 154,320,263 \\
+\bottomrule
+\end{tabular}
+\caption{Full-workload comparison across the three cache configurations}
+\label{tab:config-comparison}
+\end{table}

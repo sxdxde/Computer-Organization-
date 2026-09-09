@@ -1,0 +1,26 @@
+\begin{table}[H]\centering\small
+\begin{tabular}{rrr}\toprule
+Pressure level & Aggregation-state L1 hit\% & Overall L1 Miss\% \\ \midrule
+1 & 84.92 & 93.47 \\
+2 & 74.69 & 95.61 \\
+4 & 60.73 & 97.57 \\
+8 & 43.82 & 98.93 \\
+16 & 26.82 & 99.63 \\
+32 & 14.32 & 99.90 \\
+\bottomrule\end{tabular}
+\caption{Exp E: baseline aggregation-state residency under rising interleave pressure.}
+\label{tab:expE-baseline}\end{table}
+
+\begin{table}[H]\centering\small
+\begin{tabular}{rlrr}\toprule
+Pressure & Mitigation & Aggregation-state L1 hit\% & Overall L1 Miss\% \\ \midrule
+16 & +victim32 & 26.82 & 99.63 \\
+16 & +stream\_pf\_d4 & 26.46 & 1.01 \\
+16 & +victim32+stream\_pf\_d4 & 26.46 & 1.01 \\
+32 & +victim32 & 14.32 & 99.90 \\
+32 & +stream\_pf\_d4 & 14.06 & 0.63 \\
+32 & +victim32+stream\_pf\_d4 & 14.06 & 0.63 \\
+\bottomrule\end{tabular}
+\caption{Exp E: does the victim cache and/or prefetching alleviate high-pressure thrashing?}
+\label{tab:expE-mitigation}\end{table}
+

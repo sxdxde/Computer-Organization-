@@ -1,0 +1,142 @@
+\begin{table}[H]\centering\small
+\begin{tabular}{lrrrrrr}\toprule
+Stage & Accesses & L1 Miss\% & L2 Miss\% & LLC Miss\% & DRAM Acc. & AMAT \\ \midrule
+1\_ingestion & 320,000 & 50.00 & 100.00 & 100.00 & 160,002 & 143.00 \\
+2\_extraction & 180,000 & 33.33 & 100.00 & 0.00 & 0 & 30.33 \\
+3\_aggregation & 100,000 & 82.41 & 97.15 & 0.08 & 64 & 66.35 \\
+4\_lookup & 60,000 & 99.40 & 81.35 & 96.91 & 47,020 & 226.16 \\
+5\_result\_gen & 40,000 & 100.00 & 100.00 & 100.00 & 40,000 & 281.00 \\
+\bottomrule\end{tabular}
+\caption{Exp A: baseline per-stage characterization (no victim cache, no prefetching).}
+\label{tab:expA}\end{table}
+
+\begin{table}[H]\centering\small
+\begin{tabular}{lrrr}\toprule
+Stage segment & Accesses & L1 Miss\% & AMAT \\ \midrule
+1\_ingestion\_cold\_0-20pct & 64,000 & 50.00 & 143.01 \\
+1\_ingestion\_steady\_20-100pct & 256,000 & 50.00 & 143.00 \\
+2\_extraction\_cold\_0-20pct & 36,000 & 33.33 & 30.33 \\
+2\_extraction\_steady\_20-100pct & 144,000 & 33.33 & 30.33 \\
+3\_aggregation\_cold\_0-20pct & 20,000 & 82.59 & 67.05 \\
+3\_aggregation\_steady\_20-100pct & 80,000 & 82.37 & 66.18 \\
+4\_lookup\_cold\_0-20pct & 12,000 & 99.42 & 269.19 \\
+4\_lookup\_steady\_20-100pct & 48,000 & 99.40 & 215.40 \\
+5\_result\_gen\_cold\_0-20pct & 8,000 & 100.00 & 281.00 \\
+5\_result\_gen\_steady\_20-100pct & 32,000 & 100.00 & 281.00 \\
+\bottomrule\end{tabular}
+\caption{Exp A: first 20\% (cold) vs. remaining 80\% (steady-state) of each stage.}
+\label{tab:expA-cold}\end{table}
+
+\begin{table}[H]\centering\small
+\begin{tabular}{rrrrrr}\toprule
+VC entries & Extra bytes & Clock (cyc) & L1 Miss\% & VC hits & AMAT \\ \midrule
+0 & 0 & 82,665,212 & 57.44 & 0 & 118.09 \\
+8 & 512 & 82,664,224 & 57.44 & 76 & 118.09 \\
+16 & 1,024 & 82,663,340 & 57.44 & 144 & 118.09 \\
+32 & 2,048 & 82,661,520 & 57.44 & 284 & 118.09 \\
+64 & 4,096 & 82,658,543 & 57.44 & 513 & 118.08 \\
+\midrule 13-way L1 (+4KB, no VC) & 4{,}096 & 82,660,140 & 57.39 & -- & 118.09 \\
+\bottomrule\end{tabular}
+\caption{Exp B: victim-cache size sweep vs. an equal-extra-storage associativity increase.}
+\label{tab:expB}\end{table}
+
+\begin{table}[H]\centering\small
+\begin{tabular}{rrrr}\toprule
+VC entries & L1 Miss\% & Clock (cyc) & VC hits \\ \midrule
+0 & 100.00 & 948,900 & 0 \\
+1 & 100.00 & 948,900 & 0 \\
+2 & 100.00 & 948,900 & 0 \\
+3 & 100.00 & 364,095 & 44,985 \\
+4 & 100.00 & 364,095 & 44,985 \\
+8 & 100.00 & 364,095 & 44,985 \\
+\bottomrule\end{tabular}
+\caption{Exp B supplementary: 15 addresses round-robin thrashing one 12-way L1 set.}
+\label{tab:expB-conflict}\end{table}
+
+\begin{table}[H]\centering\small
+\begin{tabular}{lrrrrrr}\toprule
+Prefetcher & Clock (cyc) & L1 Miss\% & Accuracy\% & Coverage\% & Timeliness\% & Issued \\ \midrule
+none & 82,665,212 & 57.44 & 0.0 & 0.0 & 0.0 & 0 \\
+next\_line & 75,510,773 & 34.57 & 40.4 & 40.4 & 1.6 & 402,223 \\
+stride\_d1 & 82,920,183 & 23.15 & 100.0 & 59.7 & 0.0 & 240,060 \\
+stride\_d4 & 43,439,008 & 23.16 & 100.0 & 59.7 & 75.0 & 240,105 \\
+stride\_d8 & 36,863,516 & 23.16 & 100.0 & 59.7 & 83.9 & 240,107 \\
+stream\_d4 & 43,444,992 & 23.16 & 100.0 & 59.7 & 75.0 & 239,998 \\
+stream\_d8 & 36,867,718 & 23.16 & 100.0 & 59.7 & 83.9 & 240,006 \\
+stream\_d16 & 33,689,342 & 23.17 & 100.0 & 59.7 & 95.8 & 240,022 \\
+\bottomrule\end{tabular}
+\caption{Exp C: prefetch mechanism comparison, full pipeline.}
+\label{tab:expC}\end{table}
+
+\begin{table}[H]\centering\small
+\begin{tabular}{lrrrrr}\toprule
+Kind & Distance & Clock (cyc) & L1 Miss\% & Wasted-evicted PF & Useful-data evictions \\ \midrule
+none & 0 & 82,665,212 & 57.44 & 0 & 765,916 \\
+stride & 1 & 82,920,183 & 23.15 & 248,860 & 157,097 \\
+stride & 2 & 56,600,572 & 23.15 & 248,909 & 157,099 \\
+stride & 4 & 43,439,008 & 23.16 & 248,973 & 157,106 \\
+stride & 8 & 36,863,516 & 23.16 & 248,985 & 157,149 \\
+stride & 16 & 33,685,428 & 23.18 & 249,027 & 157,262 \\
+stride & 32 & 32,432,768 & 23.20 & 249,061 & 157,472 \\
+stride & 64 & 32,449,932 & 23.26 & 249,080 & 157,949 \\
+stream & 1 & 82,922,825 & 23.15 & 248,761 & 157,132 \\
+stream & 2 & 56,603,970 & 23.15 & 248,763 & 157,140 \\
+stream & 4 & 43,444,992 & 23.16 & 248,771 & 157,159 \\
+stream & 8 & 36,867,718 & 23.16 & 248,791 & 157,187 \\
+stream & 16 & 33,689,342 & 23.17 & 248,826 & 157,279 \\
+stream & 32 & 32,431,948 & 23.20 & 248,894 & 157,434 \\
+stream & 64 & 32,437,372 & 23.25 & 248,969 & 157,773 \\
+\bottomrule\end{tabular}
+\caption{Exp D: prefetch distance sweep, full pipeline (distance 0 = no prefetch).}
+\label{tab:expD}\end{table}
+
+\begin{table}[H]\centering\small
+\begin{tabular}{rrr}\toprule
+Pressure level & Aggregation-state L1 hit\% & Overall L1 Miss\% \\ \midrule
+1 & 84.92 & 93.47 \\
+2 & 74.69 & 95.61 \\
+4 & 60.73 & 97.57 \\
+8 & 43.82 & 98.93 \\
+16 & 26.82 & 99.63 \\
+32 & 14.32 & 99.90 \\
+\bottomrule\end{tabular}
+\caption{Exp E: baseline aggregation-state residency under rising interleave pressure.}
+\label{tab:expE-baseline}\end{table}
+
+\begin{table}[H]\centering\small
+\begin{tabular}{rlrr}\toprule
+Pressure & Mitigation & Aggregation-state L1 hit\% & Overall L1 Miss\% \\ \midrule
+16 & +victim32 & 26.82 & 99.63 \\
+16 & +stream\_pf\_d4 & 26.46 & 1.01 \\
+16 & +victim32+stream\_pf\_d4 & 26.46 & 1.01 \\
+32 & +victim32 & 14.32 & 99.90 \\
+32 & +stream\_pf\_d4 & 14.06 & 0.63 \\
+32 & +victim32+stream\_pf\_d4 & 14.06 & 0.63 \\
+\bottomrule\end{tabular}
+\caption{Exp E: does the victim cache and/or prefetching alleviate high-pressure thrashing?}
+\label{tab:expE-mitigation}\end{table}
+
+\begin{table}[H]\centering\small
+\begin{tabular}{rrr}\toprule
+MSHRs & Dependent chain (cyc) & Independent streams (cyc) \\ \midrule
+1 & 2,584,000 & 2,584,000 \\
+2 & 2,584,000 & 1,292,001 \\
+4 & 2,584,000 & 646,003 \\
+8 & 2,584,000 & 323,007 \\
+16 & 2,584,000 & 323,007 \\
+32 & 2,584,000 & 323,007 \\
+64 & 2,584,000 & 323,007 \\
+\bottomrule\end{tabular}
+\caption{Exp F: total Result-Generation execution cycles vs. MSHR count.}
+\label{tab:expF}\end{table}
+
+\begin{table}[H]\centering\small
+\begin{tabular}{lrrrr}\toprule
+Configuration & Clock (cyc) & AMAT & L1 Miss\% & DRAM Acc. \\ \midrule
+A\_baseline & 82,665,212 & 118.09 & 57.44 & 247,086 \\
+B\_victim\_only & 82,658,543 & 118.08 & 57.44 & 247,086 \\
+C\_prefetch\_only & 33,689,342 & 48.13 & 23.17 & 87,090 \\
+D\_victim+prefetch (recommended) & 33,682,036 & 48.12 & 23.17 & 87,090 \\
+\bottomrule\end{tabular}
+\caption{Exp G: final configuration comparison (selected prefetcher: stream\_d16, selected victim-cache size: 64 entries).}
+\label{tab:expG}\end{table}

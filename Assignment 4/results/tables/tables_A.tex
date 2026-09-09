@@ -1,0 +1,29 @@
+\begin{table}[H]\centering\small
+\begin{tabular}{lrrrrrr}\toprule
+Stage & Accesses & L1 Miss\% & L2 Miss\% & LLC Miss\% & DRAM Acc. & AMAT \\ \midrule
+1\_ingestion & 320,000 & 50.00 & 100.00 & 100.00 & 160,002 & 143.00 \\
+2\_extraction & 180,000 & 33.33 & 100.00 & 0.00 & 0 & 30.33 \\
+3\_aggregation & 100,000 & 82.41 & 97.15 & 0.08 & 64 & 66.35 \\
+4\_lookup & 60,000 & 99.40 & 81.35 & 96.91 & 47,020 & 226.16 \\
+5\_result\_gen & 40,000 & 100.00 & 100.00 & 100.00 & 40,000 & 281.00 \\
+\bottomrule\end{tabular}
+\caption{Exp A: baseline per-stage characterization (no victim cache, no prefetching).}
+\label{tab:expA}\end{table}
+
+\begin{table}[H]\centering\small
+\begin{tabular}{lrrr}\toprule
+Stage segment & Accesses & L1 Miss\% & AMAT \\ \midrule
+1\_ingestion\_cold\_0-20pct & 64,000 & 50.00 & 143.01 \\
+1\_ingestion\_steady\_20-100pct & 256,000 & 50.00 & 143.00 \\
+2\_extraction\_cold\_0-20pct & 36,000 & 33.33 & 30.33 \\
+2\_extraction\_steady\_20-100pct & 144,000 & 33.33 & 30.33 \\
+3\_aggregation\_cold\_0-20pct & 20,000 & 82.59 & 67.05 \\
+3\_aggregation\_steady\_20-100pct & 80,000 & 82.37 & 66.18 \\
+4\_lookup\_cold\_0-20pct & 12,000 & 99.42 & 269.19 \\
+4\_lookup\_steady\_20-100pct & 48,000 & 99.40 & 215.40 \\
+5\_result\_gen\_cold\_0-20pct & 8,000 & 100.00 & 281.00 \\
+5\_result\_gen\_steady\_20-100pct & 32,000 & 100.00 & 281.00 \\
+\bottomrule\end{tabular}
+\caption{Exp A: first 20\% (cold) vs. remaining 80\% (steady-state) of each stage.}
+\label{tab:expA-cold}\end{table}
+

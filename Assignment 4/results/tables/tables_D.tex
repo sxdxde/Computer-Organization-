@@ -1,0 +1,22 @@
+\begin{table}[H]\centering\small
+\begin{tabular}{lrrrrr}\toprule
+Kind & Distance & Clock (cyc) & L1 Miss\% & Wasted-evicted PF & Useful-data evictions \\ \midrule
+none & 0 & 82,665,212 & 57.44 & 0 & 765,916 \\
+stride & 1 & 82,920,183 & 23.15 & 248,860 & 157,097 \\
+stride & 2 & 56,600,572 & 23.15 & 248,909 & 157,099 \\
+stride & 4 & 43,439,008 & 23.16 & 248,973 & 157,106 \\
+stride & 8 & 36,863,516 & 23.16 & 248,985 & 157,149 \\
+stride & 16 & 33,685,428 & 23.18 & 249,027 & 157,262 \\
+stride & 32 & 32,432,768 & 23.20 & 249,061 & 157,472 \\
+stride & 64 & 32,449,932 & 23.26 & 249,080 & 157,949 \\
+stream & 1 & 82,922,825 & 23.15 & 248,761 & 157,132 \\
+stream & 2 & 56,603,970 & 23.15 & 248,763 & 157,140 \\
+stream & 4 & 43,444,992 & 23.16 & 248,771 & 157,159 \\
+stream & 8 & 36,867,718 & 23.16 & 248,791 & 157,187 \\
+stream & 16 & 33,689,342 & 23.17 & 248,826 & 157,279 \\
+stream & 32 & 32,431,948 & 23.20 & 248,894 & 157,434 \\
+stream & 64 & 32,437,372 & 23.25 & 248,969 & 157,773 \\
+\bottomrule\end{tabular}
+\caption{Exp D: prefetch distance sweep, full pipeline (distance 0 = no prefetch).}
+\label{tab:expD}\end{table}
+

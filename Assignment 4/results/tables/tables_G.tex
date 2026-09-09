@@ -1,0 +1,10 @@
+\begin{table}[H]\centering\small
+\begin{tabular}{lrrrr}\toprule
+Configuration & Clock (cyc) & AMAT & L1 Miss\% & DRAM Acc. \\ \midrule
+A\_baseline & 82,665,212 & 118.09 & 57.44 & 247,086 \\
+B\_victim\_only & 82,658,543 & 118.08 & 57.44 & 247,086 \\
+C\_prefetch\_only & 33,689,342 & 48.13 & 23.17 & 87,090 \\
+D\_victim+prefetch (recommended) & 33,682,036 & 48.12 & 23.17 & 87,090 \\
+\bottomrule\end{tabular}
+\caption{Exp G: final configuration comparison (selected prefetcher: stream\_d16, selected victim-cache size: 64 entries).}
+\label{tab:expG}\end{table}

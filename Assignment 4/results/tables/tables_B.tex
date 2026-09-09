@@ -1,0 +1,13 @@
+\begin{table}[H]\centering\small
+\begin{tabular}{rrrrrr}\toprule
+VC entries & Extra bytes & Clock (cyc) & L1 Miss\% & VC hits & AMAT \\ \midrule
+0 & 0 & 82,665,212 & 57.44 & 0 & 118.09 \\
+8 & 512 & 82,664,224 & 57.44 & 76 & 118.09 \\
+16 & 1,024 & 82,663,340 & 57.44 & 144 & 118.09 \\
+32 & 2,048 & 82,661,520 & 57.44 & 284 & 118.09 \\
+64 & 4,096 & 82,658,543 & 57.44 & 513 & 118.08 \\
+\midrule 13-way L1 (+4KB, no VC) & 4{,}096 & 82,660,140 & 57.39 & -- & 118.09 \\
+\bottomrule\end{tabular}
+\caption{Exp B: victim-cache size sweep vs. an equal-extra-storage associativity increase.}
+\label{tab:expB}\end{table}
+

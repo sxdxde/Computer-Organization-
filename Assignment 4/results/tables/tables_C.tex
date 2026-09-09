@@ -1,0 +1,15 @@
+\begin{table}[H]\centering\small
+\begin{tabular}{lrrrrrr}\toprule
+Prefetcher & Clock (cyc) & L1 Miss\% & Accuracy\% & Coverage\% & Timeliness\% & Issued \\ \midrule
+none & 82,665,212 & 57.44 & 0.0 & 0.0 & 0.0 & 0 \\
+next\_line & 75,510,773 & 34.57 & 40.4 & 40.4 & 1.6 & 402,223 \\
+stride\_d1 & 82,920,183 & 23.15 & 100.0 & 59.7 & 0.0 & 240,060 \\
+stride\_d4 & 43,439,008 & 23.16 & 100.0 & 59.7 & 75.0 & 240,105 \\
+stride\_d8 & 36,863,516 & 23.16 & 100.0 & 59.7 & 83.9 & 240,107 \\
+stream\_d4 & 43,444,992 & 23.16 & 100.0 & 59.7 & 75.0 & 239,998 \\
+stream\_d8 & 36,867,718 & 23.16 & 100.0 & 59.7 & 83.9 & 240,006 \\
+stream\_d16 & 33,689,342 & 23.17 & 100.0 & 59.7 & 95.8 & 240,022 \\
+\bottomrule\end{tabular}
+\caption{Exp C: prefetch mechanism comparison, full pipeline.}
+\label{tab:expC}\end{table}
+
