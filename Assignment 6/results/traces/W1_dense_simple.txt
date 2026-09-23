@@ -1,0 +1,31 @@
+Cycle 0
+------------------------------------------------------------
+Bytes available : 32
+D0 : 48 01 D8                 ADD RAX, RBX -> 1 uop
+D1 : 48 01 C8                 ADD RAX, RCX -> 1 uop
+D2 : 48 31 D8                 XOR RAX, RBX -> 1 uop
+D3 : 48 01 F0                 ADD RAX, RSI -> 1 uop
+D4 : 48 29 D8                 SUB RAX, RBX -> 1 uop
+D5 : 48 01 C1                 ADD RCX, RAX -> 1 uop
+Instructions decoded : 6
+Bytes consumed       : 18
+uops generated        : 6
+Fusion events         : 0
+MSROM events          : 0
+------------------------------------------------------------
+
+Cycle 1
+------------------------------------------------------------
+Bytes available : 32
+D0 : 48 31 C9                 XOR RCX, RCX -> 1 uop
+D1 : 48 01 CA                 ADD RDX, RCX -> 1 uop
+D2 : idle
+D3 : idle
+D4 : idle
+D5 : idle
+Instructions decoded : 2
+Bytes consumed       : 6
+uops generated        : 2
+Fusion events         : 0
+MSROM events          : 0
+------------------------------------------------------------

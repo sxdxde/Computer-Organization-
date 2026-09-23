@@ -1,0 +1,31 @@
+Cycle 0
+------------------------------------------------------------
+Bytes available : 32
+D0 : 48 8B 44 8B 10           MOV RAX, [RBX+RCX*4+16] -> 1 uop
+D1 : 48 83 C0 08              ADD RAX, 8 -> 1 uop
+D2 : 48 01 D8                 ADD RAX, RBX -> 1 uop
+D3 : 48 8B 84 8B 20 01 00 00  MOV RAX, [RBX+RCX*4+288] -> 1 uop
+D4 : 48 39 D8                 CMP RAX, RBX -> 1 uop
+D5 : 48 83 E8 04              SUB RAX, 4 -> 1 uop
+Instructions decoded : 6
+Bytes consumed       : 27
+uops generated        : 6
+Fusion events         : 0
+MSROM events          : 0
+------------------------------------------------------------
+
+Cycle 1
+------------------------------------------------------------
+Bytes available : 32
+D0 : 48 89 44 8B 10           MOV [RBX+RCX*4+16], RAX -> 1 uop
+D1 : idle
+D2 : idle
+D3 : idle
+D4 : idle
+D5 : idle
+Instructions decoded : 1
+Bytes consumed       : 5
+uops generated        : 1
+Fusion events         : 0
+MSROM events          : 0
+------------------------------------------------------------

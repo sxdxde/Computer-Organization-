@@ -1,0 +1,47 @@
+workload,cycle,lane,bytes_hex,length,mnemonic,operands,class,uops,fused,msrom
+W1_dense_simple,0,D0,48 01 D8,3,ADD,"RAX, RBX",ALU-RR,1,False,False
+W1_dense_simple,0,D1,48 01 C8,3,ADD,"RAX, RCX",ALU-RR,1,False,False
+W1_dense_simple,0,D2,48 31 D8,3,XOR,"RAX, RBX",ALU-RR,1,False,False
+W1_dense_simple,0,D3,48 01 F0,3,ADD,"RAX, RSI",ALU-RR,1,False,False
+W1_dense_simple,0,D4,48 29 D8,3,SUB,"RAX, RBX",ALU-RR,1,False,False
+W1_dense_simple,0,D5,48 01 C1,3,ADD,"RCX, RAX",ALU-RR,1,False,False
+W1_dense_simple,1,D0,48 31 C9,3,XOR,"RCX, RCX",ALU-RR,1,False,False
+W1_dense_simple,1,D1,48 01 CA,3,ADD,"RDX, RCX",ALU-RR,1,False,False
+W2_variable_length,0,D0,48 8B 44 8B 10,5,MOV,"RAX, [RBX+RCX*4+16]",LOAD,1,False,False
+W2_variable_length,0,D1,48 83 C0 08,4,ADD,"RAX, 8",ALU-IMM,1,False,False
+W2_variable_length,0,D2,48 01 D8,3,ADD,"RAX, RBX",ALU-RR,1,False,False
+W2_variable_length,0,D3,48 8B 84 8B 20 01 00 00,8,MOV,"RAX, [RBX+RCX*4+288]",LOAD,1,False,False
+W2_variable_length,0,D4,48 39 D8,3,CMP,"RAX, RBX",CMP,1,False,False
+W2_variable_length,0,D5,48 83 E8 04,4,SUB,"RAX, 4",ALU-IMM,1,False,False
+W2_variable_length,1,D0,48 89 44 8B 10,5,MOV,"[RBX+RCX*4+16], RAX",STORE,1,False,False
+W3_fusion,0,D0,48 39 D8,3,CMP,"RAX, RBX",CMP,1,False,False
+W3_fusion,0,D1,75 05,2,JNE,rel8=+5,BRANCH,0,True,False
+W3_fusion,0,D2,48 39 C8,3,CMP,"RAX, RCX",CMP,1,False,False
+W3_fusion,0,D3,74 05,2,JE,rel8=+5,BRANCH,0,True,False
+W3_fusion,0,D4,48 85 C0,3,TEST,"RAX, RAX",TEST,1,False,False
+W3_fusion,0,D5,75 05,2,JNE,rel8=+5,BRANCH,0,True,False
+W3_fusion,1,D0,48 39 F0,3,CMP,"RAX, RSI",CMP,1,False,False
+W3_fusion,1,D1,74 05,2,JE,rel8=+5,BRANCH,0,True,False
+W4_uop_expansion_msrom,0,D0,48 01 03,3,ADD,"[RBX], RAX",ALU-RMW(mem),2,False,False
+W4_uop_expansion_msrom,0,D1,48 8D 04 8B,4,LEA,"RAX, [RBX+RCX*4]",LEA,1,False,False
+W4_uop_expansion_msrom,0,D2,0F A2,2,CPUID,,MSROM:CPUID,4,False,True
+W4_uop_expansion_msrom,1,D0,0F 31,2,RDTSC,,MSROM:RDTSC,2,False,True
+W4_uop_expansion_msrom,2,D0,C8 10 00 00,4,ENTER,"0x10, 0",MSROM:ENTER,3,False,True
+W4_uop_expansion_msrom,3,D0,F3 A4,2,REP MOVSB,"[RDI], [RSI]  (REP-prefixed string move)",MSROM:REP MOVSB,4,False,True
+W4_uop_expansion_msrom,4,D0,F0 48 0F C1 03,5,LOCK XADD,"[RBX], RAX",MSROM:LOCK XADD,5,False,True
+W5_mixed_realistic,0,D0,48 01 D8,3,ADD,"RAX, RBX",ALU-RR,1,False,False
+W5_mixed_realistic,0,D1,48 8B 44 8B 10,5,MOV,"RAX, [RBX+RCX*4+16]",LOAD,1,False,False
+W5_mixed_realistic,0,D2,48 83 C0 08,4,ADD,"RAX, 8",ALU-IMM,1,False,False
+W5_mixed_realistic,0,D3,48 39 D8,3,CMP,"RAX, RBX",CMP,1,False,False
+W5_mixed_realistic,0,D4,75 05,2,JNE,rel8=+5,BRANCH,0,True,False
+W5_mixed_realistic,0,D5,48 01 03,3,ADD,"[RBX], RAX",ALU-RMW(mem),2,False,False
+W5_mixed_realistic,1,D0,0F A2,2,CPUID,,MSROM:CPUID,4,False,True
+W5_mixed_realistic,2,D0,48 89 44 8B 10,5,MOV,"[RBX+RCX*4+16], RAX",STORE,1,False,False
+W5_mixed_realistic,2,D1,48 31 C9,3,XOR,"RCX, RCX",ALU-RR,1,False,False
+CUSTOM_fusion_across_cycle,0,D0,48 01 D8,3,ADD,"RAX, RBX",ALU-RR,1,False,False
+CUSTOM_fusion_across_cycle,0,D1,48 01 C8,3,ADD,"RAX, RCX",ALU-RR,1,False,False
+CUSTOM_fusion_across_cycle,0,D2,48 01 F0,3,ADD,"RAX, RSI",ALU-RR,1,False,False
+CUSTOM_fusion_across_cycle,0,D3,48 01 C1,3,ADD,"RCX, RAX",ALU-RR,1,False,False
+CUSTOM_fusion_across_cycle,0,D4,48 01 CA,3,ADD,"RDX, RCX",ALU-RR,1,False,False
+CUSTOM_fusion_across_cycle,0,D5,48 39 D8,3,CMP,"RAX, RBX",CMP,1,False,False
+CUSTOM_fusion_across_cycle,1,D0,75 05,2,JNE,rel8=+5,BRANCH,1,False,False

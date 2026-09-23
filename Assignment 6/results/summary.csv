@@ -1,0 +1,7 @@
+workload,total_instructions,total_bytes,total_uops,cycles_used,instructions_per_cycle,bytes_per_cycle,uops_per_cycle,uops_per_instruction,fusion_events,msrom_events
+W1_dense_simple,8,24,8,2,4.0,12.0,4.0,1.0,0,0
+W2_variable_length,7,32,7,2,3.5,16.0,3.5,1.0,0,0
+W3_fusion,8,20,4,2,4.0,10.0,2.0,0.5,4,0
+W4_uop_expansion_msrom,7,22,21,5,1.4,4.4,4.2,3.0,0,5
+W5_mixed_realistic,9,30,12,3,3.0,10.0,4.0,1.3333333333333333,1,1
+CUSTOM_fusion_across_cycle,7,20,7,2,3.5,10.0,3.5,1.0,0,0

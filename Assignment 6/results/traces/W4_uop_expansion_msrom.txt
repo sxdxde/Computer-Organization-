@@ -1,0 +1,79 @@
+Cycle 0
+------------------------------------------------------------
+Bytes available : 32
+D0 : 48 01 03                 ADD [RBX], RAX -> 2 uops
+D1 : 48 8D 04 8B              LEA RAX, [RBX+RCX*4] -> 1 uop
+D2 : 0F A2                    CPUID -> MSROM, 4 uops
+D3 : idle
+D4 : idle
+D5 : idle
+Instructions decoded : 3
+Bytes consumed       : 9
+uops generated        : 7
+Fusion events         : 0
+MSROM events          : 1
+------------------------------------------------------------
+
+Cycle 1
+------------------------------------------------------------
+Bytes available : 32
+D0 : 0F 31                    RDTSC -> MSROM, 2 uops
+D1 : idle
+D2 : idle
+D3 : idle
+D4 : idle
+D5 : idle
+Instructions decoded : 1
+Bytes consumed       : 2
+uops generated        : 2
+Fusion events         : 0
+MSROM events          : 1
+------------------------------------------------------------
+
+Cycle 2
+------------------------------------------------------------
+Bytes available : 32
+D0 : C8 10 00 00              ENTER 0x10, 0 -> MSROM, 3 uops
+D1 : idle
+D2 : idle
+D3 : idle
+D4 : idle
+D5 : idle
+Instructions decoded : 1
+Bytes consumed       : 4
+uops generated        : 3
+Fusion events         : 0
+MSROM events          : 1
+------------------------------------------------------------
+
+Cycle 3
+------------------------------------------------------------
+Bytes available : 32
+D0 : F3 A4                    REP MOVSB [RDI], [RSI]  (REP-prefixed string move) -> MSROM, 4 uops
+D1 : idle
+D2 : idle
+D3 : idle
+D4 : idle
+D5 : idle
+Instructions decoded : 1
+Bytes consumed       : 2
+uops generated        : 4
+Fusion events         : 0
+MSROM events          : 1
+------------------------------------------------------------
+
+Cycle 4
+------------------------------------------------------------
+Bytes available : 32
+D0 : F0 48 0F C1 03           LOCK XADD [RBX], RAX -> MSROM, 5 uops
+D1 : idle
+D2 : idle
+D3 : idle
+D4 : idle
+D5 : idle
+Instructions decoded : 1
+Bytes consumed       : 5
+uops generated        : 5
+Fusion events         : 0
+MSROM events          : 1
+------------------------------------------------------------

@@ -1,0 +1,31 @@
+Cycle 0
+------------------------------------------------------------
+Bytes available : 32
+D0 : 48 39 D8                 CMP RAX, RBX -> 1 uop
+D1 : 75 05                    JNE rel8=+5 -> fused (with D0)
+D2 : 48 39 C8                 CMP RAX, RCX -> 1 uop
+D3 : 74 05                    JE rel8=+5 -> fused (with D2)
+D4 : 48 85 C0                 TEST RAX, RAX -> 1 uop
+D5 : 75 05                    JNE rel8=+5 -> fused (with D4)
+Instructions decoded : 6
+Bytes consumed       : 15
+uops generated        : 3
+Fusion events         : 3
+MSROM events          : 0
+------------------------------------------------------------
+
+Cycle 1
+------------------------------------------------------------
+Bytes available : 32
+D0 : 48 39 F0                 CMP RAX, RSI -> 1 uop
+D1 : 74 05                    JE rel8=+5 -> fused (with D0)
+D2 : idle
+D3 : idle
+D4 : idle
+D5 : idle
+Instructions decoded : 2
+Bytes consumed       : 5
+uops generated        : 1
+Fusion events         : 1
+MSROM events          : 0
+------------------------------------------------------------
