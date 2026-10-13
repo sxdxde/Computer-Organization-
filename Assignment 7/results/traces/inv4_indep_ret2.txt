@@ -1,0 +1,1359 @@
+=== inv4_indep_ret2 ===
+Config: ROB=24 PRF=32 IQ=12 LQ=6 SQ=4 CKPT=2 RET=2  decode=6 alloc=6 issue=6 decodeQ=12
+
+Cycle 0
+------------------------------------------------------------------------------
+  DECODE 6 uop(s) into decode queue
+  STATE ROB 0/24 (done-unretired 0) | free pregs 32/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 6/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 1
+------------------------------------------------------------------------------
+  ALLOC  I0   ADD R2, R10, R11         reads[R10(ARF), R11(ARF)] R2->P0 (old ARF) ROB#0
+  ALLOC  I1   ADD R3, R12, R13         reads[R12(ARF), R13(ARF)] R3->P1 (old ARF) ROB#1
+  ALLOC  I2   MUL R4, R14, R15         reads[R14(ARF), R15(ARF)] R4->P2 (old ARF) ROB#2
+  ALLOC  I3   ADD R5, R16, R17         reads[R16(ARF), R17(ARF)] R5->P3 (old ARF) ROB#3
+  ALLOC  I4   ADD R6, R18, R19         reads[R18(ARF), R19(ARF)] R6->P4 (old ARF) ROB#4
+  ALLOC  I5   ADD R7, R20, R21         reads[R20(ARF), R21(ARF)] R7->P5 (old ARF) ROB#5
+  DECODE 6 uop(s) into decode queue
+  STATE ROB 6/24 (done-unretired 0) | free pregs 26/32 | IQ 6/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 6/12
+  COUNT alloc=6 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 2
+------------------------------------------------------------------------------
+  ALLOC  I6   ADD R2, R10, R11         reads[R10(ARF), R11(ARF)] R2->P6 (old P0) ROB#6
+  ALLOC  I7   ADD R3, R12, R13         reads[R12(ARF), R13(ARF)] R3->P7 (old P1) ROB#7
+  ALLOC  I8   MUL R4, R14, R15         reads[R14(ARF), R15(ARF)] R4->P8 (old P2) ROB#8
+  ALLOC  I9   ADD R5, R16, R17         reads[R16(ARF), R17(ARF)] R5->P9 (old P3) ROB#9
+  ALLOC  I10  ADD R6, R18, R19         reads[R18(ARF), R19(ARF)] R6->P10 (old P4) ROB#10
+  ALLOC  I11  ADD R7, R20, R21         reads[R20(ARF), R21(ARF)] R7->P11 (old P5) ROB#11
+  ISSUE  I0   ADD    completes @3
+  ISSUE  I1   ADD    completes @3
+  ISSUE  I2   MUL    completes @6
+  ISSUE  I3   ADD    completes @3
+  ISSUE  I4   ADD    completes @3
+  ISSUE  I5   ADD    completes @3
+  DECODE 6 uop(s) into decode queue
+  STATE ROB 12/24 (done-unretired 0) | free pregs 20/32 | IQ 6/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 6/12
+  COUNT alloc=6 issue=6 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 3
+------------------------------------------------------------------------------
+  ALLOC  I12  ADD R2, R10, R11         reads[R10(ARF), R11(ARF)] R2->P12 (old P6) ROB#12
+  ALLOC  I13  ADD R3, R12, R13         reads[R12(ARF), R13(ARF)] R3->P13 (old P7) ROB#13
+  ALLOC  I14  MUL R4, R14, R15         reads[R14(ARF), R15(ARF)] R4->P14 (old P8) ROB#14
+  ALLOC  I15  ADD R5, R16, R17         reads[R16(ARF), R17(ARF)] R5->P15 (old P9) ROB#15
+  ALLOC  I16  ADD R6, R18, R19         reads[R18(ARF), R19(ARF)] R6->P16 (old P10) ROB#16
+  ALLOC  I17  ADD R7, R20, R21         reads[R20(ARF), R21(ARF)] R7->P17 (old P11) ROB#17
+  COMPLETE I0 (ADD) -> P0 ready
+  COMPLETE I1 (ADD) -> P1 ready
+  COMPLETE I3 (ADD) -> P3 ready
+  COMPLETE I4 (ADD) -> P4 ready
+  COMPLETE I5 (ADD) -> P5 ready
+  ISSUE  I6   ADD    completes @4
+  ISSUE  I7   ADD    completes @4
+  ISSUE  I8   MUL    completes @7
+  ISSUE  I9   ADD    completes @4
+  ISSUE  I10  ADD    completes @4
+  ISSUE  I11  ADD    completes @4
+  DECODE 6 uop(s) into decode queue
+  STATE ROB 18/24 (done-unretired 5) | free pregs 14/32 | IQ 6/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 6/12
+  COUNT alloc=6 issue=6 complete=5 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 4
+------------------------------------------------------------------------------
+  ALLOC  I18  ADD R2, R10, R11         reads[R10(ARF), R11(ARF)] R2->P18 (old P12) ROB#18
+  ALLOC  I19  ADD R3, R12, R13         reads[R12(ARF), R13(ARF)] R3->P19 (old P13) ROB#19
+  ALLOC  I20  MUL R4, R14, R15         reads[R14(ARF), R15(ARF)] R4->P20 (old P14) ROB#20
+  ALLOC  I21  ADD R5, R16, R17         reads[R16(ARF), R17(ARF)] R5->P21 (old P15) ROB#21
+  ALLOC  I22  ADD R6, R18, R19         reads[R18(ARF), R19(ARF)] R6->P22 (old P16) ROB#22
+  ALLOC  I23  ADD R7, R20, R21         reads[R20(ARF), R21(ARF)] R7->P23 (old P17) ROB#23
+  COMPLETE I6 (ADD) -> P6 ready
+  COMPLETE I7 (ADD) -> P7 ready
+  COMPLETE I9 (ADD) -> P9 ready
+  COMPLETE I10 (ADD) -> P10 ready
+  COMPLETE I11 (ADD) -> P11 ready
+  RETIRE I0   ADD R2, R10, R11        
+  RETIRE I1   ADD R3, R12, R13        
+  ISSUE  I12  ADD    completes @5
+  ISSUE  I13  ADD    completes @5
+  ISSUE  I14  MUL    completes @8
+  ISSUE  I15  ADD    completes @5
+  ISSUE  I16  ADD    completes @5
+  ISSUE  I17  ADD    completes @5
+  DECODE 6 uop(s) into decode queue
+  STATE ROB 22/24 (done-unretired 8) | free pregs 8/32 | IQ 6/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 6/12
+  COUNT alloc=6 issue=6 complete=5 retire=2 squash=0 | alloc_stalled=no
+
+Cycle 5
+------------------------------------------------------------------------------
+  ALLOC  I24  ADD R2, R10, R11         reads[R10(ARF), R11(ARF)] R2->P24 (old P18) ROB#0
+  ALLOC  I25  ADD R3, R12, R13         reads[R12(ARF), R13(ARF)] R3->P25 (old P19) ROB#1
+  ALLOC-STALL I26 (MUL R4, R14, R15) blocked on ROB
+  COMPLETE I12 (ADD) -> P12 ready
+  COMPLETE I13 (ADD) -> P13 ready
+  COMPLETE I15 (ADD) -> P15 ready
+  COMPLETE I16 (ADD) -> P16 ready
+  COMPLETE I17 (ADD) -> P17 ready
+  ISSUE  I18  ADD    completes @6
+  ISSUE  I19  ADD    completes @6
+  ISSUE  I20  MUL    completes @9
+  ISSUE  I21  ADD    completes @6
+  ISSUE  I22  ADD    completes @6
+  ISSUE  I23  ADD    completes @6
+  DECODE 6 uop(s) into decode queue
+  >> alloc stall on ROB at I26: ROB full (24/24); 8 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 6, IQ 8/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement blocked by oldest instruction: I2 (MUL) is executing, completes at cycle 6
+  STATE ROB 24/24 (done-unretired 13) | free pregs 6/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 10/12
+  COUNT alloc=2 issue=6 complete=5 retire=0 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 6
+------------------------------------------------------------------------------
+  ALLOC-STALL I26 (MUL R4, R14, R15) blocked on ROB
+  COMPLETE I2 (MUL) -> P2 ready
+  COMPLETE I18 (ADD) -> P18 ready
+  COMPLETE I19 (ADD) -> P19 ready
+  COMPLETE I21 (ADD) -> P21 ready
+  COMPLETE I22 (ADD) -> P22 ready
+  COMPLETE I23 (ADD) -> P23 ready
+  ISSUE  I24  ADD    completes @7
+  ISSUE  I25  ADD    completes @7
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I26: ROB full (24/24); 13 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 6, IQ 2/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement blocked by oldest instruction: I2 (MUL) is executing, completes at cycle 6
+  STATE ROB 24/24 (done-unretired 19) | free pregs 6/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=0 issue=2 complete=6 retire=0 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 7
+------------------------------------------------------------------------------
+  ALLOC-STALL I26 (MUL R4, R14, R15) blocked on ROB
+  COMPLETE I8 (MUL) -> P8 ready
+  COMPLETE I24 (ADD) -> P24 ready
+  COMPLETE I25 (ADD) -> P25 ready
+  RETIRE I2   MUL R4, R14, R15        
+  RETIRE I3   ADD R5, R16, R17        
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I26: ROB full (24/24); 19 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 6, IQ 0/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 19 completed entries drain at 2/cycle (head I2 completed at cycle 6)
+  STATE ROB 22/24 (done-unretired 20) | free pregs 6/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=0 issue=0 complete=3 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 8
+------------------------------------------------------------------------------
+  ALLOC  I26  MUL R4, R14, R15         reads[R14(ARF), R15(ARF)] R4->P26 (old P20) ROB#2
+  ALLOC  I27  ADD R5, R16, R17         reads[R16(ARF), R17(ARF)] R5->P27 (old P21) ROB#3
+  ALLOC-STALL I28 (ADD R6, R18, R19) blocked on ROB
+  COMPLETE I14 (MUL) -> P14 ready
+  RETIRE I4   ADD R6, R18, R19        
+  RETIRE I5   ADD R7, R20, R21        
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I28: ROB full (24/24); 20 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 4, IQ 2/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 20 completed entries drain at 2/cycle (head I4 completed at cycle 3)
+  STATE ROB 22/24 (done-unretired 19) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=0 complete=1 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 9
+------------------------------------------------------------------------------
+  ALLOC  I28  ADD R6, R18, R19         reads[R18(ARF), R19(ARF)] R6->P28 (old P22) ROB#4
+  ALLOC  I29  ADD R7, R20, R21         reads[R20(ARF), R21(ARF)] R7->P29 (old P23) ROB#5
+  ALLOC-STALL I30 (ADD R2, R10, R11) blocked on ROB
+  COMPLETE I20 (MUL) -> P20 ready
+  RETIRE I6   ADD R2, R10, R11         -> RECLAIM P0 (old R2)
+  RETIRE I7   ADD R3, R12, R13         -> RECLAIM P1 (old R3)
+  ISSUE  I26  MUL    completes @13
+  ISSUE  I27  ADD    completes @10
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I30: ROB full (24/24); 19 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 19 completed entries drain at 2/cycle (head I6 completed at cycle 4)
+  STATE ROB 22/24 (done-unretired 18) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=1 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 10
+------------------------------------------------------------------------------
+  ALLOC  I30  ADD R2, R10, R11         reads[R10(ARF), R11(ARF)] R2->P30 (old P24) ROB#6
+  ALLOC  I31  ADD R3, R12, R13         reads[R12(ARF), R13(ARF)] R3->P31 (old P25) ROB#7
+  ALLOC-STALL I32 (MUL R4, R14, R15) blocked on ROB
+  COMPLETE I27 (ADD) -> P27 ready
+  RETIRE I8   MUL R4, R14, R15         -> RECLAIM P2 (old R4)
+  RETIRE I9   ADD R5, R16, R17         -> RECLAIM P3 (old R5)
+  ISSUE  I28  ADD    completes @11
+  ISSUE  I29  ADD    completes @11
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I32: ROB full (24/24); 18 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 18 completed entries drain at 2/cycle (head I8 completed at cycle 7)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=1 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 11
+------------------------------------------------------------------------------
+  ALLOC  I32  MUL R4, R14, R15         reads[R14(ARF), R15(ARF)] R4->P0 (old P26) ROB#8
+  ALLOC  I33  ADD R5, R16, R17         reads[R16(ARF), R17(ARF)] R5->P1 (old P27) ROB#9
+  ALLOC-STALL I34 (ADD R6, R18, R19) blocked on ROB
+  COMPLETE I28 (ADD) -> P28 ready
+  COMPLETE I29 (ADD) -> P29 ready
+  RETIRE I10  ADD R6, R18, R19         -> RECLAIM P4 (old R6)
+  RETIRE I11  ADD R7, R20, R21         -> RECLAIM P5 (old R7)
+  ISSUE  I30  ADD    completes @12
+  ISSUE  I31  ADD    completes @12
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I34: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I10 completed at cycle 4)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 12
+------------------------------------------------------------------------------
+  ALLOC  I34  ADD R6, R18, R19         reads[R18(ARF), R19(ARF)] R6->P2 (old P28) ROB#10
+  ALLOC  I35  ADD R7, R20, R21         reads[R20(ARF), R21(ARF)] R7->P3 (old P29) ROB#11
+  ALLOC-STALL I36 (ADD R2, R10, R11) blocked on ROB
+  COMPLETE I30 (ADD) -> P30 ready
+  COMPLETE I31 (ADD) -> P31 ready
+  RETIRE I12  ADD R2, R10, R11         -> RECLAIM P6 (old R2)
+  RETIRE I13  ADD R3, R12, R13         -> RECLAIM P7 (old R3)
+  ISSUE  I32  MUL    completes @16
+  ISSUE  I33  ADD    completes @13
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I36: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I12 completed at cycle 5)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 13
+------------------------------------------------------------------------------
+  ALLOC  I36  ADD R2, R10, R11         reads[R10(ARF), R11(ARF)] R2->P4 (old P30) ROB#12
+  ALLOC  I37  ADD R3, R12, R13         reads[R12(ARF), R13(ARF)] R3->P5 (old P31) ROB#13
+  ALLOC-STALL I38 (MUL R4, R14, R15) blocked on ROB
+  COMPLETE I26 (MUL) -> P26 ready
+  COMPLETE I33 (ADD) -> P1 ready
+  RETIRE I14  MUL R4, R14, R15         -> RECLAIM P8 (old R4)
+  RETIRE I15  ADD R5, R16, R17         -> RECLAIM P9 (old R5)
+  ISSUE  I34  ADD    completes @14
+  ISSUE  I35  ADD    completes @14
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I38: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I14 completed at cycle 8)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 14
+------------------------------------------------------------------------------
+  ALLOC  I38  MUL R4, R14, R15         reads[R14(ARF), R15(ARF)] R4->P6 (old P0) ROB#14
+  ALLOC  I39  ADD R5, R16, R17         reads[R16(ARF), R17(ARF)] R5->P7 (old P1) ROB#15
+  ALLOC-STALL I40 (ADD R6, R18, R19) blocked on ROB
+  COMPLETE I34 (ADD) -> P2 ready
+  COMPLETE I35 (ADD) -> P3 ready
+  RETIRE I16  ADD R6, R18, R19         -> RECLAIM P10 (old R6)
+  RETIRE I17  ADD R7, R20, R21         -> RECLAIM P11 (old R7)
+  ISSUE  I36  ADD    completes @15
+  ISSUE  I37  ADD    completes @15
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I40: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I16 completed at cycle 5)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 15
+------------------------------------------------------------------------------
+  ALLOC  I40  ADD R6, R18, R19         reads[R18(ARF), R19(ARF)] R6->P8 (old P2) ROB#16
+  ALLOC  I41  ADD R7, R20, R21         reads[R20(ARF), R21(ARF)] R7->P9 (old P3) ROB#17
+  ALLOC-STALL I42 (ADD R2, R10, R11) blocked on ROB
+  COMPLETE I36 (ADD) -> P4 ready
+  COMPLETE I37 (ADD) -> P5 ready
+  RETIRE I18  ADD R2, R10, R11         -> RECLAIM P12 (old R2)
+  RETIRE I19  ADD R3, R12, R13         -> RECLAIM P13 (old R3)
+  ISSUE  I38  MUL    completes @19
+  ISSUE  I39  ADD    completes @16
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I42: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I18 completed at cycle 6)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 16
+------------------------------------------------------------------------------
+  ALLOC  I42  ADD R2, R10, R11         reads[R10(ARF), R11(ARF)] R2->P10 (old P4) ROB#18
+  ALLOC  I43  ADD R3, R12, R13         reads[R12(ARF), R13(ARF)] R3->P11 (old P5) ROB#19
+  ALLOC-STALL I44 (MUL R4, R14, R15) blocked on ROB
+  COMPLETE I32 (MUL) -> P0 ready
+  COMPLETE I39 (ADD) -> P7 ready
+  RETIRE I20  MUL R4, R14, R15         -> RECLAIM P14 (old R4)
+  RETIRE I21  ADD R5, R16, R17         -> RECLAIM P15 (old R5)
+  ISSUE  I40  ADD    completes @17
+  ISSUE  I41  ADD    completes @17
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I44: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I20 completed at cycle 9)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 17
+------------------------------------------------------------------------------
+  ALLOC  I44  MUL R4, R14, R15         reads[R14(ARF), R15(ARF)] R4->P12 (old P6) ROB#20
+  ALLOC  I45  ADD R5, R16, R17         reads[R16(ARF), R17(ARF)] R5->P13 (old P7) ROB#21
+  ALLOC-STALL I46 (ADD R6, R18, R19) blocked on ROB
+  COMPLETE I40 (ADD) -> P8 ready
+  COMPLETE I41 (ADD) -> P9 ready
+  RETIRE I22  ADD R6, R18, R19         -> RECLAIM P16 (old R6)
+  RETIRE I23  ADD R7, R20, R21         -> RECLAIM P17 (old R7)
+  ISSUE  I42  ADD    completes @18
+  ISSUE  I43  ADD    completes @18
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I46: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I22 completed at cycle 6)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 18
+------------------------------------------------------------------------------
+  ALLOC  I46  ADD R6, R18, R19         reads[R18(ARF), R19(ARF)] R6->P14 (old P8) ROB#22
+  ALLOC  I47  ADD R7, R20, R21         reads[R20(ARF), R21(ARF)] R7->P15 (old P9) ROB#23
+  ALLOC-STALL I48 (ADD R2, R10, R11) blocked on ROB
+  COMPLETE I42 (ADD) -> P10 ready
+  COMPLETE I43 (ADD) -> P11 ready
+  RETIRE I24  ADD R2, R10, R11         -> RECLAIM P18 (old R2)
+  RETIRE I25  ADD R3, R12, R13         -> RECLAIM P19 (old R3)
+  ISSUE  I44  MUL    completes @22
+  ISSUE  I45  ADD    completes @19
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I48: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I24 completed at cycle 7)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 19
+------------------------------------------------------------------------------
+  ALLOC  I48  ADD R2, R10, R11         reads[R10(ARF), R11(ARF)] R2->P16 (old P10) ROB#0
+  ALLOC  I49  ADD R3, R12, R13         reads[R12(ARF), R13(ARF)] R3->P17 (old P11) ROB#1
+  ALLOC-STALL I50 (MUL R4, R14, R15) blocked on ROB
+  COMPLETE I38 (MUL) -> P6 ready
+  COMPLETE I45 (ADD) -> P13 ready
+  RETIRE I26  MUL R4, R14, R15         -> RECLAIM P20 (old R4)
+  RETIRE I27  ADD R5, R16, R17         -> RECLAIM P21 (old R5)
+  ISSUE  I46  ADD    completes @20
+  ISSUE  I47  ADD    completes @20
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I50: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I26 completed at cycle 13)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 20
+------------------------------------------------------------------------------
+  ALLOC  I50  MUL R4, R14, R15         reads[R14(ARF), R15(ARF)] R4->P18 (old P12) ROB#2
+  ALLOC  I51  ADD R5, R16, R17         reads[R16(ARF), R17(ARF)] R5->P19 (old P13) ROB#3
+  ALLOC-STALL I52 (ADD R6, R18, R19) blocked on ROB
+  COMPLETE I46 (ADD) -> P14 ready
+  COMPLETE I47 (ADD) -> P15 ready
+  RETIRE I28  ADD R6, R18, R19         -> RECLAIM P22 (old R6)
+  RETIRE I29  ADD R7, R20, R21         -> RECLAIM P23 (old R7)
+  ISSUE  I48  ADD    completes @21
+  ISSUE  I49  ADD    completes @21
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I52: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I28 completed at cycle 11)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 21
+------------------------------------------------------------------------------
+  ALLOC  I52  ADD R6, R18, R19         reads[R18(ARF), R19(ARF)] R6->P20 (old P14) ROB#4
+  ALLOC  I53  ADD R7, R20, R21         reads[R20(ARF), R21(ARF)] R7->P21 (old P15) ROB#5
+  ALLOC-STALL I54 (ADD R2, R10, R11) blocked on ROB
+  COMPLETE I48 (ADD) -> P16 ready
+  COMPLETE I49 (ADD) -> P17 ready
+  RETIRE I30  ADD R2, R10, R11         -> RECLAIM P24 (old R2)
+  RETIRE I31  ADD R3, R12, R13         -> RECLAIM P25 (old R3)
+  ISSUE  I50  MUL    completes @25
+  ISSUE  I51  ADD    completes @22
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I54: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I30 completed at cycle 12)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 22
+------------------------------------------------------------------------------
+  ALLOC  I54  ADD R2, R10, R11         reads[R10(ARF), R11(ARF)] R2->P22 (old P16) ROB#6
+  ALLOC  I55  ADD R3, R12, R13         reads[R12(ARF), R13(ARF)] R3->P23 (old P17) ROB#7
+  ALLOC-STALL I56 (MUL R4, R14, R15) blocked on ROB
+  COMPLETE I44 (MUL) -> P12 ready
+  COMPLETE I51 (ADD) -> P19 ready
+  RETIRE I32  MUL R4, R14, R15         -> RECLAIM P26 (old R4)
+  RETIRE I33  ADD R5, R16, R17         -> RECLAIM P27 (old R5)
+  ISSUE  I52  ADD    completes @23
+  ISSUE  I53  ADD    completes @23
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I56: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I32 completed at cycle 16)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 23
+------------------------------------------------------------------------------
+  ALLOC  I56  MUL R4, R14, R15         reads[R14(ARF), R15(ARF)] R4->P24 (old P18) ROB#8
+  ALLOC  I57  ADD R5, R16, R17         reads[R16(ARF), R17(ARF)] R5->P25 (old P19) ROB#9
+  ALLOC-STALL I58 (ADD R6, R18, R19) blocked on ROB
+  COMPLETE I52 (ADD) -> P20 ready
+  COMPLETE I53 (ADD) -> P21 ready
+  RETIRE I34  ADD R6, R18, R19         -> RECLAIM P28 (old R6)
+  RETIRE I35  ADD R7, R20, R21         -> RECLAIM P29 (old R7)
+  ISSUE  I54  ADD    completes @24
+  ISSUE  I55  ADD    completes @24
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I58: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I34 completed at cycle 14)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 24
+------------------------------------------------------------------------------
+  ALLOC  I58  ADD R6, R18, R19         reads[R18(ARF), R19(ARF)] R6->P26 (old P20) ROB#10
+  ALLOC  I59  ADD R7, R20, R21         reads[R20(ARF), R21(ARF)] R7->P27 (old P21) ROB#11
+  ALLOC-STALL I60 (ADD R2, R10, R11) blocked on ROB
+  COMPLETE I54 (ADD) -> P22 ready
+  COMPLETE I55 (ADD) -> P23 ready
+  RETIRE I36  ADD R2, R10, R11         -> RECLAIM P30 (old R2)
+  RETIRE I37  ADD R3, R12, R13         -> RECLAIM P31 (old R3)
+  ISSUE  I56  MUL    completes @28
+  ISSUE  I57  ADD    completes @25
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I60: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I36 completed at cycle 15)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 25
+------------------------------------------------------------------------------
+  ALLOC  I60  ADD R2, R10, R11         reads[R10(ARF), R11(ARF)] R2->P28 (old P22) ROB#12
+  ALLOC  I61  ADD R3, R12, R13         reads[R12(ARF), R13(ARF)] R3->P29 (old P23) ROB#13
+  ALLOC-STALL I62 (MUL R4, R14, R15) blocked on ROB
+  COMPLETE I50 (MUL) -> P18 ready
+  COMPLETE I57 (ADD) -> P25 ready
+  RETIRE I38  MUL R4, R14, R15         -> RECLAIM P0 (old R4)
+  RETIRE I39  ADD R5, R16, R17         -> RECLAIM P1 (old R5)
+  ISSUE  I58  ADD    completes @26
+  ISSUE  I59  ADD    completes @26
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I62: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I38 completed at cycle 19)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 26
+------------------------------------------------------------------------------
+  ALLOC  I62  MUL R4, R14, R15         reads[R14(ARF), R15(ARF)] R4->P30 (old P24) ROB#14
+  ALLOC  I63  ADD R5, R16, R17         reads[R16(ARF), R17(ARF)] R5->P31 (old P25) ROB#15
+  ALLOC-STALL I64 (ADD R6, R18, R19) blocked on ROB
+  COMPLETE I58 (ADD) -> P26 ready
+  COMPLETE I59 (ADD) -> P27 ready
+  RETIRE I40  ADD R6, R18, R19         -> RECLAIM P2 (old R6)
+  RETIRE I41  ADD R7, R20, R21         -> RECLAIM P3 (old R7)
+  ISSUE  I60  ADD    completes @27
+  ISSUE  I61  ADD    completes @27
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I64: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I40 completed at cycle 17)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 27
+------------------------------------------------------------------------------
+  ALLOC  I64  ADD R6, R18, R19         reads[R18(ARF), R19(ARF)] R6->P0 (old P26) ROB#16
+  ALLOC  I65  ADD R7, R20, R21         reads[R20(ARF), R21(ARF)] R7->P1 (old P27) ROB#17
+  ALLOC-STALL I66 (ADD R2, R10, R11) blocked on ROB
+  COMPLETE I60 (ADD) -> P28 ready
+  COMPLETE I61 (ADD) -> P29 ready
+  RETIRE I42  ADD R2, R10, R11         -> RECLAIM P4 (old R2)
+  RETIRE I43  ADD R3, R12, R13         -> RECLAIM P5 (old R3)
+  ISSUE  I62  MUL    completes @31
+  ISSUE  I63  ADD    completes @28
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I66: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I42 completed at cycle 18)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 28
+------------------------------------------------------------------------------
+  ALLOC  I66  ADD R2, R10, R11         reads[R10(ARF), R11(ARF)] R2->P2 (old P28) ROB#18
+  ALLOC  I67  ADD R3, R12, R13         reads[R12(ARF), R13(ARF)] R3->P3 (old P29) ROB#19
+  ALLOC-STALL I68 (MUL R4, R14, R15) blocked on ROB
+  COMPLETE I56 (MUL) -> P24 ready
+  COMPLETE I63 (ADD) -> P31 ready
+  RETIRE I44  MUL R4, R14, R15         -> RECLAIM P6 (old R4)
+  RETIRE I45  ADD R5, R16, R17         -> RECLAIM P7 (old R5)
+  ISSUE  I64  ADD    completes @29
+  ISSUE  I65  ADD    completes @29
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I68: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I44 completed at cycle 22)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 29
+------------------------------------------------------------------------------
+  ALLOC  I68  MUL R4, R14, R15         reads[R14(ARF), R15(ARF)] R4->P4 (old P30) ROB#20
+  ALLOC  I69  ADD R5, R16, R17         reads[R16(ARF), R17(ARF)] R5->P5 (old P31) ROB#21
+  ALLOC-STALL I70 (ADD R6, R18, R19) blocked on ROB
+  COMPLETE I64 (ADD) -> P0 ready
+  COMPLETE I65 (ADD) -> P1 ready
+  RETIRE I46  ADD R6, R18, R19         -> RECLAIM P8 (old R6)
+  RETIRE I47  ADD R7, R20, R21         -> RECLAIM P9 (old R7)
+  ISSUE  I66  ADD    completes @30
+  ISSUE  I67  ADD    completes @30
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I70: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I46 completed at cycle 20)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 30
+------------------------------------------------------------------------------
+  ALLOC  I70  ADD R6, R18, R19         reads[R18(ARF), R19(ARF)] R6->P6 (old P0) ROB#22
+  ALLOC  I71  ADD R7, R20, R21         reads[R20(ARF), R21(ARF)] R7->P7 (old P1) ROB#23
+  ALLOC-STALL I72 (ADD R2, R10, R11) blocked on ROB
+  COMPLETE I66 (ADD) -> P2 ready
+  COMPLETE I67 (ADD) -> P3 ready
+  RETIRE I48  ADD R2, R10, R11         -> RECLAIM P10 (old R2)
+  RETIRE I49  ADD R3, R12, R13         -> RECLAIM P11 (old R3)
+  ISSUE  I68  MUL    completes @34
+  ISSUE  I69  ADD    completes @31
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I72: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I48 completed at cycle 21)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 31
+------------------------------------------------------------------------------
+  ALLOC  I72  ADD R2, R10, R11         reads[R10(ARF), R11(ARF)] R2->P8 (old P2) ROB#0
+  ALLOC  I73  ADD R3, R12, R13         reads[R12(ARF), R13(ARF)] R3->P9 (old P3) ROB#1
+  ALLOC-STALL I74 (MUL R4, R14, R15) blocked on ROB
+  COMPLETE I62 (MUL) -> P30 ready
+  COMPLETE I69 (ADD) -> P5 ready
+  RETIRE I50  MUL R4, R14, R15         -> RECLAIM P12 (old R4)
+  RETIRE I51  ADD R5, R16, R17         -> RECLAIM P13 (old R5)
+  ISSUE  I70  ADD    completes @32
+  ISSUE  I71  ADD    completes @32
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I74: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I50 completed at cycle 25)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 32
+------------------------------------------------------------------------------
+  ALLOC  I74  MUL R4, R14, R15         reads[R14(ARF), R15(ARF)] R4->P10 (old P4) ROB#2
+  ALLOC  I75  ADD R5, R16, R17         reads[R16(ARF), R17(ARF)] R5->P11 (old P5) ROB#3
+  ALLOC-STALL I76 (ADD R6, R18, R19) blocked on ROB
+  COMPLETE I70 (ADD) -> P6 ready
+  COMPLETE I71 (ADD) -> P7 ready
+  RETIRE I52  ADD R6, R18, R19         -> RECLAIM P14 (old R6)
+  RETIRE I53  ADD R7, R20, R21         -> RECLAIM P15 (old R7)
+  ISSUE  I72  ADD    completes @33
+  ISSUE  I73  ADD    completes @33
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I76: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I52 completed at cycle 23)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 33
+------------------------------------------------------------------------------
+  ALLOC  I76  ADD R6, R18, R19         reads[R18(ARF), R19(ARF)] R6->P12 (old P6) ROB#4
+  ALLOC  I77  ADD R7, R20, R21         reads[R20(ARF), R21(ARF)] R7->P13 (old P7) ROB#5
+  ALLOC-STALL I78 (ADD R2, R10, R11) blocked on ROB
+  COMPLETE I72 (ADD) -> P8 ready
+  COMPLETE I73 (ADD) -> P9 ready
+  RETIRE I54  ADD R2, R10, R11         -> RECLAIM P16 (old R2)
+  RETIRE I55  ADD R3, R12, R13         -> RECLAIM P17 (old R3)
+  ISSUE  I74  MUL    completes @37
+  ISSUE  I75  ADD    completes @34
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I78: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I54 completed at cycle 24)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 34
+------------------------------------------------------------------------------
+  ALLOC  I78  ADD R2, R10, R11         reads[R10(ARF), R11(ARF)] R2->P14 (old P8) ROB#6
+  ALLOC  I79  ADD R3, R12, R13         reads[R12(ARF), R13(ARF)] R3->P15 (old P9) ROB#7
+  ALLOC-STALL I80 (MUL R4, R14, R15) blocked on ROB
+  COMPLETE I68 (MUL) -> P4 ready
+  COMPLETE I75 (ADD) -> P11 ready
+  RETIRE I56  MUL R4, R14, R15         -> RECLAIM P18 (old R4)
+  RETIRE I57  ADD R5, R16, R17         -> RECLAIM P19 (old R5)
+  ISSUE  I76  ADD    completes @35
+  ISSUE  I77  ADD    completes @35
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I80: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I56 completed at cycle 28)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 35
+------------------------------------------------------------------------------
+  ALLOC  I80  MUL R4, R14, R15         reads[R14(ARF), R15(ARF)] R4->P16 (old P10) ROB#8
+  ALLOC  I81  ADD R5, R16, R17         reads[R16(ARF), R17(ARF)] R5->P17 (old P11) ROB#9
+  ALLOC-STALL I82 (ADD R6, R18, R19) blocked on ROB
+  COMPLETE I76 (ADD) -> P12 ready
+  COMPLETE I77 (ADD) -> P13 ready
+  RETIRE I58  ADD R6, R18, R19         -> RECLAIM P20 (old R6)
+  RETIRE I59  ADD R7, R20, R21         -> RECLAIM P21 (old R7)
+  ISSUE  I78  ADD    completes @36
+  ISSUE  I79  ADD    completes @36
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I82: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I58 completed at cycle 26)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 36
+------------------------------------------------------------------------------
+  ALLOC  I82  ADD R6, R18, R19         reads[R18(ARF), R19(ARF)] R6->P18 (old P12) ROB#10
+  ALLOC  I83  ADD R7, R20, R21         reads[R20(ARF), R21(ARF)] R7->P19 (old P13) ROB#11
+  ALLOC-STALL I84 (ADD R2, R10, R11) blocked on ROB
+  COMPLETE I78 (ADD) -> P14 ready
+  COMPLETE I79 (ADD) -> P15 ready
+  RETIRE I60  ADD R2, R10, R11         -> RECLAIM P22 (old R2)
+  RETIRE I61  ADD R3, R12, R13         -> RECLAIM P23 (old R3)
+  ISSUE  I80  MUL    completes @40
+  ISSUE  I81  ADD    completes @37
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I84: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I60 completed at cycle 27)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 37
+------------------------------------------------------------------------------
+  ALLOC  I84  ADD R2, R10, R11         reads[R10(ARF), R11(ARF)] R2->P20 (old P14) ROB#12
+  ALLOC  I85  ADD R3, R12, R13         reads[R12(ARF), R13(ARF)] R3->P21 (old P15) ROB#13
+  ALLOC-STALL I86 (MUL R4, R14, R15) blocked on ROB
+  COMPLETE I74 (MUL) -> P10 ready
+  COMPLETE I81 (ADD) -> P17 ready
+  RETIRE I62  MUL R4, R14, R15         -> RECLAIM P24 (old R4)
+  RETIRE I63  ADD R5, R16, R17         -> RECLAIM P25 (old R5)
+  ISSUE  I82  ADD    completes @38
+  ISSUE  I83  ADD    completes @38
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I86: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I62 completed at cycle 31)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 38
+------------------------------------------------------------------------------
+  ALLOC  I86  MUL R4, R14, R15         reads[R14(ARF), R15(ARF)] R4->P22 (old P16) ROB#14
+  ALLOC  I87  ADD R5, R16, R17         reads[R16(ARF), R17(ARF)] R5->P23 (old P17) ROB#15
+  ALLOC-STALL I88 (ADD R6, R18, R19) blocked on ROB
+  COMPLETE I82 (ADD) -> P18 ready
+  COMPLETE I83 (ADD) -> P19 ready
+  RETIRE I64  ADD R6, R18, R19         -> RECLAIM P26 (old R6)
+  RETIRE I65  ADD R7, R20, R21         -> RECLAIM P27 (old R7)
+  ISSUE  I84  ADD    completes @39
+  ISSUE  I85  ADD    completes @39
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I88: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I64 completed at cycle 29)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 39
+------------------------------------------------------------------------------
+  ALLOC  I88  ADD R6, R18, R19         reads[R18(ARF), R19(ARF)] R6->P24 (old P18) ROB#16
+  ALLOC  I89  ADD R7, R20, R21         reads[R20(ARF), R21(ARF)] R7->P25 (old P19) ROB#17
+  ALLOC-STALL I90 (ADD R2, R10, R11) blocked on ROB
+  COMPLETE I84 (ADD) -> P20 ready
+  COMPLETE I85 (ADD) -> P21 ready
+  RETIRE I66  ADD R2, R10, R11         -> RECLAIM P28 (old R2)
+  RETIRE I67  ADD R3, R12, R13         -> RECLAIM P29 (old R3)
+  ISSUE  I86  MUL    completes @43
+  ISSUE  I87  ADD    completes @40
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I90: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I66 completed at cycle 30)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 40
+------------------------------------------------------------------------------
+  ALLOC  I90  ADD R2, R10, R11         reads[R10(ARF), R11(ARF)] R2->P26 (old P20) ROB#18
+  ALLOC  I91  ADD R3, R12, R13         reads[R12(ARF), R13(ARF)] R3->P27 (old P21) ROB#19
+  ALLOC-STALL I92 (MUL R4, R14, R15) blocked on ROB
+  COMPLETE I80 (MUL) -> P16 ready
+  COMPLETE I87 (ADD) -> P23 ready
+  RETIRE I68  MUL R4, R14, R15         -> RECLAIM P30 (old R4)
+  RETIRE I69  ADD R5, R16, R17         -> RECLAIM P31 (old R5)
+  ISSUE  I88  ADD    completes @41
+  ISSUE  I89  ADD    completes @41
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I92: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I68 completed at cycle 34)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 41
+------------------------------------------------------------------------------
+  ALLOC  I92  MUL R4, R14, R15         reads[R14(ARF), R15(ARF)] R4->P28 (old P22) ROB#20
+  ALLOC  I93  ADD R5, R16, R17         reads[R16(ARF), R17(ARF)] R5->P29 (old P23) ROB#21
+  ALLOC-STALL I94 (ADD R6, R18, R19) blocked on ROB
+  COMPLETE I88 (ADD) -> P24 ready
+  COMPLETE I89 (ADD) -> P25 ready
+  RETIRE I70  ADD R6, R18, R19         -> RECLAIM P0 (old R6)
+  RETIRE I71  ADD R7, R20, R21         -> RECLAIM P1 (old R7)
+  ISSUE  I90  ADD    completes @42
+  ISSUE  I91  ADD    completes @42
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I94: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I70 completed at cycle 32)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 42
+------------------------------------------------------------------------------
+  ALLOC  I94  ADD R6, R18, R19         reads[R18(ARF), R19(ARF)] R6->P30 (old P24) ROB#22
+  ALLOC  I95  ADD R7, R20, R21         reads[R20(ARF), R21(ARF)] R7->P31 (old P25) ROB#23
+  ALLOC-STALL I96 (ADD R2, R10, R11) blocked on ROB
+  COMPLETE I90 (ADD) -> P26 ready
+  COMPLETE I91 (ADD) -> P27 ready
+  RETIRE I72  ADD R2, R10, R11         -> RECLAIM P2 (old R2)
+  RETIRE I73  ADD R3, R12, R13         -> RECLAIM P3 (old R3)
+  ISSUE  I92  MUL    completes @46
+  ISSUE  I93  ADD    completes @43
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I96: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I72 completed at cycle 33)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 43
+------------------------------------------------------------------------------
+  ALLOC  I96  ADD R2, R10, R11         reads[R10(ARF), R11(ARF)] R2->P0 (old P26) ROB#0
+  ALLOC  I97  ADD R3, R12, R13         reads[R12(ARF), R13(ARF)] R3->P1 (old P27) ROB#1
+  ALLOC-STALL I98 (MUL R4, R14, R15) blocked on ROB
+  COMPLETE I86 (MUL) -> P22 ready
+  COMPLETE I93 (ADD) -> P29 ready
+  RETIRE I74  MUL R4, R14, R15         -> RECLAIM P4 (old R4)
+  RETIRE I75  ADD R5, R16, R17         -> RECLAIM P5 (old R5)
+  ISSUE  I94  ADD    completes @44
+  ISSUE  I95  ADD    completes @44
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I98: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I74 completed at cycle 37)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 44
+------------------------------------------------------------------------------
+  ALLOC  I98  MUL R4, R14, R15         reads[R14(ARF), R15(ARF)] R4->P2 (old P28) ROB#2
+  ALLOC  I99  ADD R5, R16, R17         reads[R16(ARF), R17(ARF)] R5->P3 (old P29) ROB#3
+  ALLOC-STALL I100 (ADD R6, R18, R19) blocked on ROB
+  COMPLETE I94 (ADD) -> P30 ready
+  COMPLETE I95 (ADD) -> P31 ready
+  RETIRE I76  ADD R6, R18, R19         -> RECLAIM P6 (old R6)
+  RETIRE I77  ADD R7, R20, R21         -> RECLAIM P7 (old R7)
+  ISSUE  I96  ADD    completes @45
+  ISSUE  I97  ADD    completes @45
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I100: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I76 completed at cycle 35)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 45
+------------------------------------------------------------------------------
+  ALLOC  I100 ADD R6, R18, R19         reads[R18(ARF), R19(ARF)] R6->P4 (old P30) ROB#4
+  ALLOC  I101 ADD R7, R20, R21         reads[R20(ARF), R21(ARF)] R7->P5 (old P31) ROB#5
+  ALLOC-STALL I102 (ADD R2, R10, R11) blocked on ROB
+  COMPLETE I96 (ADD) -> P0 ready
+  COMPLETE I97 (ADD) -> P1 ready
+  RETIRE I78  ADD R2, R10, R11         -> RECLAIM P8 (old R2)
+  RETIRE I79  ADD R3, R12, R13         -> RECLAIM P9 (old R3)
+  ISSUE  I98  MUL    completes @49
+  ISSUE  I99  ADD    completes @46
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I102: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I78 completed at cycle 36)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 46
+------------------------------------------------------------------------------
+  ALLOC  I102 ADD R2, R10, R11         reads[R10(ARF), R11(ARF)] R2->P6 (old P0) ROB#6
+  ALLOC  I103 ADD R3, R12, R13         reads[R12(ARF), R13(ARF)] R3->P7 (old P1) ROB#7
+  ALLOC-STALL I104 (MUL R4, R14, R15) blocked on ROB
+  COMPLETE I92 (MUL) -> P28 ready
+  COMPLETE I99 (ADD) -> P3 ready
+  RETIRE I80  MUL R4, R14, R15         -> RECLAIM P10 (old R4)
+  RETIRE I81  ADD R5, R16, R17         -> RECLAIM P11 (old R5)
+  ISSUE  I100 ADD    completes @47
+  ISSUE  I101 ADD    completes @47
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I104: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I80 completed at cycle 40)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 47
+------------------------------------------------------------------------------
+  ALLOC  I104 MUL R4, R14, R15         reads[R14(ARF), R15(ARF)] R4->P8 (old P2) ROB#8
+  ALLOC  I105 ADD R5, R16, R17         reads[R16(ARF), R17(ARF)] R5->P9 (old P3) ROB#9
+  ALLOC-STALL I106 (ADD R6, R18, R19) blocked on ROB
+  COMPLETE I100 (ADD) -> P4 ready
+  COMPLETE I101 (ADD) -> P5 ready
+  RETIRE I82  ADD R6, R18, R19         -> RECLAIM P12 (old R6)
+  RETIRE I83  ADD R7, R20, R21         -> RECLAIM P13 (old R7)
+  ISSUE  I102 ADD    completes @48
+  ISSUE  I103 ADD    completes @48
+  DECODE 2 uop(s) into decode queue
+  FRONTEND STALL: decode queue full (allocation stalled on ROB)
+  >> alloc stall on ROB at I106: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I82 completed at cycle 38)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 48
+------------------------------------------------------------------------------
+  ALLOC  I106 ADD R6, R18, R19         reads[R18(ARF), R19(ARF)] R6->P10 (old P4) ROB#10
+  ALLOC  I107 ADD R7, R20, R21         reads[R20(ARF), R21(ARF)] R7->P11 (old P5) ROB#11
+  ALLOC-STALL I108 (ADD R2, R10, R11) blocked on ROB
+  COMPLETE I102 (ADD) -> P6 ready
+  COMPLETE I103 (ADD) -> P7 ready
+  RETIRE I84  ADD R2, R10, R11         -> RECLAIM P14 (old R2)
+  RETIRE I85  ADD R3, R12, R13         -> RECLAIM P15 (old R3)
+  ISSUE  I104 MUL    completes @52
+  ISSUE  I105 ADD    completes @49
+  DECODE 2 uop(s) into decode queue
+  >> alloc stall on ROB at I108: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I84 completed at cycle 39)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 12/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 49
+------------------------------------------------------------------------------
+  ALLOC  I108 ADD R2, R10, R11         reads[R10(ARF), R11(ARF)] R2->P12 (old P6) ROB#12
+  ALLOC  I109 ADD R3, R12, R13         reads[R12(ARF), R13(ARF)] R3->P13 (old P7) ROB#13
+  ALLOC-STALL I110 (MUL R4, R14, R15) blocked on ROB
+  COMPLETE I98 (MUL) -> P2 ready
+  COMPLETE I105 (ADD) -> P9 ready
+  RETIRE I86  MUL R4, R14, R15         -> RECLAIM P16 (old R4)
+  RETIRE I87  ADD R5, R16, R17         -> RECLAIM P17 (old R5)
+  ISSUE  I106 ADD    completes @50
+  ISSUE  I107 ADD    completes @50
+  >> alloc stall on ROB at I110: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I86 completed at cycle 43)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 10/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 50
+------------------------------------------------------------------------------
+  ALLOC  I110 MUL R4, R14, R15         reads[R14(ARF), R15(ARF)] R4->P14 (old P8) ROB#14
+  ALLOC  I111 ADD R5, R16, R17         reads[R16(ARF), R17(ARF)] R5->P15 (old P9) ROB#15
+  ALLOC-STALL I112 (ADD R6, R18, R19) blocked on ROB
+  COMPLETE I106 (ADD) -> P10 ready
+  COMPLETE I107 (ADD) -> P11 ready
+  RETIRE I88  ADD R6, R18, R19         -> RECLAIM P18 (old R6)
+  RETIRE I89  ADD R7, R20, R21         -> RECLAIM P19 (old R7)
+  ISSUE  I108 ADD    completes @51
+  ISSUE  I109 ADD    completes @51
+  >> alloc stall on ROB at I112: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I88 completed at cycle 41)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 8/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 51
+------------------------------------------------------------------------------
+  ALLOC  I112 ADD R6, R18, R19         reads[R18(ARF), R19(ARF)] R6->P16 (old P10) ROB#16
+  ALLOC  I113 ADD R7, R20, R21         reads[R20(ARF), R21(ARF)] R7->P17 (old P11) ROB#17
+  ALLOC-STALL I114 (ADD R2, R10, R11) blocked on ROB
+  COMPLETE I108 (ADD) -> P12 ready
+  COMPLETE I109 (ADD) -> P13 ready
+  RETIRE I90  ADD R2, R10, R11         -> RECLAIM P20 (old R2)
+  RETIRE I91  ADD R3, R12, R13         -> RECLAIM P21 (old R3)
+  ISSUE  I110 MUL    completes @55
+  ISSUE  I111 ADD    completes @52
+  >> alloc stall on ROB at I114: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I90 completed at cycle 42)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 6/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 52
+------------------------------------------------------------------------------
+  ALLOC  I114 ADD R2, R10, R11         reads[R10(ARF), R11(ARF)] R2->P18 (old P12) ROB#18
+  ALLOC  I115 ADD R3, R12, R13         reads[R12(ARF), R13(ARF)] R3->P19 (old P13) ROB#19
+  ALLOC-STALL I116 (MUL R4, R14, R15) blocked on ROB
+  COMPLETE I104 (MUL) -> P8 ready
+  COMPLETE I111 (ADD) -> P15 ready
+  RETIRE I92  MUL R4, R14, R15         -> RECLAIM P22 (old R4)
+  RETIRE I93  ADD R5, R16, R17         -> RECLAIM P23 (old R5)
+  ISSUE  I112 ADD    completes @53
+  ISSUE  I113 ADD    completes @53
+  >> alloc stall on ROB at I116: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I92 completed at cycle 46)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 4/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 53
+------------------------------------------------------------------------------
+  ALLOC  I116 MUL R4, R14, R15         reads[R14(ARF), R15(ARF)] R4->P20 (old P14) ROB#20
+  ALLOC  I117 ADD R5, R16, R17         reads[R16(ARF), R17(ARF)] R5->P21 (old P15) ROB#21
+  ALLOC-STALL I118 (ADD R6, R18, R19) blocked on ROB
+  COMPLETE I112 (ADD) -> P16 ready
+  COMPLETE I113 (ADD) -> P17 ready
+  RETIRE I94  ADD R6, R18, R19         -> RECLAIM P24 (old R6)
+  RETIRE I95  ADD R7, R20, R21         -> RECLAIM P25 (old R7)
+  ISSUE  I114 ADD    completes @54
+  ISSUE  I115 ADD    completes @54
+  >> alloc stall on ROB at I118: ROB full (24/24); 17 entries completed-but-unretired
+     avail: ROB 24/24, PRF free 2, IQ 4/12, LQ 0/6, SQ 0/4, CKPT 0/2
+     root : retirement is bandwidth-bound: 17 completed entries drain at 2/cycle (head I94 completed at cycle 44)
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 2/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=YES(ROB)
+
+Cycle 54
+------------------------------------------------------------------------------
+  ALLOC  I118 ADD R6, R18, R19         reads[R18(ARF), R19(ARF)] R6->P22 (old P16) ROB#22
+  ALLOC  I119 ADD R7, R20, R21         reads[R20(ARF), R21(ARF)] R7->P23 (old P17) ROB#23
+  COMPLETE I114 (ADD) -> P18 ready
+  COMPLETE I115 (ADD) -> P19 ready
+  RETIRE I96  ADD R2, R10, R11         -> RECLAIM P26 (old R2)
+  RETIRE I97  ADD R3, R12, R13         -> RECLAIM P27 (old R3)
+  ISSUE  I116 MUL    completes @58
+  ISSUE  I117 ADD    completes @55
+  STATE ROB 22/24 (done-unretired 17) | free pregs 4/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=2 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=no
+
+Cycle 55
+------------------------------------------------------------------------------
+  COMPLETE I110 (MUL) -> P14 ready
+  COMPLETE I117 (ADD) -> P21 ready
+  RETIRE I98  MUL R4, R14, R15         -> RECLAIM P28 (old R4)
+  RETIRE I99  ADD R5, R16, R17         -> RECLAIM P29 (old R5)
+  ISSUE  I118 ADD    completes @56
+  ISSUE  I119 ADD    completes @56
+  STATE ROB 20/24 (done-unretired 17) | free pregs 6/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=2 complete=2 retire=2 squash=0 | alloc_stalled=no
+
+Cycle 56
+------------------------------------------------------------------------------
+  COMPLETE I118 (ADD) -> P22 ready
+  COMPLETE I119 (ADD) -> P23 ready
+  RETIRE I100 ADD R6, R18, R19         -> RECLAIM P30 (old R6)
+  RETIRE I101 ADD R7, R20, R21         -> RECLAIM P31 (old R7)
+  STATE ROB 18/24 (done-unretired 17) | free pregs 8/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=2 retire=2 squash=0 | alloc_stalled=no
+
+Cycle 57
+------------------------------------------------------------------------------
+  RETIRE I102 ADD R2, R10, R11         -> RECLAIM P0 (old R2)
+  RETIRE I103 ADD R3, R12, R13         -> RECLAIM P1 (old R3)
+  STATE ROB 16/24 (done-unretired 15) | free pregs 10/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=2 squash=0 | alloc_stalled=no
+
+Cycle 58
+------------------------------------------------------------------------------
+  COMPLETE I116 (MUL) -> P20 ready
+  RETIRE I104 MUL R4, R14, R15         -> RECLAIM P2 (old R4)
+  RETIRE I105 ADD R5, R16, R17         -> RECLAIM P3 (old R5)
+  STATE ROB 14/24 (done-unretired 14) | free pregs 12/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=1 retire=2 squash=0 | alloc_stalled=no
+
+Cycle 59
+------------------------------------------------------------------------------
+  RETIRE I106 ADD R6, R18, R19         -> RECLAIM P4 (old R6)
+  RETIRE I107 ADD R7, R20, R21         -> RECLAIM P5 (old R7)
+  STATE ROB 12/24 (done-unretired 12) | free pregs 14/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=2 squash=0 | alloc_stalled=no
+
+Cycle 60
+------------------------------------------------------------------------------
+  RETIRE I108 ADD R2, R10, R11         -> RECLAIM P6 (old R2)
+  RETIRE I109 ADD R3, R12, R13         -> RECLAIM P7 (old R3)
+  STATE ROB 10/24 (done-unretired 10) | free pregs 16/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=2 squash=0 | alloc_stalled=no
+
+Cycle 61
+------------------------------------------------------------------------------
+  RETIRE I110 MUL R4, R14, R15         -> RECLAIM P8 (old R4)
+  RETIRE I111 ADD R5, R16, R17         -> RECLAIM P9 (old R5)
+  STATE ROB 8/24 (done-unretired 8) | free pregs 18/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=2 squash=0 | alloc_stalled=no
+
+Cycle 62
+------------------------------------------------------------------------------
+  RETIRE I112 ADD R6, R18, R19         -> RECLAIM P10 (old R6)
+  RETIRE I113 ADD R7, R20, R21         -> RECLAIM P11 (old R7)
+  STATE ROB 6/24 (done-unretired 6) | free pregs 20/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=2 squash=0 | alloc_stalled=no
+
+Cycle 63
+------------------------------------------------------------------------------
+  RETIRE I114 ADD R2, R10, R11         -> RECLAIM P12 (old R2)
+  RETIRE I115 ADD R3, R12, R13         -> RECLAIM P13 (old R3)
+  STATE ROB 4/24 (done-unretired 4) | free pregs 22/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=2 squash=0 | alloc_stalled=no
+
+Cycle 64
+------------------------------------------------------------------------------
+  RETIRE I116 MUL R4, R14, R15         -> RECLAIM P14 (old R4)
+  RETIRE I117 ADD R5, R16, R17         -> RECLAIM P15 (old R5)
+  STATE ROB 2/24 (done-unretired 2) | free pregs 24/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=2 squash=0 | alloc_stalled=no
+
+Cycle 65
+------------------------------------------------------------------------------
+  RETIRE I118 ADD R6, R18, R19         -> RECLAIM P16 (old R6)
+  RETIRE I119 ADD R7, R20, R21         -> RECLAIM P17 (old R7)
+  STATE ROB 0/24 (done-unretired 0) | free pregs 26/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=2 squash=0 | alloc_stalled=no
+
+ALLOCATION-STALL CAUSAL CHAINS (consecutive cycles with identical cause collapsed)
+------------------------------------------------------------------------------
+cycles 5-6: I26 blocked on ROB
+    immediate resource : ROB   (ROB 24/24, PRF free 6, IQ 8/12, LQ 0/6, SQ 0/4, CKPT 0/2)
+    why unavailable    : ROB full (24/24); 8 entries completed-but-unretired
+    earlier event      : retirement blocked by oldest instruction: I2 (MUL) is executing, completes at cycle 6
+cycles 7-53: I26 blocked on ROB
+    immediate resource : ROB   (ROB 24/24, PRF free 6, IQ 0/12, LQ 0/6, SQ 0/4, CKPT 0/2)
+    why unavailable    : ROB full (24/24); 19 entries completed-but-unretired
+    earlier event      : retirement is bandwidth-bound: 19 completed entries drain at 2/cycle (head I2 completed at cycle 6)
+
+PER-INSTRUCTION TABLE
+==============================================================================
+seq id   instruction                arch srcs -> phys srcs       dst      old   ROB dec alloc issue cmplt retire squash reclaim
+-------------------------------------------------------------------------------------------------------------------------------
+  0 I0   ADD R2, R10, R11           R10->ARF, R11->ARF           R2->P0   ARF     0   0     1     2     3      4      -       -
+  1 I1   ADD R3, R12, R13           R12->ARF, R13->ARF           R3->P1   ARF     1   0     1     2     3      4      -       -
+  2 I2   MUL R4, R14, R15           R14->ARF, R15->ARF           R4->P2   ARF     2   0     1     2     6      7      -       -
+  3 I3   ADD R5, R16, R17           R16->ARF, R17->ARF           R5->P3   ARF     3   0     1     2     3      7      -       -
+  4 I4   ADD R6, R18, R19           R18->ARF, R19->ARF           R6->P4   ARF     4   0     1     2     3      8      -       -
+  5 I5   ADD R7, R20, R21           R20->ARF, R21->ARF           R7->P5   ARF     5   0     1     2     3      8      -       -
+  6 I6   ADD R2, R10, R11           R10->ARF, R11->ARF           R2->P6   P0      6   1     2     3     4      9      -       9
+  7 I7   ADD R3, R12, R13           R12->ARF, R13->ARF           R3->P7   P1      7   1     2     3     4      9      -       9
+  8 I8   MUL R4, R14, R15           R14->ARF, R15->ARF           R4->P8   P2      8   1     2     3     7     10      -      10
+  9 I9   ADD R5, R16, R17           R16->ARF, R17->ARF           R5->P9   P3      9   1     2     3     4     10      -      10
+ 10 I10  ADD R6, R18, R19           R18->ARF, R19->ARF           R6->P10  P4     10   1     2     3     4     11      -      11
+ 11 I11  ADD R7, R20, R21           R20->ARF, R21->ARF           R7->P11  P5     11   1     2     3     4     11      -      11
+ 12 I12  ADD R2, R10, R11           R10->ARF, R11->ARF           R2->P12  P6     12   2     3     4     5     12      -      12
+ 13 I13  ADD R3, R12, R13           R12->ARF, R13->ARF           R3->P13  P7     13   2     3     4     5     12      -      12
+ 14 I14  MUL R4, R14, R15           R14->ARF, R15->ARF           R4->P14  P8     14   2     3     4     8     13      -      13
+ 15 I15  ADD R5, R16, R17           R16->ARF, R17->ARF           R5->P15  P9     15   2     3     4     5     13      -      13
+ 16 I16  ADD R6, R18, R19           R18->ARF, R19->ARF           R6->P16  P10    16   2     3     4     5     14      -      14
+ 17 I17  ADD R7, R20, R21           R20->ARF, R21->ARF           R7->P17  P11    17   2     3     4     5     14      -      14
+ 18 I18  ADD R2, R10, R11           R10->ARF, R11->ARF           R2->P18  P12    18   3     4     5     6     15      -      15
+ 19 I19  ADD R3, R12, R13           R12->ARF, R13->ARF           R3->P19  P13    19   3     4     5     6     15      -      15
+ 20 I20  MUL R4, R14, R15           R14->ARF, R15->ARF           R4->P20  P14    20   3     4     5     9     16      -      16
+ 21 I21  ADD R5, R16, R17           R16->ARF, R17->ARF           R5->P21  P15    21   3     4     5     6     16      -      16
+ 22 I22  ADD R6, R18, R19           R18->ARF, R19->ARF           R6->P22  P16    22   3     4     5     6     17      -      17
+ 23 I23  ADD R7, R20, R21           R20->ARF, R21->ARF           R7->P23  P17    23   3     4     5     6     17      -      17
+ 24 I24  ADD R2, R10, R11           R10->ARF, R11->ARF           R2->P24  P18     0   4     5     6     7     18      -      18
+ 25 I25  ADD R3, R12, R13           R12->ARF, R13->ARF           R3->P25  P19     1   4     5     6     7     18      -      18
+ 26 I26  MUL R4, R14, R15           R14->ARF, R15->ARF           R4->P26  P20     2   4     8     9    13     19      -      19
+ 27 I27  ADD R5, R16, R17           R16->ARF, R17->ARF           R5->P27  P21     3   4     8     9    10     19      -      19
+ 28 I28  ADD R6, R18, R19           R18->ARF, R19->ARF           R6->P28  P22     4   4     9    10    11     20      -      20
+ 29 I29  ADD R7, R20, R21           R20->ARF, R21->ARF           R7->P29  P23     5   4     9    10    11     20      -      20
+ 30 I30  ADD R2, R10, R11           R10->ARF, R11->ARF           R2->P30  P24     6   5    10    11    12     21      -      21
+ 31 I31  ADD R3, R12, R13           R12->ARF, R13->ARF           R3->P31  P25     7   5    10    11    12     21      -      21
+ 32 I32  MUL R4, R14, R15           R14->ARF, R15->ARF           R4->P0   P26     8   5    11    12    16     22      -      22
+ 33 I33  ADD R5, R16, R17           R16->ARF, R17->ARF           R5->P1   P27     9   5    11    12    13     22      -      22
+ 34 I34  ADD R6, R18, R19           R18->ARF, R19->ARF           R6->P2   P28    10   5    12    13    14     23      -      23
+ 35 I35  ADD R7, R20, R21           R20->ARF, R21->ARF           R7->P3   P29    11   5    12    13    14     23      -      23
+ 36 I36  ADD R2, R10, R11           R10->ARF, R11->ARF           R2->P4   P30    12   6    13    14    15     24      -      24
+ 37 I37  ADD R3, R12, R13           R12->ARF, R13->ARF           R3->P5   P31    13   6    13    14    15     24      -      24
+ 38 I38  MUL R4, R14, R15           R14->ARF, R15->ARF           R4->P6   P0     14   8    14    15    19     25      -      25
+ 39 I39  ADD R5, R16, R17           R16->ARF, R17->ARF           R5->P7   P1     15   8    14    15    16     25      -      25
+ 40 I40  ADD R6, R18, R19           R18->ARF, R19->ARF           R6->P8   P2     16   9    15    16    17     26      -      26
+ 41 I41  ADD R7, R20, R21           R20->ARF, R21->ARF           R7->P9   P3     17   9    15    16    17     26      -      26
+ 42 I42  ADD R2, R10, R11           R10->ARF, R11->ARF           R2->P10  P4     18  10    16    17    18     27      -      27
+ 43 I43  ADD R3, R12, R13           R12->ARF, R13->ARF           R3->P11  P5     19  10    16    17    18     27      -      27
+ 44 I44  MUL R4, R14, R15           R14->ARF, R15->ARF           R4->P12  P6     20  11    17    18    22     28      -      28
+ 45 I45  ADD R5, R16, R17           R16->ARF, R17->ARF           R5->P13  P7     21  11    17    18    19     28      -      28
+ 46 I46  ADD R6, R18, R19           R18->ARF, R19->ARF           R6->P14  P8     22  12    18    19    20     29      -      29
+ 47 I47  ADD R7, R20, R21           R20->ARF, R21->ARF           R7->P15  P9     23  12    18    19    20     29      -      29
+ 48 I48  ADD R2, R10, R11           R10->ARF, R11->ARF           R2->P16  P10     0  13    19    20    21     30      -      30
+ 49 I49  ADD R3, R12, R13           R12->ARF, R13->ARF           R3->P17  P11     1  13    19    20    21     30      -      30
+ 50 I50  MUL R4, R14, R15           R14->ARF, R15->ARF           R4->P18  P12     2  14    20    21    25     31      -      31
+ 51 I51  ADD R5, R16, R17           R16->ARF, R17->ARF           R5->P19  P13     3  14    20    21    22     31      -      31
+ 52 I52  ADD R6, R18, R19           R18->ARF, R19->ARF           R6->P20  P14     4  15    21    22    23     32      -      32
+ 53 I53  ADD R7, R20, R21           R20->ARF, R21->ARF           R7->P21  P15     5  15    21    22    23     32      -      32
+ 54 I54  ADD R2, R10, R11           R10->ARF, R11->ARF           R2->P22  P16     6  16    22    23    24     33      -      33
+ 55 I55  ADD R3, R12, R13           R12->ARF, R13->ARF           R3->P23  P17     7  16    22    23    24     33      -      33
+ 56 I56  MUL R4, R14, R15           R14->ARF, R15->ARF           R4->P24  P18     8  17    23    24    28     34      -      34
+ 57 I57  ADD R5, R16, R17           R16->ARF, R17->ARF           R5->P25  P19     9  17    23    24    25     34      -      34
+ 58 I58  ADD R6, R18, R19           R18->ARF, R19->ARF           R6->P26  P20    10  18    24    25    26     35      -      35
+ 59 I59  ADD R7, R20, R21           R20->ARF, R21->ARF           R7->P27  P21    11  18    24    25    26     35      -      35
+ 60 I60  ADD R2, R10, R11           R10->ARF, R11->ARF           R2->P28  P22    12  19    25    26    27     36      -      36
+ 61 I61  ADD R3, R12, R13           R12->ARF, R13->ARF           R3->P29  P23    13  19    25    26    27     36      -      36
+ 62 I62  MUL R4, R14, R15           R14->ARF, R15->ARF           R4->P30  P24    14  20    26    27    31     37      -      37
+ 63 I63  ADD R5, R16, R17           R16->ARF, R17->ARF           R5->P31  P25    15  20    26    27    28     37      -      37
+ 64 I64  ADD R6, R18, R19           R18->ARF, R19->ARF           R6->P0   P26    16  21    27    28    29     38      -      38
+ 65 I65  ADD R7, R20, R21           R20->ARF, R21->ARF           R7->P1   P27    17  21    27    28    29     38      -      38
+ 66 I66  ADD R2, R10, R11           R10->ARF, R11->ARF           R2->P2   P28    18  22    28    29    30     39      -      39
+ 67 I67  ADD R3, R12, R13           R12->ARF, R13->ARF           R3->P3   P29    19  22    28    29    30     39      -      39
+ 68 I68  MUL R4, R14, R15           R14->ARF, R15->ARF           R4->P4   P30    20  23    29    30    34     40      -      40
+ 69 I69  ADD R5, R16, R17           R16->ARF, R17->ARF           R5->P5   P31    21  23    29    30    31     40      -      40
+ 70 I70  ADD R6, R18, R19           R18->ARF, R19->ARF           R6->P6   P0     22  24    30    31    32     41      -      41
+ 71 I71  ADD R7, R20, R21           R20->ARF, R21->ARF           R7->P7   P1     23  24    30    31    32     41      -      41
+ 72 I72  ADD R2, R10, R11           R10->ARF, R11->ARF           R2->P8   P2      0  25    31    32    33     42      -      42
+ 73 I73  ADD R3, R12, R13           R12->ARF, R13->ARF           R3->P9   P3      1  25    31    32    33     42      -      42
+ 74 I74  MUL R4, R14, R15           R14->ARF, R15->ARF           R4->P10  P4      2  26    32    33    37     43      -      43
+ 75 I75  ADD R5, R16, R17           R16->ARF, R17->ARF           R5->P11  P5      3  26    32    33    34     43      -      43
+ 76 I76  ADD R6, R18, R19           R18->ARF, R19->ARF           R6->P12  P6      4  27    33    34    35     44      -      44
+ 77 I77  ADD R7, R20, R21           R20->ARF, R21->ARF           R7->P13  P7      5  27    33    34    35     44      -      44
+ 78 I78  ADD R2, R10, R11           R10->ARF, R11->ARF           R2->P14  P8      6  28    34    35    36     45      -      45
+ 79 I79  ADD R3, R12, R13           R12->ARF, R13->ARF           R3->P15  P9      7  28    34    35    36     45      -      45
+ 80 I80  MUL R4, R14, R15           R14->ARF, R15->ARF           R4->P16  P10     8  29    35    36    40     46      -      46
+ 81 I81  ADD R5, R16, R17           R16->ARF, R17->ARF           R5->P17  P11     9  29    35    36    37     46      -      46
+ 82 I82  ADD R6, R18, R19           R18->ARF, R19->ARF           R6->P18  P12    10  30    36    37    38     47      -      47
+ 83 I83  ADD R7, R20, R21           R20->ARF, R21->ARF           R7->P19  P13    11  30    36    37    38     47      -      47
+ 84 I84  ADD R2, R10, R11           R10->ARF, R11->ARF           R2->P20  P14    12  31    37    38    39     48      -      48
+ 85 I85  ADD R3, R12, R13           R12->ARF, R13->ARF           R3->P21  P15    13  31    37    38    39     48      -      48
+ 86 I86  MUL R4, R14, R15           R14->ARF, R15->ARF           R4->P22  P16    14  32    38    39    43     49      -      49
+ 87 I87  ADD R5, R16, R17           R16->ARF, R17->ARF           R5->P23  P17    15  32    38    39    40     49      -      49
+ 88 I88  ADD R6, R18, R19           R18->ARF, R19->ARF           R6->P24  P18    16  33    39    40    41     50      -      50
+ 89 I89  ADD R7, R20, R21           R20->ARF, R21->ARF           R7->P25  P19    17  33    39    40    41     50      -      50
+ 90 I90  ADD R2, R10, R11           R10->ARF, R11->ARF           R2->P26  P20    18  34    40    41    42     51      -      51
+ 91 I91  ADD R3, R12, R13           R12->ARF, R13->ARF           R3->P27  P21    19  34    40    41    42     51      -      51
+ 92 I92  MUL R4, R14, R15           R14->ARF, R15->ARF           R4->P28  P22    20  35    41    42    46     52      -      52
+ 93 I93  ADD R5, R16, R17           R16->ARF, R17->ARF           R5->P29  P23    21  35    41    42    43     52      -      52
+ 94 I94  ADD R6, R18, R19           R18->ARF, R19->ARF           R6->P30  P24    22  36    42    43    44     53      -      53
+ 95 I95  ADD R7, R20, R21           R20->ARF, R21->ARF           R7->P31  P25    23  36    42    43    44     53      -      53
+ 96 I96  ADD R2, R10, R11           R10->ARF, R11->ARF           R2->P0   P26     0  37    43    44    45     54      -      54
+ 97 I97  ADD R3, R12, R13           R12->ARF, R13->ARF           R3->P1   P27     1  37    43    44    45     54      -      54
+ 98 I98  MUL R4, R14, R15           R14->ARF, R15->ARF           R4->P2   P28     2  38    44    45    49     55      -      55
+ 99 I99  ADD R5, R16, R17           R16->ARF, R17->ARF           R5->P3   P29     3  38    44    45    46     55      -      55
+100 I100 ADD R6, R18, R19           R18->ARF, R19->ARF           R6->P4   P30     4  39    45    46    47     56      -      56
+101 I101 ADD R7, R20, R21           R20->ARF, R21->ARF           R7->P5   P31     5  39    45    46    47     56      -      56
+102 I102 ADD R2, R10, R11           R10->ARF, R11->ARF           R2->P6   P0      6  40    46    47    48     57      -      57
+103 I103 ADD R3, R12, R13           R12->ARF, R13->ARF           R3->P7   P1      7  40    46    47    48     57      -      57
+104 I104 MUL R4, R14, R15           R14->ARF, R15->ARF           R4->P8   P2      8  41    47    48    52     58      -      58
+105 I105 ADD R5, R16, R17           R16->ARF, R17->ARF           R5->P9   P3      9  41    47    48    49     58      -      58
+106 I106 ADD R6, R18, R19           R18->ARF, R19->ARF           R6->P10  P4     10  42    48    49    50     59      -      59
+107 I107 ADD R7, R20, R21           R20->ARF, R21->ARF           R7->P11  P5     11  42    48    49    50     59      -      59
+108 I108 ADD R2, R10, R11           R10->ARF, R11->ARF           R2->P12  P6     12  43    49    50    51     60      -      60
+109 I109 ADD R3, R12, R13           R12->ARF, R13->ARF           R3->P13  P7     13  43    49    50    51     60      -      60
+110 I110 MUL R4, R14, R15           R14->ARF, R15->ARF           R4->P14  P8     14  44    50    51    55     61      -      61
+111 I111 ADD R5, R16, R17           R16->ARF, R17->ARF           R5->P15  P9     15  44    50    51    52     61      -      61
+112 I112 ADD R6, R18, R19           R18->ARF, R19->ARF           R6->P16  P10    16  45    51    52    53     62      -      62
+113 I113 ADD R7, R20, R21           R20->ARF, R21->ARF           R7->P17  P11    17  45    51    52    53     62      -      62
+114 I114 ADD R2, R10, R11           R10->ARF, R11->ARF           R2->P18  P12    18  46    52    53    54     63      -      63
+115 I115 ADD R3, R12, R13           R12->ARF, R13->ARF           R3->P19  P13    19  46    52    53    54     63      -      63
+116 I116 MUL R4, R14, R15           R14->ARF, R15->ARF           R4->P20  P14    20  47    53    54    58     64      -      64
+117 I117 ADD R5, R16, R17           R16->ARF, R17->ARF           R5->P21  P15    21  47    53    54    55     64      -      64
+118 I118 ADD R6, R18, R19           R18->ARF, R19->ARF           R6->P22  P16    22  48    54    55    56     65      -      65
+119 I119 ADD R7, R20, R21           R20->ARF, R21->ARF           R7->P23  P17    23  48    54    55    56     65      -      65
+
+PHYSICAL-REGISTER VERSION TABLE
+==============================================================================
+preg arch writer  alloc ready  readers           lastRdIss lastRdRet freed@ life  freed by
+------------------------------------------------------------------------------------------
+P0   R2   I0          1     3  -                         -         -      9    8  reclaimed at retire of I6
+P1   R3   I1          1     3  -                         -         -      9    8  reclaimed at retire of I7
+P2   R4   I2          1     6  -                         -         -     10    9  reclaimed at retire of I8
+P3   R5   I3          1     3  -                         -         -     10    9  reclaimed at retire of I9
+P4   R6   I4          1     3  -                         -         -     11   10  reclaimed at retire of I10
+P5   R7   I5          1     3  -                         -         -     11   10  reclaimed at retire of I11
+P6   R2   I6          2     4  -                         -         -     12   10  reclaimed at retire of I12
+P7   R3   I7          2     4  -                         -         -     12   10  reclaimed at retire of I13
+P8   R4   I8          2     7  -                         -         -     13   11  reclaimed at retire of I14
+P9   R5   I9          2     4  -                         -         -     13   11  reclaimed at retire of I15
+P10  R6   I10         2     4  -                         -         -     14   12  reclaimed at retire of I16
+P11  R7   I11         2     4  -                         -         -     14   12  reclaimed at retire of I17
+P12  R2   I12         3     5  -                         -         -     15   12  reclaimed at retire of I18
+P13  R3   I13         3     5  -                         -         -     15   12  reclaimed at retire of I19
+P14  R4   I14         3     8  -                         -         -     16   13  reclaimed at retire of I20
+P15  R5   I15         3     5  -                         -         -     16   13  reclaimed at retire of I21
+P16  R6   I16         3     5  -                         -         -     17   14  reclaimed at retire of I22
+P17  R7   I17         3     5  -                         -         -     17   14  reclaimed at retire of I23
+P18  R2   I18         4     6  -                         -         -     18   14  reclaimed at retire of I24
+P19  R3   I19         4     6  -                         -         -     18   14  reclaimed at retire of I25
+P20  R4   I20         4     9  -                         -         -     19   15  reclaimed at retire of I26
+P21  R5   I21         4     6  -                         -         -     19   15  reclaimed at retire of I27
+P22  R6   I22         4     6  -                         -         -     20   16  reclaimed at retire of I28
+P23  R7   I23         4     6  -                         -         -     20   16  reclaimed at retire of I29
+P24  R2   I24         5     7  -                         -         -     21   16  reclaimed at retire of I30
+P25  R3   I25         5     7  -                         -         -     21   16  reclaimed at retire of I31
+P26  R4   I26         8    13  -                         -         -     22   14  reclaimed at retire of I32
+P27  R5   I27         8    10  -                         -         -     22   14  reclaimed at retire of I33
+P28  R6   I28         9    11  -                         -         -     23   14  reclaimed at retire of I34
+P29  R7   I29         9    11  -                         -         -     23   14  reclaimed at retire of I35
+P30  R2   I30        10    12  -                         -         -     24   14  reclaimed at retire of I36
+P31  R3   I31        10    12  -                         -         -     24   14  reclaimed at retire of I37
+P0   R4   I32        11    16  -                         -         -     25   14  reclaimed at retire of I38
+P1   R5   I33        11    13  -                         -         -     25   14  reclaimed at retire of I39
+P2   R6   I34        12    14  -                         -         -     26   14  reclaimed at retire of I40
+P3   R7   I35        12    14  -                         -         -     26   14  reclaimed at retire of I41
+P4   R2   I36        13    15  -                         -         -     27   14  reclaimed at retire of I42
+P5   R3   I37        13    15  -                         -         -     27   14  reclaimed at retire of I43
+P6   R4   I38        14    19  -                         -         -     28   14  reclaimed at retire of I44
+P7   R5   I39        14    16  -                         -         -     28   14  reclaimed at retire of I45
+P8   R6   I40        15    17  -                         -         -     29   14  reclaimed at retire of I46
+P9   R7   I41        15    17  -                         -         -     29   14  reclaimed at retire of I47
+P10  R2   I42        16    18  -                         -         -     30   14  reclaimed at retire of I48
+P11  R3   I43        16    18  -                         -         -     30   14  reclaimed at retire of I49
+P12  R4   I44        17    22  -                         -         -     31   14  reclaimed at retire of I50
+P13  R5   I45        17    19  -                         -         -     31   14  reclaimed at retire of I51
+P14  R6   I46        18    20  -                         -         -     32   14  reclaimed at retire of I52
+P15  R7   I47        18    20  -                         -         -     32   14  reclaimed at retire of I53
+P16  R2   I48        19    21  -                         -         -     33   14  reclaimed at retire of I54
+P17  R3   I49        19    21  -                         -         -     33   14  reclaimed at retire of I55
+P18  R4   I50        20    25  -                         -         -     34   14  reclaimed at retire of I56
+P19  R5   I51        20    22  -                         -         -     34   14  reclaimed at retire of I57
+P20  R6   I52        21    23  -                         -         -     35   14  reclaimed at retire of I58
+P21  R7   I53        21    23  -                         -         -     35   14  reclaimed at retire of I59
+P22  R2   I54        22    24  -                         -         -     36   14  reclaimed at retire of I60
+P23  R3   I55        22    24  -                         -         -     36   14  reclaimed at retire of I61
+P24  R4   I56        23    28  -                         -         -     37   14  reclaimed at retire of I62
+P25  R5   I57        23    25  -                         -         -     37   14  reclaimed at retire of I63
+P26  R6   I58        24    26  -                         -         -     38   14  reclaimed at retire of I64
+P27  R7   I59        24    26  -                         -         -     38   14  reclaimed at retire of I65
+P28  R2   I60        25    27  -                         -         -     39   14  reclaimed at retire of I66
+P29  R3   I61        25    27  -                         -         -     39   14  reclaimed at retire of I67
+P30  R4   I62        26    31  -                         -         -     40   14  reclaimed at retire of I68
+P31  R5   I63        26    28  -                         -         -     40   14  reclaimed at retire of I69
+P0   R6   I64        27    29  -                         -         -     41   14  reclaimed at retire of I70
+P1   R7   I65        27    29  -                         -         -     41   14  reclaimed at retire of I71
+P2   R2   I66        28    30  -                         -         -     42   14  reclaimed at retire of I72
+P3   R3   I67        28    30  -                         -         -     42   14  reclaimed at retire of I73
+P4   R4   I68        29    34  -                         -         -     43   14  reclaimed at retire of I74
+P5   R5   I69        29    31  -                         -         -     43   14  reclaimed at retire of I75
+P6   R6   I70        30    32  -                         -         -     44   14  reclaimed at retire of I76
+P7   R7   I71        30    32  -                         -         -     44   14  reclaimed at retire of I77
+P8   R2   I72        31    33  -                         -         -     45   14  reclaimed at retire of I78
+P9   R3   I73        31    33  -                         -         -     45   14  reclaimed at retire of I79
+P10  R4   I74        32    37  -                         -         -     46   14  reclaimed at retire of I80
+P11  R5   I75        32    34  -                         -         -     46   14  reclaimed at retire of I81
+P12  R6   I76        33    35  -                         -         -     47   14  reclaimed at retire of I82
+P13  R7   I77        33    35  -                         -         -     47   14  reclaimed at retire of I83
+P14  R2   I78        34    36  -                         -         -     48   14  reclaimed at retire of I84
+P15  R3   I79        34    36  -                         -         -     48   14  reclaimed at retire of I85
+P16  R4   I80        35    40  -                         -         -     49   14  reclaimed at retire of I86
+P17  R5   I81        35    37  -                         -         -     49   14  reclaimed at retire of I87
+P18  R6   I82        36    38  -                         -         -     50   14  reclaimed at retire of I88
+P19  R7   I83        36    38  -                         -         -     50   14  reclaimed at retire of I89
+P20  R2   I84        37    39  -                         -         -     51   14  reclaimed at retire of I90
+P21  R3   I85        37    39  -                         -         -     51   14  reclaimed at retire of I91
+P22  R4   I86        38    43  -                         -         -     52   14  reclaimed at retire of I92
+P23  R5   I87        38    40  -                         -         -     52   14  reclaimed at retire of I93
+P24  R6   I88        39    41  -                         -         -     53   14  reclaimed at retire of I94
+P25  R7   I89        39    41  -                         -         -     53   14  reclaimed at retire of I95
+P26  R2   I90        40    42  -                         -         -     54   14  reclaimed at retire of I96
+P27  R3   I91        40    42  -                         -         -     54   14  reclaimed at retire of I97
+P28  R4   I92        41    46  -                         -         -     55   14  reclaimed at retire of I98
+P29  R5   I93        41    43  -                         -         -     55   14  reclaimed at retire of I99
+P30  R6   I94        42    44  -                         -         -     56   14  reclaimed at retire of I100
+P31  R7   I95        42    44  -                         -         -     56   14  reclaimed at retire of I101
+P0   R2   I96        43    45  -                         -         -     57   14  reclaimed at retire of I102
+P1   R3   I97        43    45  -                         -         -     57   14  reclaimed at retire of I103
+P2   R4   I98        44    49  -                         -         -     58   14  reclaimed at retire of I104
+P3   R5   I99        44    46  -                         -         -     58   14  reclaimed at retire of I105
+P4   R6   I100       45    47  -                         -         -     59   14  reclaimed at retire of I106
+P5   R7   I101       45    47  -                         -         -     59   14  reclaimed at retire of I107
+P6   R2   I102       46    48  -                         -         -     60   14  reclaimed at retire of I108
+P7   R3   I103       46    48  -                         -         -     60   14  reclaimed at retire of I109
+P8   R4   I104       47    52  -                         -         -     61   14  reclaimed at retire of I110
+P9   R5   I105       47    49  -                         -         -     61   14  reclaimed at retire of I111
+P10  R6   I106       48    50  -                         -         -     62   14  reclaimed at retire of I112
+P11  R7   I107       48    50  -                         -         -     62   14  reclaimed at retire of I113
+P12  R2   I108       49    51  -                         -         -     63   14  reclaimed at retire of I114
+P13  R3   I109       49    51  -                         -         -     63   14  reclaimed at retire of I115
+P14  R4   I110       50    55  -                         -         -     64   14  reclaimed at retire of I116
+P15  R5   I111       50    52  -                         -         -     64   14  reclaimed at retire of I117
+P16  R6   I112       51    53  -                         -         -     65   14  reclaimed at retire of I118
+P17  R7   I113       51    53  -                         -         -     65   14  reclaimed at retire of I119
+P18  R2   I114       52    54  -                         -         -      -    -  still live (architectural state)
+P19  R3   I115       52    54  -                         -         -      -    -  still live (architectural state)
+P20  R4   I116       53    58  -                         -         -      -    -  still live (architectural state)
+P21  R5   I117       53    55  -                         -         -      -    -  still live (architectural state)
+P22  R6   I118       54    56  -                         -         -      -    -  still live (architectural state)
+P23  R7   I119       54    56  -                         -         -      -    -  still live (architectural state)

@@ -1,0 +1,63 @@
+run,workload,T,dataflow_T,bottleneck,gain_scheduler capacity,gain_dispatch width,gain_issue width,gain_wakeup bandwidth,gain_ALU,gain_IMUL,gain_FADD,gain_FMUL,gain_LOAD/AGU,gain_STA/STD
+base__A_orig,base,37,37,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+base__B_sched48,base,37,37,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+base__C_alu4,base,37,37,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+base__D_imul2,base,37,37,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+base__E_load3,base,37,37,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+base__F_issue8,base,37,37,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+base__G_load3_imul2,base,37,37,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+base__H_load4,base,37,37,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+base__I_load3_imul2_fmul3,base,37,37,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+base__J_loadpipe,base,37,37,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+base__K_allpipe,base,37,37,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+base__sched6,base,42,37,scheduler capacity,5,0,0,0,0,1,0,0,0,0
+base__sched12,base,39,37,scheduler capacity,2,0,0,0,0,0,0,0,2,0
+base__sched24,base,37,37,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+base__sched48,base,37,37,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+base__sched96,base,37,37,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+base__issue3_wake3,base,37,37,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+base__issue6_wake6,base,37,37,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+base__issue3_wake6,base,37,37,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+base__issue6_wake3,base,37,37,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+base__issue4_wake4,base,37,37,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+base__issue2_wake2,base,41,37,co-limited: issue width + wakeup bandwidth + LOAD/AGU,0,0,1,1,0,0,0,0,1,0
+base_x4__A_orig,base_x4,123,37,LOAD/AGU,0,0,0,0,0,0,0,0,28,0
+base_x4__B_sched48,base_x4,123,37,LOAD/AGU,0,0,0,0,0,0,0,0,36,0
+base_x4__C_alu4,base_x4,123,37,LOAD/AGU,0,0,0,0,0,0,0,0,28,0
+base_x4__D_imul2,base_x4,123,37,LOAD/AGU,0,0,0,0,0,0,0,0,36,0
+base_x4__E_load3,base_x4,96,37,co-limited: scheduler capacity + IMUL + LOAD/AGU,9,0,0,0,0,6,0,0,1,0
+base_x4__F_issue8,base_x4,123,37,LOAD/AGU,0,0,0,0,0,0,0,0,28,0
+base_x4__G_load3_imul2,base_x4,90,37,co-limited: scheduler capacity + LOAD/AGU,5,0,0,0,0,0,0,0,3,0
+base_x4__H_load4,base_x4,96,37,co-limited: IMUL + scheduler capacity + LOAD/AGU,6,0,0,0,0,9,0,0,1,0
+base_x4__I_load3_imul2_fmul3,base_x4,90,37,co-limited: scheduler capacity + LOAD/AGU,5,0,0,0,0,0,0,0,5,0
+base_x4__J_loadpipe,base_x4,95,37,co-limited: scheduler capacity + IMUL,8,0,0,0,0,8,0,0,0,0
+base_x4__K_allpipe,base_x4,85,37,co-limited: scheduler capacity + IMUL,22,0,0,0,0,1,0,0,0,0
+base_x4__sched6,base_x4,156,37,co-limited: scheduler capacity + IMUL + LOAD/AGU,33,0,0,0,0,4,0,0,3,0
+base_x4__sched12,base_x4,136,37,co-limited: LOAD/AGU + scheduler capacity + IMUL,13,0,0,0,0,2,0,0,14,0
+base_x4__sched24,base_x4,123,37,LOAD/AGU,0,0,0,0,0,0,0,0,28,0
+base_x4__sched48,base_x4,123,37,LOAD/AGU,0,0,0,0,0,0,0,0,36,0
+base_x4__sched96,base_x4,123,37,LOAD/AGU,0,0,0,0,0,0,0,0,36,0
+base_x4__issue3_wake3,base_x4,124,37,co-limited: LOAD/AGU + issue width,0,0,1,0,0,0,0,0,21,0
+base_x4__issue6_wake6,base_x4,123,37,LOAD/AGU,0,0,0,0,0,0,0,0,28,0
+base_x4__issue3_wake6,base_x4,124,37,co-limited: LOAD/AGU + issue width,0,0,1,0,0,0,0,0,22,0
+base_x4__issue6_wake3,base_x4,123,37,LOAD/AGU,0,0,0,0,0,0,0,0,26,0
+base_x4__issue4_wake4,base_x4,123,37,LOAD/AGU,0,0,0,0,0,0,0,0,28,0
+base_x4__issue2_wake2,base_x4,128,37,co-limited: LOAD/AGU + issue width + wakeup bandwidth,1,0,5,3,0,3,0,0,9,0
+s_inv4_A__A_orig,s_inv4_A,31,31,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+s_inv4_A__sched12,s_inv4_A,31,31,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+s_inv4_B__A_orig,s_inv4_B,11,6,LOAD/AGU,0,0,0,0,0,0,0,0,1,0
+s_inv4_B__sched12,s_inv4_B,11,6,LOAD/AGU,0,0,0,0,0,0,0,0,1,0
+d_inv4_A__A_orig,d_inv4_A,40,40,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+d_inv4_A__sched12,d_inv4_A,40,40,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+d_inv4_B__A_orig,d_inv4_B,16,6,LOAD/AGU,0,0,0,0,0,0,0,0,6,0
+d_inv4_B__sched12,d_inv4_B,16,6,LOAD/AGU,0,0,0,0,0,0,0,0,6,0
+s_counterexample__A_orig,s_counterexample,42,6,IMUL,0,1,0,0,0,21,0,0,0,0
+s_counterexample__E_load3,s_counterexample,42,6,IMUL,0,1,0,0,0,26,0,0,0,0
+s_counterexample__J_loadpipe,s_counterexample,42,6,IMUL,0,1,0,0,0,33,0,0,0,0
+s_counterexample__D_imul2,s_counterexample,22,6,co-limited: dispatch width + IMUL,0,1,0,0,0,1,0,0,0,0
+s_counterexample__G_load3_imul2,s_counterexample,22,6,co-limited: IMUL + dispatch width,0,1,0,0,0,6,0,0,0,0
+d_counterexample__A_orig,d_counterexample,44,44,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+d_counterexample__E_load3,d_counterexample,44,44,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+d_counterexample__J_loadpipe,d_counterexample,44,44,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+d_counterexample__D_imul2,d_counterexample,44,44,dataflow (critical path),0,0,0,0,0,0,0,0,0,0
+d_counterexample__G_load3_imul2,d_counterexample,44,44,dataflow (critical path),0,0,0,0,0,0,0,0,0,0

@@ -1,0 +1,11 @@
+# inv2a_loads_LQ
+LOAD R1, [A1]
+LOAD R2, [A2]
+LOAD R3, [A3]
+LOAD R4, [A4]
+LOAD R5, [A5]
+LOAD R6, [A6]
+LOAD R7, [A7]
+LOAD R8, [A8]
+LOAD R9, [A9]
+LOAD R10, [A10]

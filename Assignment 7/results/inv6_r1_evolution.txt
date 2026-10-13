@@ -1,0 +1,9 @@
+[inv6a_short_lifetime]
+Evolution of R1:
+  I0   renames R1 -> P0  (alloc 1, ready 3); read by: no readers; reclaimed @cycle 4 (reclaimed at retire of I1)
+  I1   renames R1 -> P1  (alloc 1, ready 3); read by: I2@issue3; still the architectural mapping
+
+[inv6b_long_lifetime]
+Evolution of R1:
+  I0   renames R1 -> P0  (alloc 1, ready 3); read by: I1@issue3; reclaimed @cycle 24 (reclaimed at retire of I2)
+  I2   renames R1 -> P2  (alloc 1, ready 3); read by: I3@issue3; still the architectural mapping

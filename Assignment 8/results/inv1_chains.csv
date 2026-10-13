@@ -1,0 +1,35 @@
+chain,uop,text,eligible_c,eligible_because,issue_c,complete_c,delay,delay_cause
+FP chain,U04,"FMUL F10, F2, F3",1,live-in/dispatch,1,5,0,none (issued the cycle it became ready)
+FP chain,U10,"FMUL F12, F10, F6",5,U04->F10,5,9,0,none (issued the cycle it became ready)
+FP chain,U17,"FMUL F14, F12, F8",9,U10->F12,9,13,0,none (issued the cycle it became ready)
+FP chain,U23,"FADD F16, F14, F15",13,U17->F14,13,16,0,none (issued the cycle it became ready)
+FP chain,U25,"FMUL F17, F16, F10",16,U23->F16,16,20,0,none (issued the cycle it became ready)
+FP chain,U28,"FADD F18, F17, F11",20,U25->F17,20,23,0,none (issued the cycle it became ready)
+FP chain,U36,"FMUL F19, F18, F12",23,U28->F18,23,27,0,none (issued the cycle it became ready)
+FP chain,U37,"FADD F20, F19, F16",27,U36->F19,27,30,0,none (issued the cycle it became ready)
+FP chain,U41,"FADD F21, F20, F17",30,U37->F20,30,33,0,none (issued the cycle it became ready)
+FP chain,U44,"FMUL F22, F21, F19",33,U41->F21,33,37,0,none (issued the cycle it became ready)
+integer address -> multiply chain,U00,"ADD R20, R1, R2",1,live-in/dispatch,1,2,0,none (issued the cycle it became ready)
+integer address -> multiply chain,U06,"ADD R22, R20, R6",2,U00->R20,2,3,0,none (issued the cycle it became ready)
+integer address -> multiply chain,U12,"ADD R25, R22, R26",3,U06->R22,3,4,0,none (issued the cycle it became ready)
+integer address -> multiply chain,U14,"IMUL R27, R25, R28",4,U12->R25,7,11,3,"no free IMUL unit - occupied: IMUL0:U07(issued c3, free c7)"
+integer address -> multiply chain,U15,"ADD R29, R27, R30",11,U14->R27,11,12,0,none (issued the cycle it became ready)
+integer address -> multiply chain,U16,"LOAD R15, [R29 + 0]",12,U15->R29,12,17,0,none (issued the cycle it became ready)
+integer address -> multiply chain,U19,"ADD R31, R15, R32",17,U16->R15,17,18,0,none (issued the cycle it became ready)
+integer address -> multiply chain,U21,"IMUL R33, R31, R34",18,U19->R31,18,22,0,none (issued the cycle it became ready)
+integer address -> multiply chain,U22,"ADD R35, R33, R36",22,U21->R33,22,23,0,none (issued the cycle it became ready)
+integer address -> multiply chain,U26,"ADD R37, R35, R38",23,U22->R35,23,24,0,none (issued the cycle it became ready)
+integer address -> multiply chain,U29,"IMUL R39, R37, R40",24,U26->R37,24,28,0,none (issued the cycle it became ready)
+integer address -> multiply chain,U30,"ADD R41, R39, R42",28,U29->R39,28,29,0,none (issued the cycle it became ready)
+integer address -> multiply chain,U31,"STORE [R41 + 0], R18",32,U27->R18,32,33,0,none (issued the cycle it became ready)
+second address chain (R43/R49/R51),U00,"ADD R20, R1, R2",1,live-in/dispatch,1,2,0,none (issued the cycle it became ready)
+second address chain (R43/R49/R51),U32,"ADD R43, R20, R44",6,U00->R20,6,7,0,none (issued the cycle it became ready)
+second address chain (R43/R49/R51),U38,"ADD R47, R43, R48",9,U32->R43,9,10,0,none (issued the cycle it became ready)
+second address chain (R43/R49/R51),U39,"IMUL R49, R47, R50",10,U38->R47,11,15,1,"no free IMUL unit - occupied: IMUL0:U14(issued c7, free c11)"
+second address chain (R43/R49/R51),U40,"LOAD R21, [R49 + 0]",15,U39->R49,17,22,2,"no free LOAD unit - occupied: LOAD0:U16(issued c12, free c17); LOAD1:U34(issued c12, free c17)"
+second address chain (R43/R49/R51),U42,"ADD R51, R49, R52",15,U39->R49,15,16,0,none (issued the cycle it became ready)
+second address chain (R43/R49/R51),U43,"LOAD R22, [R51 + 0]",16,U42->R51,22,27,6,"no free LOAD unit - occupied: LOAD0:U16(issued c12, free c17); LOAD1:U34(issued c12, free c17)"
+second address chain (R43/R49/R51),U45,"ADD R53, R51, R54",16,U42->R51,16,17,0,none (issued the cycle it became ready)
+second address chain (R43/R49/R51),U46,"STORE [R53 + 0], R22",27,U43->R22,27,28,0,none (issued the cycle it became ready)
+load-use chain (R24),U08,"ADD R24, R8, R9",2,live-in/dispatch,2,3,0,none (issued the cycle it became ready)
+load-use chain (R24),U09,"LOAD R12, [R24 + 0]",3,U08->R24,7,12,4,"no free LOAD unit - occupied: LOAD0:U02(issued c2, free c7); LOAD1:U03(issued c2, free c7)"

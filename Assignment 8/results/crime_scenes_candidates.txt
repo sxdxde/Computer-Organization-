@@ -1,0 +1,266 @@
+CYCLE 7   (SCHED=24 DISP=6 ISSUE=6 WAKE=6 ALU=3 MUL=1 FADD=2 FMUL=2 LD=2)
+Scheduler:
+  Occupied entries : 24/24
+  Ready entries    : 6
+  Waiting entries  : 18
+  Ready uops:
+    U09      LOAD R12, [R24 + 0]        needs LOAD
+    U13      LOAD R14, [R25 + 0]        needs LOAD
+    U14      IMUL R27, R25, R28         needs IMUL
+    U18      FADD F15, F13, F9          needs FADD
+    U34      LOAD R19, [R43 + 0]        needs LOAD
+    U35      LOAD R20, [R45 + 0]        needs LOAD
+  Selected uops:
+    U09
+    U13
+    U14
+    U18
+  Ready but NOT selected / NOT issued:
+    U34: no free LOAD unit - taken this cycle by older U09,U13
+    U35: no free LOAD unit - taken this cycle by older U09,U13
+  Waiting entries (not ready) and what each waits for:
+    U15 ADD R29, R27, R30          waits on R27 from U14 (issues c7)
+    U16 LOAD R15, [R29 + 0]        waits on R29 from U15 (issues c11)
+    U17 FMUL F14, F12, F8          waits on F12 from U10 (issued c5, ready c9)
+    U19 ADD R31, R15, R32          waits on R15 from U16 (issues c12)
+    U20 LOAD R16, [R31 + 0]        waits on R31 from U19 (issues c17)
+    U21 IMUL R33, R31, R34         waits on R31 from U19 (issues c17)
+    U22 ADD R35, R33, R36          waits on R33 from U21 (issues c18)
+    U23 FADD F16, F14, F15         waits on F14 from U17 (issues c9); F15 from U18 (issues c7)
+    U24 LOAD R17, [R35 + 0]        waits on R35 from U22 (issues c22)
+    U25 FMUL F17, F16, F10         waits on F16 from U23 (issues c13)
+    U26 ADD R37, R35, R38          waits on R35 from U22 (issues c22)
+    U27 LOAD R18, [R37 + 0]        waits on R37 from U26 (issues c23)
+    U28 FADD F18, F17, F11         waits on F17 from U25 (issues c16)
+    U29 IMUL R39, R37, R40         waits on R37 from U26 (issues c23)
+    U30 ADD R41, R39, R42          waits on R39 from U29 (issues c24)
+    U31 STORE [R41 + 0], R18       waits on R41 from U30 (issues c28); R18 from U27 (issues c27)
+    U36 FMUL F19, F18, F12         waits on F18 from U28 (issues c20); F12 from U10 (issued c5, ready c9)
+    U37 FADD F20, F19, F16         waits on F19 from U36 (issues c23); F16 from U23 (issues c13)
+Execution resources:
+  ALU   units 3: free at select 3, issued now 0, busy after issue 0, idle 3
+  IMUL  units 1: free at select 1, issued now 1, busy after issue 1, idle 0
+  FADD  units 2: free at select 2, issued now 1, busy after issue 1, idle 1
+  FMUL  units 2: free at select 1, issued now 0, busy after issue 1, idle 1
+  LOAD  units 2: free at select 2, issued now 2, busy after issue 2, idle 0
+  STA   units 1: free at select 1, issued now 0, busy after issue 0, idle 1
+  STD   units 1: free at select 1, issued now 0, busy after issue 0, idle 1
+  BR    units 1: free at select 1, issued now 0, busy after issue 0, idle 1
+Issue slots:
+  Used: 4   Remaining: 2   (width 6)
+Wakeup:
+  Available bandwidth: 6 operands/cycle   Used: 0   Demand: 0   Deferred: 0
+
+CYCLE 12   (SCHED=24 DISP=6 ISSUE=6 WAKE=6 ALU=3 MUL=1 FADD=2 FMUL=2 LD=2)
+Scheduler:
+  Occupied entries : 24/24
+  Ready entries    : 3
+  Waiting entries  : 21
+  Ready uops:
+    U16      LOAD R15, [R29 + 0]        needs LOAD
+    U34      LOAD R19, [R43 + 0]        needs LOAD
+    U35      LOAD R20, [R45 + 0]        needs LOAD
+  Selected uops:
+    U16
+    U34
+  Ready but NOT selected / NOT issued:
+    U35: no free LOAD unit - taken this cycle by older U16,U34
+  Waiting entries (not ready) and what each waits for:
+    U19 ADD R31, R15, R32          waits on R15 from U16 (issues c12)
+    U20 LOAD R16, [R31 + 0]        waits on R31 from U19 (issues c17)
+    U21 IMUL R33, R31, R34         waits on R31 from U19 (issues c17)
+    U22 ADD R35, R33, R36          waits on R33 from U21 (issues c18)
+    U23 FADD F16, F14, F15         waits on F14 from U17 (issued c9, ready c13)
+    U24 LOAD R17, [R35 + 0]        waits on R35 from U22 (issues c22)
+    U25 FMUL F17, F16, F10         waits on F16 from U23 (issues c13)
+    U26 ADD R37, R35, R38          waits on R35 from U22 (issues c22)
+    U27 LOAD R18, [R37 + 0]        waits on R37 from U26 (issues c23)
+    U28 FADD F18, F17, F11         waits on F17 from U25 (issues c16)
+    U29 IMUL R39, R37, R40         waits on R37 from U26 (issues c23)
+    U30 ADD R41, R39, R42          waits on R39 from U29 (issues c24)
+    U31 STORE [R41 + 0], R18       waits on R41 from U30 (issues c28); R18 from U27 (issues c27)
+    U36 FMUL F19, F18, F12         waits on F18 from U28 (issues c20)
+    U37 FADD F20, F19, F16         waits on F19 from U36 (issues c23); F16 from U23 (issues c13)
+    U40 LOAD R21, [R49 + 0]        waits on R49 from U39 (issued c11, ready c15)
+    U41 FADD F21, F20, F17         waits on F20 from U37 (issues c27); F17 from U25 (issues c16)
+    U42 ADD R51, R49, R52          waits on R49 from U39 (issued c11, ready c15)
+    U43 LOAD R22, [R51 + 0]        waits on R51 from U42 (issues c15)
+    U44 FMUL F22, F21, F19         waits on F21 from U41 (issues c30); F19 from U36 (issues c23)
+    U45 ADD R53, R51, R54          waits on R51 from U42 (issues c15)
+Execution resources:
+  ALU   units 3: free at select 3, issued now 0, busy after issue 0, idle 3
+  IMUL  units 1: free at select 0, issued now 0, busy after issue 1, idle 0
+  FADD  units 2: free at select 2, issued now 0, busy after issue 0, idle 2
+  FMUL  units 2: free at select 1, issued now 0, busy after issue 1, idle 1
+  LOAD  units 2: free at select 2, issued now 2, busy after issue 2, idle 0
+  STA   units 1: free at select 1, issued now 0, busy after issue 0, idle 1
+  STD   units 1: free at select 1, issued now 0, busy after issue 0, idle 1
+  BR    units 1: free at select 1, issued now 0, busy after issue 0, idle 1
+Issue slots:
+  Used: 2   Remaining: 4   (width 6)
+Wakeup:
+  Available bandwidth: 6 operands/cycle   Used: 1   Demand: 1   Deferred: 0
+
+CYCLE 17   (SCHED=24 DISP=6 ISSUE=6 WAKE=6 ALU=3 MUL=1 FADD=2 FMUL=2 LD=2)
+Scheduler:
+  Occupied entries : 19/24
+  Ready entries    : 5
+  Waiting entries  : 14
+  Ready uops:
+    U19      ADD R31, R15, R32          needs ALU
+    U35      LOAD R20, [R45 + 0]        needs LOAD
+    U40      LOAD R21, [R49 + 0]        needs LOAD
+    U43      LOAD R22, [R51 + 0]        needs LOAD
+    U46.STA  STORE [R53 + 0], R22       needs STA+STD
+  Selected uops:
+    U19
+    U35
+    U40
+    U46.STA
+  Ready but NOT selected / NOT issued:
+    U43: no free LOAD unit - taken this cycle by older U35,U40
+  Waiting entries (not ready) and what each waits for:
+    U20 LOAD R16, [R31 + 0]        waits on R31 from U19 (issues c17)
+    U21 IMUL R33, R31, R34         waits on R31 from U19 (issues c17)
+    U22 ADD R35, R33, R36          waits on R33 from U21 (issues c18)
+    U24 LOAD R17, [R35 + 0]        waits on R35 from U22 (issues c22)
+    U26 ADD R37, R35, R38          waits on R35 from U22 (issues c22)
+    U27 LOAD R18, [R37 + 0]        waits on R37 from U26 (issues c23)
+    U28 FADD F18, F17, F11         waits on F17 from U25 (issued c16, ready c20)
+    U29 IMUL R39, R37, R40         waits on R37 from U26 (issues c23)
+    U30 ADD R41, R39, R42          waits on R39 from U29 (issues c24)
+    U31 STORE [R41 + 0], R18       waits on R41 from U30 (issues c28); R18 from U27 (issues c27)
+    U36 FMUL F19, F18, F12         waits on F18 from U28 (issues c20)
+    U37 FADD F20, F19, F16         waits on F19 from U36 (issues c23)
+    U41 FADD F21, F20, F17         waits on F20 from U37 (issues c27); F17 from U25 (issued c16, ready c20)
+    U44 FMUL F22, F21, F19         waits on F21 from U41 (issues c30); F19 from U36 (issues c23)
+Execution resources:
+  ALU   units 3: free at select 3, issued now 1, busy after issue 1, idle 2
+  IMUL  units 1: free at select 1, issued now 0, busy after issue 0, idle 1
+  FADD  units 2: free at select 2, issued now 0, busy after issue 0, idle 2
+  FMUL  units 2: free at select 1, issued now 0, busy after issue 1, idle 1
+  LOAD  units 2: free at select 2, issued now 2, busy after issue 2, idle 0
+  STA   units 1: free at select 1, issued now 1, busy after issue 1, idle 0
+  STD   units 1: free at select 1, issued now 0, busy after issue 0, idle 1
+  BR    units 1: free at select 1, issued now 0, busy after issue 0, idle 1
+Issue slots:
+  Used: 4   Remaining: 2   (width 6)
+Wakeup:
+  Available bandwidth: 6 operands/cycle   Used: 2   Demand: 2   Deferred: 0
+
+CYCLE 18   (SCHED=24 DISP=6 ISSUE=6 WAKE=6 ALU=3 MUL=1 FADD=2 FMUL=2 LD=2)
+Scheduler:
+  Occupied entries : 16/24
+  Ready entries    : 3
+  Waiting entries  : 13
+  Ready uops:
+    U20      LOAD R16, [R31 + 0]        needs LOAD
+    U21      IMUL R33, R31, R34         needs IMUL
+    U43      LOAD R22, [R51 + 0]        needs LOAD
+  Selected uops:
+    U21
+  Ready but NOT selected / NOT issued:
+    U20: no free LOAD unit - occupied: LOAD0:U35(issued c17, free c22); LOAD1:U40(issued c17, free c22)
+    U43: no free LOAD unit - occupied: LOAD0:U35(issued c17, free c22); LOAD1:U40(issued c17, free c22)
+  Waiting entries (not ready) and what each waits for:
+    U22 ADD R35, R33, R36          waits on R33 from U21 (issues c18)
+    U24 LOAD R17, [R35 + 0]        waits on R35 from U22 (issues c22)
+    U26 ADD R37, R35, R38          waits on R35 from U22 (issues c22)
+    U27 LOAD R18, [R37 + 0]        waits on R37 from U26 (issues c23)
+    U28 FADD F18, F17, F11         waits on F17 from U25 (issued c16, ready c20)
+    U29 IMUL R39, R37, R40         waits on R37 from U26 (issues c23)
+    U30 ADD R41, R39, R42          waits on R39 from U29 (issues c24)
+    U31 STORE [R41 + 0], R18       waits on R41 from U30 (issues c28); R18 from U27 (issues c27)
+    U36 FMUL F19, F18, F12         waits on F18 from U28 (issues c20)
+    U37 FADD F20, F19, F16         waits on F19 from U36 (issues c23)
+    U41 FADD F21, F20, F17         waits on F20 from U37 (issues c27); F17 from U25 (issued c16, ready c20)
+    U44 FMUL F22, F21, F19         waits on F21 from U41 (issues c30); F19 from U36 (issues c23)
+    U46 STORE [R53 + 0], R22       waits on R22 from U43 (issues c22)
+Execution resources:
+  ALU   units 3: free at select 3, issued now 0, busy after issue 0, idle 3
+  IMUL  units 1: free at select 1, issued now 1, busy after issue 1, idle 0
+  FADD  units 2: free at select 2, issued now 0, busy after issue 0, idle 2
+  FMUL  units 2: free at select 1, issued now 0, busy after issue 1, idle 1
+  LOAD  units 2: free at select 0, issued now 0, busy after issue 2, idle 0
+  STA   units 1: free at select 1, issued now 0, busy after issue 0, idle 1
+  STD   units 1: free at select 1, issued now 0, busy after issue 0, idle 1
+  BR    units 1: free at select 1, issued now 0, busy after issue 0, idle 1
+Issue slots:
+  Used: 1   Remaining: 5   (width 6)
+Wakeup:
+  Available bandwidth: 6 operands/cycle   Used: 0   Demand: 0   Deferred: 0
+
+CYCLE 22   (SCHED=24 DISP=6 ISSUE=6 WAKE=6 ALU=3 MUL=1 FADD=2 FMUL=2 LD=2)
+Scheduler:
+  Occupied entries : 14/24
+  Ready entries    : 3
+  Waiting entries  : 11
+  Ready uops:
+    U20      LOAD R16, [R31 + 0]        needs LOAD
+    U22      ADD R35, R33, R36          needs ALU
+    U43      LOAD R22, [R51 + 0]        needs LOAD
+  Selected uops:
+    U20
+    U22
+    U43
+  Ready but NOT selected / NOT issued:
+  Waiting entries (not ready) and what each waits for:
+    U24 LOAD R17, [R35 + 0]        waits on R35 from U22 (issues c22)
+    U26 ADD R37, R35, R38          waits on R35 from U22 (issues c22)
+    U27 LOAD R18, [R37 + 0]        waits on R37 from U26 (issues c23)
+    U29 IMUL R39, R37, R40         waits on R37 from U26 (issues c23)
+    U30 ADD R41, R39, R42          waits on R39 from U29 (issues c24)
+    U31 STORE [R41 + 0], R18       waits on R41 from U30 (issues c28); R18 from U27 (issues c27)
+    U36 FMUL F19, F18, F12         waits on F18 from U28 (issued c20, ready c23)
+    U37 FADD F20, F19, F16         waits on F19 from U36 (issues c23)
+    U41 FADD F21, F20, F17         waits on F20 from U37 (issues c27)
+    U44 FMUL F22, F21, F19         waits on F21 from U41 (issues c30); F19 from U36 (issues c23)
+    U46 STORE [R53 + 0], R22       waits on R22 from U43 (issues c22)
+Execution resources:
+  ALU   units 3: free at select 3, issued now 1, busy after issue 1, idle 2
+  IMUL  units 1: free at select 1, issued now 0, busy after issue 0, idle 1
+  FADD  units 2: free at select 1, issued now 0, busy after issue 1, idle 1
+  FMUL  units 2: free at select 2, issued now 0, busy after issue 0, idle 2
+  LOAD  units 2: free at select 2, issued now 2, busy after issue 2, idle 0
+  STA   units 1: free at select 1, issued now 0, busy after issue 0, idle 1
+  STD   units 1: free at select 1, issued now 0, busy after issue 0, idle 1
+  BR    units 1: free at select 1, issued now 0, busy after issue 0, idle 1
+Issue slots:
+  Used: 3   Remaining: 3   (width 6)
+Wakeup:
+  Available bandwidth: 6 operands/cycle   Used: 3   Demand: 3   Deferred: 0
+
+CYCLE 27   (SCHED=24 DISP=6 ISSUE=6 WAKE=6 ALU=3 MUL=1 FADD=2 FMUL=2 LD=2)
+Scheduler:
+  Occupied entries : 8/24
+  Ready entries    : 4
+  Waiting entries  : 4
+  Ready uops:
+    U24      LOAD R17, [R35 + 0]        needs LOAD
+    U27      LOAD R18, [R37 + 0]        needs LOAD
+    U37      FADD F20, F19, F16         needs FADD
+    U46.STD  STORE [R53 + 0], R22       needs STA+STD
+  Selected uops:
+    U24
+    U27
+    U37
+    U46.STD
+  Ready but NOT selected / NOT issued:
+  Waiting entries (not ready) and what each waits for:
+    U30 ADD R41, R39, R42          waits on R39 from U29 (issued c24, ready c28)
+    U31 STORE [R41 + 0], R18       waits on R41 from U30 (issues c28); R18 from U27 (issues c27)
+    U41 FADD F21, F20, F17         waits on F20 from U37 (issues c27)
+    U44 FMUL F22, F21, F19         waits on F21 from U41 (issues c30)
+Execution resources:
+  ALU   units 3: free at select 3, issued now 0, busy after issue 0, idle 3
+  IMUL  units 1: free at select 0, issued now 0, busy after issue 1, idle 0
+  FADD  units 2: free at select 2, issued now 1, busy after issue 1, idle 1
+  FMUL  units 2: free at select 2, issued now 0, busy after issue 0, idle 2
+  LOAD  units 2: free at select 2, issued now 2, busy after issue 2, idle 0
+  STA   units 1: free at select 1, issued now 0, busy after issue 0, idle 1
+  STD   units 1: free at select 1, issued now 1, busy after issue 1, idle 0
+  BR    units 1: free at select 1, issued now 0, busy after issue 0, idle 1
+Issue slots:
+  Used: 4   Remaining: 2   (width 6)
+Wakeup:
+  Available bandwidth: 6 operands/cycle   Used: 1   Demand: 1   Deferred: 0

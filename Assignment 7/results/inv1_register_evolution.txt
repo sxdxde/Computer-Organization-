@@ -1,0 +1,14 @@
+Evolution of R1:
+  I0   renames R1 -> P0  (alloc 1, ready 3); read by: I2@issue3; reclaimed @cycle 8 (reclaimed at retire of I3)
+  I3   renames R1 -> P3  (alloc 1, ready 3); read by: I4@issue3; reclaimed @cycle 10 (reclaimed at retire of I7)
+  I7   renames R1 -> P7  (alloc 2, ready 9); read by: I8@issue9, I9@issue13; reclaimed @cycle 17 (reclaimed at retire of I11)
+  I11  renames R1 -> P11  (alloc 2, ready 16); read by: no readers; still the architectural mapping
+
+Evolution of R2:
+  I1   renames R2 -> P1  (alloc 1, ready 3); read by: I2@issue3; reclaimed @cycle 8 (reclaimed at retire of I5)
+  I5   renames R2 -> P5  (alloc 1, ready 3); read by: I6@issue7; reclaimed @cycle 15 (reclaimed at retire of I9)
+  I9   renames R2 -> P9  (alloc 2, ready 14); read by: I10@issue14, I11@issue15; still the architectural mapping
+
+Evolution of R4:
+  I2   renames R4 -> P2  (alloc 1, ready 7); read by: I6@issue7; reclaimed @cycle 14 (reclaimed at retire of I8)
+  I8   renames R4 -> P8  (alloc 2, ready 13); read by: I9@issue13; still the architectural mapping

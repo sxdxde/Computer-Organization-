@@ -1,0 +1,374 @@
+=== inv2c_dependents_IQ ===
+Config: ROB=24 PRF=32 IQ=12 LQ=6 SQ=4 CKPT=2 RET=4  decode=6 alloc=6 issue=6 decodeQ=12
+
+Cycle 0
+------------------------------------------------------------------------------
+  DECODE 6 uop(s) into decode queue
+  STATE ROB 0/24 (done-unretired 0) | free pregs 32/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 6/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 1
+------------------------------------------------------------------------------
+  ALLOC  I0   LOAD R1, [A]             reads[-] R1->P0 (old ARF) ROB#0
+  ALLOC  I1   ADD R2, R1, R10          reads[R1(P0), R10(ARF)] R2->P1 (old ARF) ROB#1
+  ALLOC  I2   ADD R3, R1, R10          reads[R1(P0), R10(ARF)] R3->P2 (old ARF) ROB#2
+  ALLOC  I3   ADD R4, R1, R10          reads[R1(P0), R10(ARF)] R4->P3 (old ARF) ROB#3
+  ALLOC  I4   ADD R5, R1, R10          reads[R1(P0), R10(ARF)] R5->P4 (old ARF) ROB#4
+  ALLOC  I5   ADD R6, R1, R10          reads[R1(P0), R10(ARF)] R6->P5 (old ARF) ROB#5
+  DECODE 6 uop(s) into decode queue
+  STATE ROB 6/24 (done-unretired 0) | free pregs 26/32 | IQ 6/12 | LQ 1/6 | SQ 0/4 | CKPT 0/2 | DECQ 6/12
+  COUNT alloc=6 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 2
+------------------------------------------------------------------------------
+  ALLOC  I6   ADD R7, R1, R10          reads[R1(P0), R10(ARF)] R7->P6 (old ARF) ROB#6
+  ALLOC  I7   ADD R8, R1, R10          reads[R1(P0), R10(ARF)] R8->P7 (old ARF) ROB#7
+  ALLOC  I8   ADD R9, R1, R10          reads[R1(P0), R10(ARF)] R9->P8 (old ARF) ROB#8
+  ALLOC  I9   ADD R2, R1, R10          reads[R1(P0), R10(ARF)] R2->P9 (old P1) ROB#9
+  ALLOC  I10  ADD R3, R1, R10          reads[R1(P0), R10(ARF)] R3->P10 (old P2) ROB#10
+  ALLOC  I11  ADD R4, R1, R10          reads[R1(P0), R10(ARF)] R4->P11 (old P3) ROB#11
+  ISSUE  I0   LOAD   completes @22
+  DECODE 6 uop(s) into decode queue
+  STATE ROB 12/24 (done-unretired 0) | free pregs 20/32 | IQ 11/12 | LQ 1/6 | SQ 0/4 | CKPT 0/2 | DECQ 6/12
+  COUNT alloc=6 issue=1 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 3
+------------------------------------------------------------------------------
+  ALLOC  I12  ADD R5, R1, R10          reads[R1(P0), R10(ARF)] R5->P12 (old P4) ROB#12
+  ALLOC-STALL I13 (ADD R6, R1, R10) blocked on IQ
+  DECODE 3 uop(s) into decode queue
+  >> alloc stall on IQ at I13: IQ full (12/12); 12 entries are waiting on source operands (entries free only when a uop issues)
+     avail: ROB 13/24, PRF free 19, IQ 12/12, LQ 1/6, SQ 0/4, CKPT 0/2
+     root : oldest waiting entry: I1 (ADD) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 13/24 (done-unretired 0) | free pregs 19/32 | IQ 12/12 | LQ 1/6 | SQ 0/4 | CKPT 0/2 | DECQ 8/12
+  COUNT alloc=1 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(IQ)
+
+Cycle 4
+------------------------------------------------------------------------------
+  ALLOC-STALL I13 (ADD R6, R1, R10) blocked on IQ
+  >> alloc stall on IQ at I13: IQ full (12/12); 12 entries are waiting on source operands (entries free only when a uop issues)
+     avail: ROB 13/24, PRF free 19, IQ 12/12, LQ 1/6, SQ 0/4, CKPT 0/2
+     root : oldest waiting entry: I1 (ADD) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 13/24 (done-unretired 0) | free pregs 19/32 | IQ 12/12 | LQ 1/6 | SQ 0/4 | CKPT 0/2 | DECQ 8/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(IQ)
+
+Cycle 5
+------------------------------------------------------------------------------
+  ALLOC-STALL I13 (ADD R6, R1, R10) blocked on IQ
+  >> alloc stall on IQ at I13: IQ full (12/12); 12 entries are waiting on source operands (entries free only when a uop issues)
+     avail: ROB 13/24, PRF free 19, IQ 12/12, LQ 1/6, SQ 0/4, CKPT 0/2
+     root : oldest waiting entry: I1 (ADD) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 13/24 (done-unretired 0) | free pregs 19/32 | IQ 12/12 | LQ 1/6 | SQ 0/4 | CKPT 0/2 | DECQ 8/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(IQ)
+
+Cycle 6
+------------------------------------------------------------------------------
+  ALLOC-STALL I13 (ADD R6, R1, R10) blocked on IQ
+  >> alloc stall on IQ at I13: IQ full (12/12); 12 entries are waiting on source operands (entries free only when a uop issues)
+     avail: ROB 13/24, PRF free 19, IQ 12/12, LQ 1/6, SQ 0/4, CKPT 0/2
+     root : oldest waiting entry: I1 (ADD) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 13/24 (done-unretired 0) | free pregs 19/32 | IQ 12/12 | LQ 1/6 | SQ 0/4 | CKPT 0/2 | DECQ 8/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(IQ)
+
+Cycle 7
+------------------------------------------------------------------------------
+  ALLOC-STALL I13 (ADD R6, R1, R10) blocked on IQ
+  >> alloc stall on IQ at I13: IQ full (12/12); 12 entries are waiting on source operands (entries free only when a uop issues)
+     avail: ROB 13/24, PRF free 19, IQ 12/12, LQ 1/6, SQ 0/4, CKPT 0/2
+     root : oldest waiting entry: I1 (ADD) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 13/24 (done-unretired 0) | free pregs 19/32 | IQ 12/12 | LQ 1/6 | SQ 0/4 | CKPT 0/2 | DECQ 8/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(IQ)
+
+Cycle 8
+------------------------------------------------------------------------------
+  ALLOC-STALL I13 (ADD R6, R1, R10) blocked on IQ
+  >> alloc stall on IQ at I13: IQ full (12/12); 12 entries are waiting on source operands (entries free only when a uop issues)
+     avail: ROB 13/24, PRF free 19, IQ 12/12, LQ 1/6, SQ 0/4, CKPT 0/2
+     root : oldest waiting entry: I1 (ADD) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 13/24 (done-unretired 0) | free pregs 19/32 | IQ 12/12 | LQ 1/6 | SQ 0/4 | CKPT 0/2 | DECQ 8/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(IQ)
+
+Cycle 9
+------------------------------------------------------------------------------
+  ALLOC-STALL I13 (ADD R6, R1, R10) blocked on IQ
+  >> alloc stall on IQ at I13: IQ full (12/12); 12 entries are waiting on source operands (entries free only when a uop issues)
+     avail: ROB 13/24, PRF free 19, IQ 12/12, LQ 1/6, SQ 0/4, CKPT 0/2
+     root : oldest waiting entry: I1 (ADD) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 13/24 (done-unretired 0) | free pregs 19/32 | IQ 12/12 | LQ 1/6 | SQ 0/4 | CKPT 0/2 | DECQ 8/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(IQ)
+
+Cycle 10
+------------------------------------------------------------------------------
+  ALLOC-STALL I13 (ADD R6, R1, R10) blocked on IQ
+  >> alloc stall on IQ at I13: IQ full (12/12); 12 entries are waiting on source operands (entries free only when a uop issues)
+     avail: ROB 13/24, PRF free 19, IQ 12/12, LQ 1/6, SQ 0/4, CKPT 0/2
+     root : oldest waiting entry: I1 (ADD) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 13/24 (done-unretired 0) | free pregs 19/32 | IQ 12/12 | LQ 1/6 | SQ 0/4 | CKPT 0/2 | DECQ 8/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(IQ)
+
+Cycle 11
+------------------------------------------------------------------------------
+  ALLOC-STALL I13 (ADD R6, R1, R10) blocked on IQ
+  >> alloc stall on IQ at I13: IQ full (12/12); 12 entries are waiting on source operands (entries free only when a uop issues)
+     avail: ROB 13/24, PRF free 19, IQ 12/12, LQ 1/6, SQ 0/4, CKPT 0/2
+     root : oldest waiting entry: I1 (ADD) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 13/24 (done-unretired 0) | free pregs 19/32 | IQ 12/12 | LQ 1/6 | SQ 0/4 | CKPT 0/2 | DECQ 8/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(IQ)
+
+Cycle 12
+------------------------------------------------------------------------------
+  ALLOC-STALL I13 (ADD R6, R1, R10) blocked on IQ
+  >> alloc stall on IQ at I13: IQ full (12/12); 12 entries are waiting on source operands (entries free only when a uop issues)
+     avail: ROB 13/24, PRF free 19, IQ 12/12, LQ 1/6, SQ 0/4, CKPT 0/2
+     root : oldest waiting entry: I1 (ADD) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 13/24 (done-unretired 0) | free pregs 19/32 | IQ 12/12 | LQ 1/6 | SQ 0/4 | CKPT 0/2 | DECQ 8/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(IQ)
+
+Cycle 13
+------------------------------------------------------------------------------
+  ALLOC-STALL I13 (ADD R6, R1, R10) blocked on IQ
+  >> alloc stall on IQ at I13: IQ full (12/12); 12 entries are waiting on source operands (entries free only when a uop issues)
+     avail: ROB 13/24, PRF free 19, IQ 12/12, LQ 1/6, SQ 0/4, CKPT 0/2
+     root : oldest waiting entry: I1 (ADD) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 13/24 (done-unretired 0) | free pregs 19/32 | IQ 12/12 | LQ 1/6 | SQ 0/4 | CKPT 0/2 | DECQ 8/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(IQ)
+
+Cycle 14
+------------------------------------------------------------------------------
+  ALLOC-STALL I13 (ADD R6, R1, R10) blocked on IQ
+  >> alloc stall on IQ at I13: IQ full (12/12); 12 entries are waiting on source operands (entries free only when a uop issues)
+     avail: ROB 13/24, PRF free 19, IQ 12/12, LQ 1/6, SQ 0/4, CKPT 0/2
+     root : oldest waiting entry: I1 (ADD) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 13/24 (done-unretired 0) | free pregs 19/32 | IQ 12/12 | LQ 1/6 | SQ 0/4 | CKPT 0/2 | DECQ 8/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(IQ)
+
+Cycle 15
+------------------------------------------------------------------------------
+  ALLOC-STALL I13 (ADD R6, R1, R10) blocked on IQ
+  >> alloc stall on IQ at I13: IQ full (12/12); 12 entries are waiting on source operands (entries free only when a uop issues)
+     avail: ROB 13/24, PRF free 19, IQ 12/12, LQ 1/6, SQ 0/4, CKPT 0/2
+     root : oldest waiting entry: I1 (ADD) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 13/24 (done-unretired 0) | free pregs 19/32 | IQ 12/12 | LQ 1/6 | SQ 0/4 | CKPT 0/2 | DECQ 8/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(IQ)
+
+Cycle 16
+------------------------------------------------------------------------------
+  ALLOC-STALL I13 (ADD R6, R1, R10) blocked on IQ
+  >> alloc stall on IQ at I13: IQ full (12/12); 12 entries are waiting on source operands (entries free only when a uop issues)
+     avail: ROB 13/24, PRF free 19, IQ 12/12, LQ 1/6, SQ 0/4, CKPT 0/2
+     root : oldest waiting entry: I1 (ADD) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 13/24 (done-unretired 0) | free pregs 19/32 | IQ 12/12 | LQ 1/6 | SQ 0/4 | CKPT 0/2 | DECQ 8/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(IQ)
+
+Cycle 17
+------------------------------------------------------------------------------
+  ALLOC-STALL I13 (ADD R6, R1, R10) blocked on IQ
+  >> alloc stall on IQ at I13: IQ full (12/12); 12 entries are waiting on source operands (entries free only when a uop issues)
+     avail: ROB 13/24, PRF free 19, IQ 12/12, LQ 1/6, SQ 0/4, CKPT 0/2
+     root : oldest waiting entry: I1 (ADD) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 13/24 (done-unretired 0) | free pregs 19/32 | IQ 12/12 | LQ 1/6 | SQ 0/4 | CKPT 0/2 | DECQ 8/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(IQ)
+
+Cycle 18
+------------------------------------------------------------------------------
+  ALLOC-STALL I13 (ADD R6, R1, R10) blocked on IQ
+  >> alloc stall on IQ at I13: IQ full (12/12); 12 entries are waiting on source operands (entries free only when a uop issues)
+     avail: ROB 13/24, PRF free 19, IQ 12/12, LQ 1/6, SQ 0/4, CKPT 0/2
+     root : oldest waiting entry: I1 (ADD) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 13/24 (done-unretired 0) | free pregs 19/32 | IQ 12/12 | LQ 1/6 | SQ 0/4 | CKPT 0/2 | DECQ 8/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(IQ)
+
+Cycle 19
+------------------------------------------------------------------------------
+  ALLOC-STALL I13 (ADD R6, R1, R10) blocked on IQ
+  >> alloc stall on IQ at I13: IQ full (12/12); 12 entries are waiting on source operands (entries free only when a uop issues)
+     avail: ROB 13/24, PRF free 19, IQ 12/12, LQ 1/6, SQ 0/4, CKPT 0/2
+     root : oldest waiting entry: I1 (ADD) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 13/24 (done-unretired 0) | free pregs 19/32 | IQ 12/12 | LQ 1/6 | SQ 0/4 | CKPT 0/2 | DECQ 8/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(IQ)
+
+Cycle 20
+------------------------------------------------------------------------------
+  ALLOC-STALL I13 (ADD R6, R1, R10) blocked on IQ
+  >> alloc stall on IQ at I13: IQ full (12/12); 12 entries are waiting on source operands (entries free only when a uop issues)
+     avail: ROB 13/24, PRF free 19, IQ 12/12, LQ 1/6, SQ 0/4, CKPT 0/2
+     root : oldest waiting entry: I1 (ADD) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 13/24 (done-unretired 0) | free pregs 19/32 | IQ 12/12 | LQ 1/6 | SQ 0/4 | CKPT 0/2 | DECQ 8/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(IQ)
+
+Cycle 21
+------------------------------------------------------------------------------
+  ALLOC-STALL I13 (ADD R6, R1, R10) blocked on IQ
+  >> alloc stall on IQ at I13: IQ full (12/12); 12 entries are waiting on source operands (entries free only when a uop issues)
+     avail: ROB 13/24, PRF free 19, IQ 12/12, LQ 1/6, SQ 0/4, CKPT 0/2
+     root : oldest waiting entry: I1 (ADD) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 13/24 (done-unretired 0) | free pregs 19/32 | IQ 12/12 | LQ 1/6 | SQ 0/4 | CKPT 0/2 | DECQ 8/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(IQ)
+
+Cycle 22
+------------------------------------------------------------------------------
+  ALLOC-STALL I13 (ADD R6, R1, R10) blocked on IQ
+  COMPLETE I0 (LOAD) -> P0 ready
+  ISSUE  I1   ADD    completes @23
+  ISSUE  I2   ADD    completes @23
+  ISSUE  I3   ADD    completes @23
+  ISSUE  I4   ADD    completes @23
+  ISSUE  I5   ADD    completes @23
+  ISSUE  I6   ADD    completes @23
+  >> alloc stall on IQ at I13: IQ full (12/12); 12 entries are waiting on source operands (entries free only when a uop issues)
+     avail: ROB 13/24, PRF free 19, IQ 12/12, LQ 1/6, SQ 0/4, CKPT 0/2
+     root : oldest waiting entry: I1 (ADD) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 13/24 (done-unretired 1) | free pregs 19/32 | IQ 6/12 | LQ 1/6 | SQ 0/4 | CKPT 0/2 | DECQ 8/12
+  COUNT alloc=0 issue=6 complete=1 retire=0 squash=0 | alloc_stalled=YES(IQ)
+
+Cycle 23
+------------------------------------------------------------------------------
+  ALLOC  I13  ADD R6, R1, R10          reads[R1(P0), R10(ARF)] R6->P13 (old P5) ROB#13
+  ALLOC  I14  ADD R7, R1, R10          reads[R1(P0), R10(ARF)] R7->P14 (old P6) ROB#14
+  ALLOC  I15  ADD R8, R1, R10          reads[R1(P0), R10(ARF)] R8->P15 (old P7) ROB#15
+  ALLOC  I16  ADD R9, R1, R10          reads[R1(P0), R10(ARF)] R9->P16 (old P8) ROB#16
+  ALLOC  I17  ADD R2, R1, R10          reads[R1(P0), R10(ARF)] R2->P17 (old P9) ROB#17
+  ALLOC  I18  ADD R3, R1, R10          reads[R1(P0), R10(ARF)] R3->P18 (old P10) ROB#18
+  COMPLETE I1 (ADD) -> P1 ready
+  COMPLETE I2 (ADD) -> P2 ready
+  COMPLETE I3 (ADD) -> P3 ready
+  COMPLETE I4 (ADD) -> P4 ready
+  COMPLETE I5 (ADD) -> P5 ready
+  COMPLETE I6 (ADD) -> P6 ready
+  RETIRE I0   LOAD R1, [A]            
+  ISSUE  I7   ADD    completes @24
+  ISSUE  I8   ADD    completes @24
+  ISSUE  I9   ADD    completes @24
+  ISSUE  I10  ADD    completes @24
+  ISSUE  I11  ADD    completes @24
+  ISSUE  I12  ADD    completes @24
+  STATE ROB 18/24 (done-unretired 6) | free pregs 13/32 | IQ 6/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 2/12
+  COUNT alloc=6 issue=6 complete=6 retire=1 squash=0 | alloc_stalled=no
+
+Cycle 24
+------------------------------------------------------------------------------
+  ALLOC  I19  ADD R4, R1, R10          reads[R1(P0), R10(ARF)] R4->P19 (old P11) ROB#19
+  ALLOC  I20  ADD R5, R1, R10          reads[R1(P0), R10(ARF)] R5->P20 (old P12) ROB#20
+  COMPLETE I7 (ADD) -> P7 ready
+  COMPLETE I8 (ADD) -> P8 ready
+  COMPLETE I9 (ADD) -> P9 ready
+  COMPLETE I10 (ADD) -> P10 ready
+  COMPLETE I11 (ADD) -> P11 ready
+  COMPLETE I12 (ADD) -> P12 ready
+  RETIRE I1   ADD R2, R1, R10         
+  RETIRE I2   ADD R3, R1, R10         
+  RETIRE I3   ADD R4, R1, R10         
+  RETIRE I4   ADD R5, R1, R10         
+  ISSUE  I13  ADD    completes @25
+  ISSUE  I14  ADD    completes @25
+  ISSUE  I15  ADD    completes @25
+  ISSUE  I16  ADD    completes @25
+  ISSUE  I17  ADD    completes @25
+  ISSUE  I18  ADD    completes @25
+  STATE ROB 16/24 (done-unretired 8) | free pregs 11/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=2 issue=6 complete=6 retire=4 squash=0 | alloc_stalled=no
+
+Cycle 25
+------------------------------------------------------------------------------
+  COMPLETE I13 (ADD) -> P13 ready
+  COMPLETE I14 (ADD) -> P14 ready
+  COMPLETE I15 (ADD) -> P15 ready
+  COMPLETE I16 (ADD) -> P16 ready
+  COMPLETE I17 (ADD) -> P17 ready
+  COMPLETE I18 (ADD) -> P18 ready
+  RETIRE I5   ADD R6, R1, R10         
+  RETIRE I6   ADD R7, R1, R10         
+  RETIRE I7   ADD R8, R1, R10         
+  RETIRE I8   ADD R9, R1, R10         
+  ISSUE  I19  ADD    completes @26
+  ISSUE  I20  ADD    completes @26
+  STATE ROB 12/24 (done-unretired 10) | free pregs 11/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=2 complete=6 retire=4 squash=0 | alloc_stalled=no
+
+Cycle 26
+------------------------------------------------------------------------------
+  COMPLETE I19 (ADD) -> P19 ready
+  COMPLETE I20 (ADD) -> P20 ready
+  RETIRE I9   ADD R2, R1, R10          -> RECLAIM P1 (old R2)
+  RETIRE I10  ADD R3, R1, R10          -> RECLAIM P2 (old R3)
+  RETIRE I11  ADD R4, R1, R10          -> RECLAIM P3 (old R4)
+  RETIRE I12  ADD R5, R1, R10          -> RECLAIM P4 (old R5)
+  STATE ROB 8/24 (done-unretired 8) | free pregs 15/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=2 retire=4 squash=0 | alloc_stalled=no
+
+Cycle 27
+------------------------------------------------------------------------------
+  RETIRE I13  ADD R6, R1, R10          -> RECLAIM P5 (old R6)
+  RETIRE I14  ADD R7, R1, R10          -> RECLAIM P6 (old R7)
+  RETIRE I15  ADD R8, R1, R10          -> RECLAIM P7 (old R8)
+  RETIRE I16  ADD R9, R1, R10          -> RECLAIM P8 (old R9)
+  STATE ROB 4/24 (done-unretired 4) | free pregs 19/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=4 squash=0 | alloc_stalled=no
+
+Cycle 28
+------------------------------------------------------------------------------
+  RETIRE I17  ADD R2, R1, R10          -> RECLAIM P9 (old R2)
+  RETIRE I18  ADD R3, R1, R10          -> RECLAIM P10 (old R3)
+  RETIRE I19  ADD R4, R1, R10          -> RECLAIM P11 (old R4)
+  RETIRE I20  ADD R5, R1, R10          -> RECLAIM P12 (old R5)
+  STATE ROB 0/24 (done-unretired 0) | free pregs 23/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=4 squash=0 | alloc_stalled=no
+
+ALLOCATION-STALL CAUSAL CHAINS (consecutive cycles with identical cause collapsed)
+------------------------------------------------------------------------------
+cycles 3-22: I13 blocked on IQ
+    immediate resource : IQ   (ROB 13/24, PRF free 19, IQ 12/12, LQ 1/6, SQ 0/4, CKPT 0/2)
+    why unavailable    : IQ full (12/12); 12 entries are waiting on source operands (entries free only when a uop issues)
+    earlier event      : oldest waiting entry: I1 (ADD) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+
+PER-INSTRUCTION TABLE
+==============================================================================
+seq id   instruction                arch srcs -> phys srcs       dst      old   ROB dec alloc issue cmplt retire squash reclaim
+-------------------------------------------------------------------------------------------------------------------------------
+  0 I0   LOAD R1, [A]               -                            R1->P0   ARF     0   0     1     2    22     23      -       -
+  1 I1   ADD R2, R1, R10            R1->P0, R10->ARF             R2->P1   ARF     1   0     1    22    23     24      -       -
+  2 I2   ADD R3, R1, R10            R1->P0, R10->ARF             R3->P2   ARF     2   0     1    22    23     24      -       -
+  3 I3   ADD R4, R1, R10            R1->P0, R10->ARF             R4->P3   ARF     3   0     1    22    23     24      -       -
+  4 I4   ADD R5, R1, R10            R1->P0, R10->ARF             R5->P4   ARF     4   0     1    22    23     24      -       -
+  5 I5   ADD R6, R1, R10            R1->P0, R10->ARF             R6->P5   ARF     5   0     1    22    23     25      -       -
+  6 I6   ADD R7, R1, R10            R1->P0, R10->ARF             R7->P6   ARF     6   1     2    22    23     25      -       -
+  7 I7   ADD R8, R1, R10            R1->P0, R10->ARF             R8->P7   ARF     7   1     2    23    24     25      -       -
+  8 I8   ADD R9, R1, R10            R1->P0, R10->ARF             R9->P8   ARF     8   1     2    23    24     25      -       -
+  9 I9   ADD R2, R1, R10            R1->P0, R10->ARF             R2->P9   P1      9   1     2    23    24     26      -      26
+ 10 I10  ADD R3, R1, R10            R1->P0, R10->ARF             R3->P10  P2     10   1     2    23    24     26      -      26
+ 11 I11  ADD R4, R1, R10            R1->P0, R10->ARF             R4->P11  P3     11   1     2    23    24     26      -      26
+ 12 I12  ADD R5, R1, R10            R1->P0, R10->ARF             R5->P12  P4     12   2     3    23    24     26      -      26
+ 13 I13  ADD R6, R1, R10            R1->P0, R10->ARF             R6->P13  P5     13   2    23    24    25     27      -      27
+ 14 I14  ADD R7, R1, R10            R1->P0, R10->ARF             R7->P14  P6     14   2    23    24    25     27      -      27
+ 15 I15  ADD R8, R1, R10            R1->P0, R10->ARF             R8->P15  P7     15   2    23    24    25     27      -      27
+ 16 I16  ADD R9, R1, R10            R1->P0, R10->ARF             R9->P16  P8     16   2    23    24    25     27      -      27
+ 17 I17  ADD R2, R1, R10            R1->P0, R10->ARF             R2->P17  P9     17   2    23    24    25     28      -      28
+ 18 I18  ADD R3, R1, R10            R1->P0, R10->ARF             R3->P18  P10    18   3    23    24    25     28      -      28
+ 19 I19  ADD R4, R1, R10            R1->P0, R10->ARF             R4->P19  P11    19   3    24    25    26     28      -      28
+ 20 I20  ADD R5, R1, R10            R1->P0, R10->ARF             R5->P20  P12    20   3    24    25    26     28      -      28
+
+PHYSICAL-REGISTER VERSION TABLE
+==============================================================================
+preg arch writer  alloc ready  readers           lastRdIss lastRdRet freed@ life  freed by
+------------------------------------------------------------------------------------------
+P0   R1   I0          1    22  I1 I2 I3 I4 I5 I6 I7 I8 I9 I10 I11 I12 I13 I14 I15 I16 I17 I18 I19 I20       25        28      -    -  still live (architectural state)
+P1   R2   I1          1    23  -                         -         -     26   25  reclaimed at retire of I9
+P2   R3   I2          1    23  -                         -         -     26   25  reclaimed at retire of I10
+P3   R4   I3          1    23  -                         -         -     26   25  reclaimed at retire of I11
+P4   R5   I4          1    23  -                         -         -     26   25  reclaimed at retire of I12
+P5   R6   I5          1    23  -                         -         -     27   26  reclaimed at retire of I13
+P6   R7   I6          2    23  -                         -         -     27   25  reclaimed at retire of I14
+P7   R8   I7          2    24  -                         -         -     27   25  reclaimed at retire of I15
+P8   R9   I8          2    24  -                         -         -     27   25  reclaimed at retire of I16
+P9   R2   I9          2    24  -                         -         -     28   26  reclaimed at retire of I17
+P10  R3   I10         2    24  -                         -         -     28   26  reclaimed at retire of I18
+P11  R4   I11         2    24  -                         -         -     28   26  reclaimed at retire of I19
+P12  R5   I12         3    24  -                         -         -     28   25  reclaimed at retire of I20
+P13  R6   I13        23    25  -                         -         -      -    -  still live (architectural state)
+P14  R7   I14        23    25  -                         -         -      -    -  still live (architectural state)
+P15  R8   I15        23    25  -                         -         -      -    -  still live (architectural state)
+P16  R9   I16        23    25  -                         -         -      -    -  still live (architectural state)
+P17  R2   I17        23    25  -                         -         -      -    -  still live (architectural state)
+P18  R3   I18        23    25  -                         -         -      -    -  still live (architectural state)
+P19  R4   I19        24    26  -                         -         -      -    -  still live (architectural state)
+P20  R5   I20        24    26  -                         -         -      -    -  still live (architectural state)

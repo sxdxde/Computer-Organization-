@@ -1,0 +1,130 @@
+=== inv2b_stores_SQ ===
+Config: ROB=24 PRF=32 IQ=12 LQ=6 SQ=4 CKPT=2 RET=4  decode=6 alloc=6 issue=6 decodeQ=12
+
+Cycle 0
+------------------------------------------------------------------------------
+  DECODE 6 uop(s) into decode queue
+  STATE ROB 0/24 (done-unretired 0) | free pregs 32/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 6/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 1
+------------------------------------------------------------------------------
+  ALLOC  I0   STORE [S1], R21          reads[R21(ARF)] ROB#0
+  ALLOC  I1   STORE [S2], R22          reads[R22(ARF)] ROB#1
+  ALLOC  I2   STORE [S3], R23          reads[R23(ARF)] ROB#2
+  ALLOC  I3   STORE [S4], R24          reads[R24(ARF)] ROB#3
+  ALLOC-STALL I4 (STORE [S5], R25) blocked on SQ
+  DECODE 2 uop(s) into decode queue
+  >> alloc stall on SQ at I4: SQ full (4/4); entries are held from allocation until retirement; oldest holder I0 (STORE) is IQ
+     avail: ROB 4/24, PRF free 32, IQ 4/12, LQ 0/6, SQ 4/4, CKPT 0/2
+     root : retirement blocked by oldest instruction: I0 (STORE) is ready to issue (allocated one cycle earlier)
+  STATE ROB 4/24 (done-unretired 0) | free pregs 32/32 | IQ 4/12 | LQ 0/6 | SQ 4/4 | CKPT 0/2 | DECQ 4/12
+  COUNT alloc=4 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(SQ)
+
+Cycle 2
+------------------------------------------------------------------------------
+  ALLOC-STALL I4 (STORE [S5], R25) blocked on SQ
+  ISSUE  I0   STORE  completes @3
+  ISSUE  I1   STORE  completes @3
+  ISSUE  I2   STORE  completes @3
+  ISSUE  I3   STORE  completes @3
+  >> alloc stall on SQ at I4: SQ full (4/4); entries are held from allocation until retirement; oldest holder I0 (STORE) is IQ
+     avail: ROB 4/24, PRF free 32, IQ 4/12, LQ 0/6, SQ 4/4, CKPT 0/2
+     root : retirement blocked by oldest instruction: I0 (STORE) is ready to issue (allocated one cycle earlier)
+  STATE ROB 4/24 (done-unretired 0) | free pregs 32/32 | IQ 0/12 | LQ 0/6 | SQ 4/4 | CKPT 0/2 | DECQ 4/12
+  COUNT alloc=0 issue=4 complete=0 retire=0 squash=0 | alloc_stalled=YES(SQ)
+
+Cycle 3
+------------------------------------------------------------------------------
+  ALLOC-STALL I4 (STORE [S5], R25) blocked on SQ
+  COMPLETE I0 (STORE)
+  COMPLETE I1 (STORE)
+  COMPLETE I2 (STORE)
+  COMPLETE I3 (STORE)
+  >> alloc stall on SQ at I4: SQ full (4/4); entries are held from allocation until retirement; oldest holder I0 (STORE) is EXEC
+     avail: ROB 4/24, PRF free 32, IQ 0/12, LQ 0/6, SQ 4/4, CKPT 0/2
+     root : retirement blocked by oldest instruction: I0 (STORE) is executing, completes at cycle 3
+  STATE ROB 4/24 (done-unretired 4) | free pregs 32/32 | IQ 0/12 | LQ 0/6 | SQ 4/4 | CKPT 0/2 | DECQ 4/12
+  COUNT alloc=0 issue=0 complete=4 retire=0 squash=0 | alloc_stalled=YES(SQ)
+
+Cycle 4
+------------------------------------------------------------------------------
+  ALLOC-STALL I4 (STORE [S5], R25) blocked on SQ
+  RETIRE I0   STORE [S1], R21         
+  RETIRE I1   STORE [S2], R22         
+  RETIRE I2   STORE [S3], R23         
+  RETIRE I3   STORE [S4], R24         
+  >> alloc stall on SQ at I4: SQ full (4/4); entries are held from allocation until retirement; oldest holder I0 (STORE) is DONE
+     avail: ROB 4/24, PRF free 32, IQ 0/12, LQ 0/6, SQ 4/4, CKPT 0/2
+     root : head I0 completed at cycle 3 and retires this cycle; the freed entry is first usable by allocation next cycle
+  STATE ROB 0/24 (done-unretired 0) | free pregs 32/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 4/12
+  COUNT alloc=0 issue=0 complete=0 retire=4 squash=0 | alloc_stalled=YES(SQ)
+
+Cycle 5
+------------------------------------------------------------------------------
+  ALLOC  I4   STORE [S5], R25          reads[R25(ARF)] ROB#4
+  ALLOC  I5   STORE [S6], R26          reads[R26(ARF)] ROB#5
+  ALLOC  I6   STORE [S7], R27          reads[R27(ARF)] ROB#6
+  ALLOC  I7   STORE [S8], R28          reads[R28(ARF)] ROB#7
+  STATE ROB 4/24 (done-unretired 0) | free pregs 32/32 | IQ 4/12 | LQ 0/6 | SQ 4/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=4 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 6
+------------------------------------------------------------------------------
+  ISSUE  I4   STORE  completes @7
+  ISSUE  I5   STORE  completes @7
+  ISSUE  I6   STORE  completes @7
+  ISSUE  I7   STORE  completes @7
+  STATE ROB 4/24 (done-unretired 0) | free pregs 32/32 | IQ 0/12 | LQ 0/6 | SQ 4/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=4 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 7
+------------------------------------------------------------------------------
+  COMPLETE I4 (STORE)
+  COMPLETE I5 (STORE)
+  COMPLETE I6 (STORE)
+  COMPLETE I7 (STORE)
+  STATE ROB 4/24 (done-unretired 4) | free pregs 32/32 | IQ 0/12 | LQ 0/6 | SQ 4/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=4 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 8
+------------------------------------------------------------------------------
+  RETIRE I4   STORE [S5], R25         
+  RETIRE I5   STORE [S6], R26         
+  RETIRE I6   STORE [S7], R27         
+  RETIRE I7   STORE [S8], R28         
+  STATE ROB 0/24 (done-unretired 0) | free pregs 32/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=4 squash=0 | alloc_stalled=no
+
+ALLOCATION-STALL CAUSAL CHAINS (consecutive cycles with identical cause collapsed)
+------------------------------------------------------------------------------
+cycles 1-2: I4 blocked on SQ
+    immediate resource : SQ   (ROB 4/24, PRF free 32, IQ 4/12, LQ 0/6, SQ 4/4, CKPT 0/2)
+    why unavailable    : SQ full (4/4); entries are held from allocation until retirement; oldest holder I0 (STORE) is IQ
+    earlier event      : retirement blocked by oldest instruction: I0 (STORE) is ready to issue (allocated one cycle earlier)
+cycle 3: I4 blocked on SQ
+    immediate resource : SQ   (ROB 4/24, PRF free 32, IQ 0/12, LQ 0/6, SQ 4/4, CKPT 0/2)
+    why unavailable    : SQ full (4/4); entries are held from allocation until retirement; oldest holder I0 (STORE) is EXEC
+    earlier event      : retirement blocked by oldest instruction: I0 (STORE) is executing, completes at cycle 3
+cycle 4: I4 blocked on SQ
+    immediate resource : SQ   (ROB 4/24, PRF free 32, IQ 0/12, LQ 0/6, SQ 4/4, CKPT 0/2)
+    why unavailable    : SQ full (4/4); entries are held from allocation until retirement; oldest holder I0 (STORE) is DONE
+    earlier event      : head I0 completed at cycle 3 and retires this cycle; the freed entry is first usable by allocation next cycle
+
+PER-INSTRUCTION TABLE
+==============================================================================
+seq id   instruction                arch srcs -> phys srcs       dst      old   ROB dec alloc issue cmplt retire squash reclaim
+-------------------------------------------------------------------------------------------------------------------------------
+  0 I0   STORE [S1], R21            R21->ARF                     -        -       0   0     1     2     3      4      -       -
+  1 I1   STORE [S2], R22            R22->ARF                     -        -       1   0     1     2     3      4      -       -
+  2 I2   STORE [S3], R23            R23->ARF                     -        -       2   0     1     2     3      4      -       -
+  3 I3   STORE [S4], R24            R24->ARF                     -        -       3   0     1     2     3      4      -       -
+  4 I4   STORE [S5], R25            R25->ARF                     -        -       4   0     5     6     7      8      -       -
+  5 I5   STORE [S6], R26            R26->ARF                     -        -       5   0     5     6     7      8      -       -
+  6 I6   STORE [S7], R27            R27->ARF                     -        -       6   1     5     6     7      8      -       -
+  7 I7   STORE [S8], R28            R28->ARF                     -        -       7   1     5     6     7      8      -       -
+
+PHYSICAL-REGISTER VERSION TABLE
+==============================================================================
+preg arch writer  alloc ready  readers           lastRdIss lastRdRet freed@ life  freed by
+------------------------------------------------------------------------------------------

@@ -1,0 +1,13 @@
+# final_ckpt
+LOAD R1, [A]
+ADD R2, R10, R11
+BRANCH B1 pred=NT actual=NT src=R1
+ADD R3, R12, R13
+ADD R4, R14, R15
+BRANCH B2 pred=NT actual=NT src=R1
+ADD R5, R16, R17
+BRANCH B3 pred=NT actual=NT src=R1
+ADD R6, R18, R19
+ADD R7, R20, R21
+ADD R8, R10, R12
+ADD R9, R11, R13

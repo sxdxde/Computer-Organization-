@@ -1,0 +1,180 @@
+=== inv1_rename ===
+Config: ROB=24 PRF=32 IQ=12 LQ=6 SQ=4 CKPT=2 RET=4  decode=6 alloc=6 issue=6 decodeQ=12
+
+Cycle 0
+------------------------------------------------------------------------------
+  DECODE 6 uop(s) into decode queue
+  STATE ROB 0/24 (done-unretired 0) | free pregs 32/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 6/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 1
+------------------------------------------------------------------------------
+  ALLOC  I0   ADD R1, R20, R21         reads[R20(ARF), R21(ARF)] R1->P0 (old ARF) ROB#0
+  ALLOC  I1   ADD R2, R22, R23         reads[R22(ARF), R23(ARF)] R2->P1 (old ARF) ROB#1
+  ALLOC  I2   MUL R4, R1, R2           reads[R1(P0), R2(P1)] R4->P2 (old ARF) ROB#2
+  ALLOC  I3   ADD R1, R5, R6           reads[R5(ARF), R6(ARF)] R1->P3 (old P0) ROB#3
+  ALLOC  I4   ADD R8, R1, R9           reads[R1(P3), R9(ARF)] R8->P4 (old ARF) ROB#4
+  ALLOC  I5   ADD R2, R10, R11         reads[R10(ARF), R11(ARF)] R2->P5 (old P1) ROB#5
+  DECODE 6 uop(s) into decode queue
+  STATE ROB 6/24 (done-unretired 0) | free pregs 26/32 | IQ 6/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 6/12
+  COUNT alloc=6 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 2
+------------------------------------------------------------------------------
+  ALLOC  I6   ADD R3, R2, R4           reads[R2(P5), R4(P2)] R3->P6 (old ARF) ROB#6
+  ALLOC  I7   ADD R1, R3, R8           reads[R3(P6), R8(P4)] R1->P7 (old P3) ROB#7
+  ALLOC  I8   MUL R4, R1, R1           reads[R1(P7), R1(P7)] R4->P8 (old P2) ROB#8
+  ALLOC  I9   ADD R2, R4, R1           reads[R4(P8), R1(P7)] R2->P9 (old P5) ROB#9
+  ALLOC  I10  ADD R8, R2, R3           reads[R2(P9), R3(P6)] R8->P10 (old P4) ROB#10
+  ALLOC  I11  ADD R1, R8, R2           reads[R8(P10), R2(P9)] R1->P11 (old P7) ROB#11
+  ISSUE  I0   ADD    completes @3
+  ISSUE  I1   ADD    completes @3
+  ISSUE  I3   ADD    completes @3
+  ISSUE  I5   ADD    completes @3
+  STATE ROB 12/24 (done-unretired 0) | free pregs 20/32 | IQ 8/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=6 issue=4 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 3
+------------------------------------------------------------------------------
+  COMPLETE I0 (ADD) -> P0 ready
+  COMPLETE I1 (ADD) -> P1 ready
+  COMPLETE I3 (ADD) -> P3 ready
+  COMPLETE I5 (ADD) -> P5 ready
+  ISSUE  I2   MUL    completes @7
+  ISSUE  I4   ADD    completes @4
+  STATE ROB 12/24 (done-unretired 4) | free pregs 20/32 | IQ 6/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=2 complete=4 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 4
+------------------------------------------------------------------------------
+  COMPLETE I4 (ADD) -> P4 ready
+  RETIRE I0   ADD R1, R20, R21        
+  RETIRE I1   ADD R2, R22, R23        
+  STATE ROB 10/24 (done-unretired 3) | free pregs 20/32 | IQ 6/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=1 retire=2 squash=0 | alloc_stalled=no
+
+Cycle 5
+------------------------------------------------------------------------------
+  STATE ROB 10/24 (done-unretired 3) | free pregs 20/32 | IQ 6/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 6
+------------------------------------------------------------------------------
+  STATE ROB 10/24 (done-unretired 3) | free pregs 20/32 | IQ 6/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 7
+------------------------------------------------------------------------------
+  COMPLETE I2 (MUL) -> P2 ready
+  ISSUE  I6   ADD    completes @8
+  STATE ROB 10/24 (done-unretired 4) | free pregs 20/32 | IQ 5/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=1 complete=1 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 8
+------------------------------------------------------------------------------
+  COMPLETE I6 (ADD) -> P6 ready
+  RETIRE I2   MUL R4, R1, R2          
+  RETIRE I3   ADD R1, R5, R6           -> RECLAIM P0 (old R1)
+  RETIRE I4   ADD R8, R1, R9          
+  RETIRE I5   ADD R2, R10, R11         -> RECLAIM P1 (old R2)
+  ISSUE  I7   ADD    completes @9
+  STATE ROB 6/24 (done-unretired 1) | free pregs 22/32 | IQ 4/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=1 complete=1 retire=4 squash=0 | alloc_stalled=no
+
+Cycle 9
+------------------------------------------------------------------------------
+  COMPLETE I7 (ADD) -> P7 ready
+  RETIRE I6   ADD R3, R2, R4          
+  ISSUE  I8   MUL    completes @13
+  STATE ROB 5/24 (done-unretired 1) | free pregs 22/32 | IQ 3/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=1 complete=1 retire=1 squash=0 | alloc_stalled=no
+
+Cycle 10
+------------------------------------------------------------------------------
+  RETIRE I7   ADD R1, R3, R8           -> RECLAIM P3 (old R1)
+  STATE ROB 4/24 (done-unretired 0) | free pregs 23/32 | IQ 3/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=1 squash=0 | alloc_stalled=no
+
+Cycle 11
+------------------------------------------------------------------------------
+  STATE ROB 4/24 (done-unretired 0) | free pregs 23/32 | IQ 3/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 12
+------------------------------------------------------------------------------
+  STATE ROB 4/24 (done-unretired 0) | free pregs 23/32 | IQ 3/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 13
+------------------------------------------------------------------------------
+  COMPLETE I8 (MUL) -> P8 ready
+  ISSUE  I9   ADD    completes @14
+  STATE ROB 4/24 (done-unretired 1) | free pregs 23/32 | IQ 2/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=1 complete=1 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 14
+------------------------------------------------------------------------------
+  COMPLETE I9 (ADD) -> P9 ready
+  RETIRE I8   MUL R4, R1, R1           -> RECLAIM P2 (old R4)
+  ISSUE  I10  ADD    completes @15
+  STATE ROB 3/24 (done-unretired 1) | free pregs 24/32 | IQ 1/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=1 complete=1 retire=1 squash=0 | alloc_stalled=no
+
+Cycle 15
+------------------------------------------------------------------------------
+  COMPLETE I10 (ADD) -> P10 ready
+  RETIRE I9   ADD R2, R4, R1           -> RECLAIM P5 (old R2)
+  ISSUE  I11  ADD    completes @16
+  STATE ROB 2/24 (done-unretired 1) | free pregs 25/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=1 complete=1 retire=1 squash=0 | alloc_stalled=no
+
+Cycle 16
+------------------------------------------------------------------------------
+  COMPLETE I11 (ADD) -> P11 ready
+  RETIRE I10  ADD R8, R2, R3           -> RECLAIM P4 (old R8)
+  STATE ROB 1/24 (done-unretired 1) | free pregs 26/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=1 retire=1 squash=0 | alloc_stalled=no
+
+Cycle 17
+------------------------------------------------------------------------------
+  RETIRE I11  ADD R1, R8, R2           -> RECLAIM P7 (old R1)
+  STATE ROB 0/24 (done-unretired 0) | free pregs 27/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=1 squash=0 | alloc_stalled=no
+
+ALLOCATION-STALL CAUSAL CHAINS (consecutive cycles with identical cause collapsed)
+------------------------------------------------------------------------------
+(no allocation stalls)
+
+PER-INSTRUCTION TABLE
+==============================================================================
+seq id   instruction                arch srcs -> phys srcs       dst      old   ROB dec alloc issue cmplt retire squash reclaim
+-------------------------------------------------------------------------------------------------------------------------------
+  0 I0   ADD R1, R20, R21           R20->ARF, R21->ARF           R1->P0   ARF     0   0     1     2     3      4      -       -
+  1 I1   ADD R2, R22, R23           R22->ARF, R23->ARF           R2->P1   ARF     1   0     1     2     3      4      -       -
+  2 I2   MUL R4, R1, R2             R1->P0, R2->P1               R4->P2   ARF     2   0     1     3     7      8      -       -
+  3 I3   ADD R1, R5, R6             R5->ARF, R6->ARF             R1->P3   P0      3   0     1     2     3      8      -       8
+  4 I4   ADD R8, R1, R9             R1->P3, R9->ARF              R8->P4   ARF     4   0     1     3     4      8      -       -
+  5 I5   ADD R2, R10, R11           R10->ARF, R11->ARF           R2->P5   P1      5   0     1     2     3      8      -       8
+  6 I6   ADD R3, R2, R4             R2->P5, R4->P2               R3->P6   ARF     6   1     2     7     8      9      -       -
+  7 I7   ADD R1, R3, R8             R3->P6, R8->P4               R1->P7   P3      7   1     2     8     9     10      -      10
+  8 I8   MUL R4, R1, R1             R1->P7, R1->P7               R4->P8   P2      8   1     2     9    13     14      -      14
+  9 I9   ADD R2, R4, R1             R4->P8, R1->P7               R2->P9   P5      9   1     2    13    14     15      -      15
+ 10 I10  ADD R8, R2, R3             R2->P9, R3->P6               R8->P10  P4     10   1     2    14    15     16      -      16
+ 11 I11  ADD R1, R8, R2             R8->P10, R2->P9              R1->P11  P7     11   1     2    15    16     17      -      17
+
+PHYSICAL-REGISTER VERSION TABLE
+==============================================================================
+preg arch writer  alloc ready  readers           lastRdIss lastRdRet freed@ life  freed by
+------------------------------------------------------------------------------------------
+P0   R1   I0          1     3  I2                        3         8      8    7  reclaimed at retire of I3
+P1   R2   I1          1     3  I2                        3         8      8    7  reclaimed at retire of I5
+P2   R4   I2          1     7  I6                        7         9     14   13  reclaimed at retire of I8
+P3   R1   I3          1     3  I4                        3         8     10    9  reclaimed at retire of I7
+P4   R8   I4          1     4  I7                        8        10     16   15  reclaimed at retire of I10
+P5   R2   I5          1     3  I6                        7         9     15   14  reclaimed at retire of I9
+P6   R3   I6          2     8  I7 I10                   14        16      -    -  still live (architectural state)
+P7   R1   I7          2     9  I8 I9                    13        15     17   15  reclaimed at retire of I11
+P8   R4   I8          2    13  I9                       13        15      -    -  still live (architectural state)
+P9   R2   I9          2    14  I10 I11                  15        17      -    -  still live (architectural state)
+P10  R8   I10         2    15  I11                      15        17      -    -  still live (architectural state)
+P11  R1   I11         2    16  -                         -         -      -    -  still live (architectural state)

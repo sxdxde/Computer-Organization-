@@ -1,0 +1,334 @@
+=== final_ckpt ===
+Config: ROB=24 PRF=32 IQ=12 LQ=6 SQ=4 CKPT=2 RET=4  decode=6 alloc=6 issue=6 decodeQ=12
+
+Cycle 0
+------------------------------------------------------------------------------
+  DECODE 6 uop(s) into decode queue
+  STATE ROB 0/24 (done-unretired 0) | free pregs 32/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 6/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 1
+------------------------------------------------------------------------------
+  ALLOC  I0   LOAD R1, [A]             reads[-] R1->P0 (old ARF) ROB#0
+  ALLOC  I1   ADD R2, R10, R11         reads[R10(ARF), R11(ARF)] R2->P1 (old ARF) ROB#1
+  ALLOC  I2   BRANCH B1 (R1)           reads[R1(P0)] ROB#2
+  ALLOC  I3   ADD R3, R12, R13         reads[R12(ARF), R13(ARF)] R3->P2 (old ARF) ROB#3
+  ALLOC  I4   ADD R4, R14, R15         reads[R14(ARF), R15(ARF)] R4->P3 (old ARF) ROB#4
+  ALLOC  I5   BRANCH B2 (R1)           reads[R1(P0)] ROB#5
+  DECODE 6 uop(s) into decode queue
+  STATE ROB 6/24 (done-unretired 0) | free pregs 28/32 | IQ 6/12 | LQ 1/6 | SQ 0/4 | CKPT 2/2 | DECQ 6/12
+  COUNT alloc=6 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 2
+------------------------------------------------------------------------------
+  ALLOC  I6   ADD R5, R16, R17         reads[R16(ARF), R17(ARF)] R5->P4 (old ARF) ROB#6
+  ALLOC-STALL I7 (BRANCH B3 (R1)) blocked on CKPT
+  ISSUE  I0   LOAD   completes @22
+  ISSUE  I1   ADD    completes @3
+  ISSUE  I3   ADD    completes @3
+  ISSUE  I4   ADD    completes @3
+  >> alloc stall on CKPT at I7: checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+     avail: ROB 7/24, PRF free 27, IQ 7/12, LQ 1/6, SQ 0/4, CKPT 2/2
+     root : oldest unresolved branch: I2 (BRANCH) waits in the IQ for I0 -> I0 (LOAD) is ready to issue (allocated one cycle earlier)
+  STATE ROB 7/24 (done-unretired 0) | free pregs 27/32 | IQ 3/12 | LQ 1/6 | SQ 0/4 | CKPT 2/2 | DECQ 5/12
+  COUNT alloc=1 issue=4 complete=0 retire=0 squash=0 | alloc_stalled=YES(CKPT)
+
+Cycle 3
+------------------------------------------------------------------------------
+  ALLOC-STALL I7 (BRANCH B3 (R1)) blocked on CKPT
+  COMPLETE I1 (ADD) -> P1 ready
+  COMPLETE I3 (ADD) -> P2 ready
+  COMPLETE I4 (ADD) -> P3 ready
+  ISSUE  I6   ADD    completes @4
+  >> alloc stall on CKPT at I7: checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+     avail: ROB 7/24, PRF free 27, IQ 3/12, LQ 1/6, SQ 0/4, CKPT 2/2
+     root : oldest unresolved branch: I2 (BRANCH) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 7/24 (done-unretired 3) | free pregs 27/32 | IQ 2/12 | LQ 1/6 | SQ 0/4 | CKPT 2/2 | DECQ 5/12
+  COUNT alloc=0 issue=1 complete=3 retire=0 squash=0 | alloc_stalled=YES(CKPT)
+
+Cycle 4
+------------------------------------------------------------------------------
+  ALLOC-STALL I7 (BRANCH B3 (R1)) blocked on CKPT
+  COMPLETE I6 (ADD) -> P4 ready
+  >> alloc stall on CKPT at I7: checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+     avail: ROB 7/24, PRF free 27, IQ 2/12, LQ 1/6, SQ 0/4, CKPT 2/2
+     root : oldest unresolved branch: I2 (BRANCH) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 7/24 (done-unretired 4) | free pregs 27/32 | IQ 2/12 | LQ 1/6 | SQ 0/4 | CKPT 2/2 | DECQ 5/12
+  COUNT alloc=0 issue=0 complete=1 retire=0 squash=0 | alloc_stalled=YES(CKPT)
+
+Cycle 5
+------------------------------------------------------------------------------
+  ALLOC-STALL I7 (BRANCH B3 (R1)) blocked on CKPT
+  >> alloc stall on CKPT at I7: checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+     avail: ROB 7/24, PRF free 27, IQ 2/12, LQ 1/6, SQ 0/4, CKPT 2/2
+     root : oldest unresolved branch: I2 (BRANCH) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 7/24 (done-unretired 4) | free pregs 27/32 | IQ 2/12 | LQ 1/6 | SQ 0/4 | CKPT 2/2 | DECQ 5/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(CKPT)
+
+Cycle 6
+------------------------------------------------------------------------------
+  ALLOC-STALL I7 (BRANCH B3 (R1)) blocked on CKPT
+  >> alloc stall on CKPT at I7: checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+     avail: ROB 7/24, PRF free 27, IQ 2/12, LQ 1/6, SQ 0/4, CKPT 2/2
+     root : oldest unresolved branch: I2 (BRANCH) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 7/24 (done-unretired 4) | free pregs 27/32 | IQ 2/12 | LQ 1/6 | SQ 0/4 | CKPT 2/2 | DECQ 5/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(CKPT)
+
+Cycle 7
+------------------------------------------------------------------------------
+  ALLOC-STALL I7 (BRANCH B3 (R1)) blocked on CKPT
+  >> alloc stall on CKPT at I7: checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+     avail: ROB 7/24, PRF free 27, IQ 2/12, LQ 1/6, SQ 0/4, CKPT 2/2
+     root : oldest unresolved branch: I2 (BRANCH) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 7/24 (done-unretired 4) | free pregs 27/32 | IQ 2/12 | LQ 1/6 | SQ 0/4 | CKPT 2/2 | DECQ 5/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(CKPT)
+
+Cycle 8
+------------------------------------------------------------------------------
+  ALLOC-STALL I7 (BRANCH B3 (R1)) blocked on CKPT
+  >> alloc stall on CKPT at I7: checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+     avail: ROB 7/24, PRF free 27, IQ 2/12, LQ 1/6, SQ 0/4, CKPT 2/2
+     root : oldest unresolved branch: I2 (BRANCH) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 7/24 (done-unretired 4) | free pregs 27/32 | IQ 2/12 | LQ 1/6 | SQ 0/4 | CKPT 2/2 | DECQ 5/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(CKPT)
+
+Cycle 9
+------------------------------------------------------------------------------
+  ALLOC-STALL I7 (BRANCH B3 (R1)) blocked on CKPT
+  >> alloc stall on CKPT at I7: checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+     avail: ROB 7/24, PRF free 27, IQ 2/12, LQ 1/6, SQ 0/4, CKPT 2/2
+     root : oldest unresolved branch: I2 (BRANCH) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 7/24 (done-unretired 4) | free pregs 27/32 | IQ 2/12 | LQ 1/6 | SQ 0/4 | CKPT 2/2 | DECQ 5/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(CKPT)
+
+Cycle 10
+------------------------------------------------------------------------------
+  ALLOC-STALL I7 (BRANCH B3 (R1)) blocked on CKPT
+  >> alloc stall on CKPT at I7: checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+     avail: ROB 7/24, PRF free 27, IQ 2/12, LQ 1/6, SQ 0/4, CKPT 2/2
+     root : oldest unresolved branch: I2 (BRANCH) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 7/24 (done-unretired 4) | free pregs 27/32 | IQ 2/12 | LQ 1/6 | SQ 0/4 | CKPT 2/2 | DECQ 5/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(CKPT)
+
+Cycle 11
+------------------------------------------------------------------------------
+  ALLOC-STALL I7 (BRANCH B3 (R1)) blocked on CKPT
+  >> alloc stall on CKPT at I7: checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+     avail: ROB 7/24, PRF free 27, IQ 2/12, LQ 1/6, SQ 0/4, CKPT 2/2
+     root : oldest unresolved branch: I2 (BRANCH) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 7/24 (done-unretired 4) | free pregs 27/32 | IQ 2/12 | LQ 1/6 | SQ 0/4 | CKPT 2/2 | DECQ 5/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(CKPT)
+
+Cycle 12
+------------------------------------------------------------------------------
+  ALLOC-STALL I7 (BRANCH B3 (R1)) blocked on CKPT
+  >> alloc stall on CKPT at I7: checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+     avail: ROB 7/24, PRF free 27, IQ 2/12, LQ 1/6, SQ 0/4, CKPT 2/2
+     root : oldest unresolved branch: I2 (BRANCH) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 7/24 (done-unretired 4) | free pregs 27/32 | IQ 2/12 | LQ 1/6 | SQ 0/4 | CKPT 2/2 | DECQ 5/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(CKPT)
+
+Cycle 13
+------------------------------------------------------------------------------
+  ALLOC-STALL I7 (BRANCH B3 (R1)) blocked on CKPT
+  >> alloc stall on CKPT at I7: checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+     avail: ROB 7/24, PRF free 27, IQ 2/12, LQ 1/6, SQ 0/4, CKPT 2/2
+     root : oldest unresolved branch: I2 (BRANCH) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 7/24 (done-unretired 4) | free pregs 27/32 | IQ 2/12 | LQ 1/6 | SQ 0/4 | CKPT 2/2 | DECQ 5/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(CKPT)
+
+Cycle 14
+------------------------------------------------------------------------------
+  ALLOC-STALL I7 (BRANCH B3 (R1)) blocked on CKPT
+  >> alloc stall on CKPT at I7: checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+     avail: ROB 7/24, PRF free 27, IQ 2/12, LQ 1/6, SQ 0/4, CKPT 2/2
+     root : oldest unresolved branch: I2 (BRANCH) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 7/24 (done-unretired 4) | free pregs 27/32 | IQ 2/12 | LQ 1/6 | SQ 0/4 | CKPT 2/2 | DECQ 5/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(CKPT)
+
+Cycle 15
+------------------------------------------------------------------------------
+  ALLOC-STALL I7 (BRANCH B3 (R1)) blocked on CKPT
+  >> alloc stall on CKPT at I7: checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+     avail: ROB 7/24, PRF free 27, IQ 2/12, LQ 1/6, SQ 0/4, CKPT 2/2
+     root : oldest unresolved branch: I2 (BRANCH) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 7/24 (done-unretired 4) | free pregs 27/32 | IQ 2/12 | LQ 1/6 | SQ 0/4 | CKPT 2/2 | DECQ 5/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(CKPT)
+
+Cycle 16
+------------------------------------------------------------------------------
+  ALLOC-STALL I7 (BRANCH B3 (R1)) blocked on CKPT
+  >> alloc stall on CKPT at I7: checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+     avail: ROB 7/24, PRF free 27, IQ 2/12, LQ 1/6, SQ 0/4, CKPT 2/2
+     root : oldest unresolved branch: I2 (BRANCH) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 7/24 (done-unretired 4) | free pregs 27/32 | IQ 2/12 | LQ 1/6 | SQ 0/4 | CKPT 2/2 | DECQ 5/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(CKPT)
+
+Cycle 17
+------------------------------------------------------------------------------
+  ALLOC-STALL I7 (BRANCH B3 (R1)) blocked on CKPT
+  >> alloc stall on CKPT at I7: checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+     avail: ROB 7/24, PRF free 27, IQ 2/12, LQ 1/6, SQ 0/4, CKPT 2/2
+     root : oldest unresolved branch: I2 (BRANCH) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 7/24 (done-unretired 4) | free pregs 27/32 | IQ 2/12 | LQ 1/6 | SQ 0/4 | CKPT 2/2 | DECQ 5/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(CKPT)
+
+Cycle 18
+------------------------------------------------------------------------------
+  ALLOC-STALL I7 (BRANCH B3 (R1)) blocked on CKPT
+  >> alloc stall on CKPT at I7: checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+     avail: ROB 7/24, PRF free 27, IQ 2/12, LQ 1/6, SQ 0/4, CKPT 2/2
+     root : oldest unresolved branch: I2 (BRANCH) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 7/24 (done-unretired 4) | free pregs 27/32 | IQ 2/12 | LQ 1/6 | SQ 0/4 | CKPT 2/2 | DECQ 5/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(CKPT)
+
+Cycle 19
+------------------------------------------------------------------------------
+  ALLOC-STALL I7 (BRANCH B3 (R1)) blocked on CKPT
+  >> alloc stall on CKPT at I7: checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+     avail: ROB 7/24, PRF free 27, IQ 2/12, LQ 1/6, SQ 0/4, CKPT 2/2
+     root : oldest unresolved branch: I2 (BRANCH) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 7/24 (done-unretired 4) | free pregs 27/32 | IQ 2/12 | LQ 1/6 | SQ 0/4 | CKPT 2/2 | DECQ 5/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(CKPT)
+
+Cycle 20
+------------------------------------------------------------------------------
+  ALLOC-STALL I7 (BRANCH B3 (R1)) blocked on CKPT
+  >> alloc stall on CKPT at I7: checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+     avail: ROB 7/24, PRF free 27, IQ 2/12, LQ 1/6, SQ 0/4, CKPT 2/2
+     root : oldest unresolved branch: I2 (BRANCH) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 7/24 (done-unretired 4) | free pregs 27/32 | IQ 2/12 | LQ 1/6 | SQ 0/4 | CKPT 2/2 | DECQ 5/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(CKPT)
+
+Cycle 21
+------------------------------------------------------------------------------
+  ALLOC-STALL I7 (BRANCH B3 (R1)) blocked on CKPT
+  >> alloc stall on CKPT at I7: checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+     avail: ROB 7/24, PRF free 27, IQ 2/12, LQ 1/6, SQ 0/4, CKPT 2/2
+     root : oldest unresolved branch: I2 (BRANCH) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 7/24 (done-unretired 4) | free pregs 27/32 | IQ 2/12 | LQ 1/6 | SQ 0/4 | CKPT 2/2 | DECQ 5/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=YES(CKPT)
+
+Cycle 22
+------------------------------------------------------------------------------
+  ALLOC-STALL I7 (BRANCH B3 (R1)) blocked on CKPT
+  COMPLETE I0 (LOAD) -> P0 ready
+  ISSUE  I2   BRANCH completes @23
+  ISSUE  I5   BRANCH completes @23
+  >> alloc stall on CKPT at I7: checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+     avail: ROB 7/24, PRF free 27, IQ 2/12, LQ 1/6, SQ 0/4, CKPT 2/2
+     root : oldest unresolved branch: I2 (BRANCH) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+  STATE ROB 7/24 (done-unretired 5) | free pregs 27/32 | IQ 0/12 | LQ 1/6 | SQ 0/4 | CKPT 2/2 | DECQ 5/12
+  COUNT alloc=0 issue=2 complete=1 retire=0 squash=0 | alloc_stalled=YES(CKPT)
+
+Cycle 23
+------------------------------------------------------------------------------
+  ALLOC-STALL I7 (BRANCH B3 (R1)) blocked on CKPT
+  COMPLETE I2 (BRANCH)
+  RESOLVE I2: predicted correctly, checkpoint released
+  COMPLETE I5 (BRANCH)
+  RESOLVE I5: predicted correctly, checkpoint released
+  RETIRE I0   LOAD R1, [A]            
+  RETIRE I1   ADD R2, R10, R11        
+  >> alloc stall on CKPT at I7: checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+     avail: ROB 7/24, PRF free 27, IQ 0/12, LQ 1/6, SQ 0/4, CKPT 2/2
+     root : oldest unresolved branch: I2 (BRANCH) is executing, completes at cycle 23
+  STATE ROB 5/24 (done-unretired 5) | free pregs 27/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 5/12
+  COUNT alloc=0 issue=0 complete=2 retire=2 squash=0 | alloc_stalled=YES(CKPT)
+
+Cycle 24
+------------------------------------------------------------------------------
+  ALLOC  I7   BRANCH B3 (R1)           reads[R1(P0)] ROB#7
+  ALLOC  I8   ADD R6, R18, R19         reads[R18(ARF), R19(ARF)] R6->P5 (old ARF) ROB#8
+  ALLOC  I9   ADD R7, R20, R21         reads[R20(ARF), R21(ARF)] R7->P6 (old ARF) ROB#9
+  ALLOC  I10  ADD R8, R10, R12         reads[R10(ARF), R12(ARF)] R8->P7 (old ARF) ROB#10
+  ALLOC  I11  ADD R9, R11, R13         reads[R11(ARF), R13(ARF)] R9->P8 (old ARF) ROB#11
+  RETIRE I2   BRANCH B1 (R1)          
+  RETIRE I3   ADD R3, R12, R13        
+  RETIRE I4   ADD R4, R14, R15        
+  RETIRE I5   BRANCH B2 (R1)          
+  STATE ROB 6/24 (done-unretired 1) | free pregs 23/32 | IQ 5/12 | LQ 0/6 | SQ 0/4 | CKPT 1/2 | DECQ 0/12
+  COUNT alloc=5 issue=0 complete=0 retire=4 squash=0 | alloc_stalled=no
+
+Cycle 25
+------------------------------------------------------------------------------
+  RETIRE I6   ADD R5, R16, R17        
+  ISSUE  I7   BRANCH completes @26
+  ISSUE  I8   ADD    completes @26
+  ISSUE  I9   ADD    completes @26
+  ISSUE  I10  ADD    completes @26
+  ISSUE  I11  ADD    completes @26
+  STATE ROB 5/24 (done-unretired 0) | free pregs 23/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 1/2 | DECQ 0/12
+  COUNT alloc=0 issue=5 complete=0 retire=1 squash=0 | alloc_stalled=no
+
+Cycle 26
+------------------------------------------------------------------------------
+  COMPLETE I7 (BRANCH)
+  RESOLVE I7: predicted correctly, checkpoint released
+  COMPLETE I8 (ADD) -> P5 ready
+  COMPLETE I9 (ADD) -> P6 ready
+  COMPLETE I10 (ADD) -> P7 ready
+  COMPLETE I11 (ADD) -> P8 ready
+  STATE ROB 5/24 (done-unretired 5) | free pregs 23/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=5 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 27
+------------------------------------------------------------------------------
+  RETIRE I7   BRANCH B3 (R1)          
+  RETIRE I8   ADD R6, R18, R19        
+  RETIRE I9   ADD R7, R20, R21        
+  RETIRE I10  ADD R8, R10, R12        
+  STATE ROB 1/24 (done-unretired 1) | free pregs 23/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=4 squash=0 | alloc_stalled=no
+
+Cycle 28
+------------------------------------------------------------------------------
+  RETIRE I11  ADD R9, R11, R13        
+  STATE ROB 0/24 (done-unretired 0) | free pregs 23/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=1 squash=0 | alloc_stalled=no
+
+ALLOCATION-STALL CAUSAL CHAINS (consecutive cycles with identical cause collapsed)
+------------------------------------------------------------------------------
+cycle 2: I7 blocked on CKPT
+    immediate resource : CKPT   (ROB 7/24, PRF free 27, IQ 7/12, LQ 1/6, SQ 0/4, CKPT 2/2)
+    why unavailable    : checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+    earlier event      : oldest unresolved branch: I2 (BRANCH) waits in the IQ for I0 -> I0 (LOAD) is ready to issue (allocated one cycle earlier)
+cycles 3-22: I7 blocked on CKPT
+    immediate resource : CKPT   (ROB 7/24, PRF free 27, IQ 3/12, LQ 1/6, SQ 0/4, CKPT 2/2)
+    why unavailable    : checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+    earlier event      : oldest unresolved branch: I2 (BRANCH) waits in the IQ for I0 -> I0 (LOAD) is executing, completes at cycle 22
+cycle 23: I7 blocked on CKPT
+    immediate resource : CKPT   (ROB 7/24, PRF free 27, IQ 0/12, LQ 1/6, SQ 0/4, CKPT 2/2)
+    why unavailable    : checkpoints exhausted (2/2); a checkpoint is held until its branch resolves; unresolved: I2, I5
+    earlier event      : oldest unresolved branch: I2 (BRANCH) is executing, completes at cycle 23
+
+PER-INSTRUCTION TABLE
+==============================================================================
+seq id   instruction                arch srcs -> phys srcs       dst      old   ROB dec alloc issue cmplt retire squash reclaim
+-------------------------------------------------------------------------------------------------------------------------------
+  0 I0   LOAD R1, [A]               -                            R1->P0   ARF     0   0     1     2    22     23      -       -
+  1 I1   ADD R2, R10, R11           R10->ARF, R11->ARF           R2->P1   ARF     1   0     1     2     3     23      -       -
+  2 I2   BRANCH B1 (R1)             R1->P0                       -        -       2   0     1    22    23     24      -       -
+  3 I3   ADD R3, R12, R13           R12->ARF, R13->ARF           R3->P2   ARF     3   0     1     2     3     24      -       -
+  4 I4   ADD R4, R14, R15           R14->ARF, R15->ARF           R4->P3   ARF     4   0     1     2     3     24      -       -
+  5 I5   BRANCH B2 (R1)             R1->P0                       -        -       5   0     1    22    23     24      -       -
+  6 I6   ADD R5, R16, R17           R16->ARF, R17->ARF           R5->P4   ARF     6   1     2     3     4     25      -       -
+  7 I7   BRANCH B3 (R1)             R1->P0                       -        -       7   1    24    25    26     27      -       -
+  8 I8   ADD R6, R18, R19           R18->ARF, R19->ARF           R6->P5   ARF     8   1    24    25    26     27      -       -
+  9 I9   ADD R7, R20, R21           R20->ARF, R21->ARF           R7->P6   ARF     9   1    24    25    26     27      -       -
+ 10 I10  ADD R8, R10, R12           R10->ARF, R12->ARF           R8->P7   ARF    10   1    24    25    26     27      -       -
+ 11 I11  ADD R9, R11, R13           R11->ARF, R13->ARF           R9->P8   ARF    11   1    24    25    26     28      -       -
+
+PHYSICAL-REGISTER VERSION TABLE
+==============================================================================
+preg arch writer  alloc ready  readers           lastRdIss lastRdRet freed@ life  freed by
+------------------------------------------------------------------------------------------
+P0   R1   I0          1    22  I2 I5 I7                 25        27      -    -  still live (architectural state)
+P1   R2   I1          1     3  -                         -         -      -    -  still live (architectural state)
+P2   R3   I3          1     3  -                         -         -      -    -  still live (architectural state)
+P3   R4   I4          1     3  -                         -         -      -    -  still live (architectural state)
+P4   R5   I6          2     4  -                         -         -      -    -  still live (architectural state)
+P5   R6   I8         24    26  -                         -         -      -    -  still live (architectural state)
+P6   R7   I9         24    26  -                         -         -      -    -  still live (architectural state)
+P7   R8   I10        24    26  -                         -         -      -    -  still live (architectural state)
+P8   R9   I11        24    26  -                         -         -      -    -  still live (architectural state)

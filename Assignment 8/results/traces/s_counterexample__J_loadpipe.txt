@@ -1,0 +1,641 @@
+# s_counterexample__J_loadpipe   [SCHED=24 DISP=6 ISSUE=6 WAKE=6 ALU=3 MUL=1 FADD=2 FMUL=2 LD=2 PIPE=LOAD]
+# total execution time (last completion) = 42 cycles
+
+=== cycle 0 ===
+dispatch  : U00 U01 U02 U03 U04 U05
+scheduler : 6/24 occupied | ready 0 | waiting 6
+ready     : -
+selected  : -
+issued    : -   (0/6 slots)
+units busy: ALU 0/3  IMUL 0/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : -   in-flight(executing) 0
+
+=== cycle 1 ===
+dispatch  : U06 U07 U08 U09 U10 U11
+scheduler : 12/24 occupied | ready 6 | waiting 6
+ready     : U00 U01 U02 U03 U04 U05
+selected  : U00 U01
+issued    : U00 U01   (2/6 slots)
+  ready-not-selected U02: no free LOAD unit - taken this cycle by older U00,U01
+  ready-not-selected U03: no free LOAD unit - taken this cycle by older U00,U01
+  ready-not-selected U04: no free LOAD unit - taken this cycle by older U00,U01
+  ready-not-selected U05: no free LOAD unit - taken this cycle by older U00,U01
+units busy: ALU 0/3  IMUL 0/1  FADD 0/2  FMUL 0/2  LOAD 2/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : -   in-flight(executing) 2
+
+=== cycle 2 ===
+dispatch  : U12 U13 U14 U15 U16 U17
+scheduler : 16/24 occupied | ready 10 | waiting 6
+ready     : U02 U03 U04 U05 U06 U07 U08 U09 U10 U11
+selected  : U02 U03 U08
+issued    : U02 U03 U08   (3/6 slots)
+  ready-not-selected U04: no free LOAD unit - taken this cycle by older U02,U03
+  ready-not-selected U05: no free LOAD unit - taken this cycle by older U02,U03
+  ready-not-selected U06: no free LOAD unit - taken this cycle by older U02,U03
+  ready-not-selected U07: no free LOAD unit - taken this cycle by older U02,U03
+  ready-not-selected U09: no free IMUL unit - taken this cycle by older U08
+  ready-not-selected U10: no free IMUL unit - taken this cycle by older U08
+  ready-not-selected U11: no free IMUL unit - taken this cycle by older U08
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 2/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : -   in-flight(executing) 5
+
+=== cycle 3 ===
+dispatch  : U18 U19 U20 U21
+scheduler : 17/24 occupied | ready 13 | waiting 4
+ready     : U04 U05 U06 U07 U09 U10 U11 U12 U13 U14 U15 U16 U17
+selected  : U04 U05
+issued    : U04 U05   (2/6 slots)
+  ready-not-selected U06: no free LOAD unit - taken this cycle by older U04,U05
+  ready-not-selected U07: no free LOAD unit - taken this cycle by older U04,U05
+  ready-not-selected U09: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+  ready-not-selected U10: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+  ready-not-selected U11: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+  ready-not-selected U12: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+  ready-not-selected U13: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+  ready-not-selected U14: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+  ready-not-selected U15: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+  ready-not-selected U16: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 2/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : -   in-flight(executing) 7
+
+=== cycle 4 ===
+dispatch  : -
+scheduler : 15/24 occupied | ready 11 | waiting 4
+ready     : U06 U07 U09 U10 U11 U12 U13 U14 U15 U16 U17
+selected  : U06 U07
+issued    : U06 U07   (2/6 slots)
+  ready-not-selected U09: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+  ready-not-selected U10: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+  ready-not-selected U11: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+  ready-not-selected U12: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+  ready-not-selected U13: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+  ready-not-selected U14: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+  ready-not-selected U15: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+  ready-not-selected U16: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 2/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : -   in-flight(executing) 9
+
+=== cycle 5 ===
+dispatch  : -
+scheduler : 13/24 occupied | ready 9 | waiting 4
+ready     : U09 U10 U11 U12 U13 U14 U15 U16 U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U09: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+  ready-not-selected U10: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+  ready-not-selected U11: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+  ready-not-selected U12: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+  ready-not-selected U13: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+  ready-not-selected U14: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+  ready-not-selected U15: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+  ready-not-selected U16: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U08(issued c2, free c6)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : -   in-flight(executing) 9
+
+=== cycle 6 ===
+dispatch  : -
+scheduler : 13/24 occupied | ready 9 | waiting 4
+ready     : U09 U10 U11 U12 U13 U14 U15 U16 U17
+selected  : U09
+issued    : U09   (1/6 slots)
+  ready-not-selected U10: no free IMUL unit - taken this cycle by older U09
+  ready-not-selected U11: no free IMUL unit - taken this cycle by older U09
+  ready-not-selected U12: no free IMUL unit - taken this cycle by older U09
+  ready-not-selected U13: no free IMUL unit - taken this cycle by older U09
+  ready-not-selected U14: no free IMUL unit - taken this cycle by older U09
+  ready-not-selected U15: no free IMUL unit - taken this cycle by older U09
+  ready-not-selected U16: no free IMUL unit - taken this cycle by older U09
+  ready-not-selected U17: no free IMUL unit - taken this cycle by older U09
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U00 U01 U08   in-flight(executing) 7
+
+=== cycle 7 ===
+dispatch  : -
+scheduler : 12/24 occupied | ready 8 | waiting 4
+ready     : U10 U11 U12 U13 U14 U15 U16 U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U10: no free IMUL unit - occupied: IMUL0:U09(issued c6, free c10)
+  ready-not-selected U11: no free IMUL unit - occupied: IMUL0:U09(issued c6, free c10)
+  ready-not-selected U12: no free IMUL unit - occupied: IMUL0:U09(issued c6, free c10)
+  ready-not-selected U13: no free IMUL unit - occupied: IMUL0:U09(issued c6, free c10)
+  ready-not-selected U14: no free IMUL unit - occupied: IMUL0:U09(issued c6, free c10)
+  ready-not-selected U15: no free IMUL unit - occupied: IMUL0:U09(issued c6, free c10)
+  ready-not-selected U16: no free IMUL unit - occupied: IMUL0:U09(issued c6, free c10)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U09(issued c6, free c10)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U02 U03   in-flight(executing) 5
+
+=== cycle 8 ===
+dispatch  : -
+scheduler : 12/24 occupied | ready 8 | waiting 4
+ready     : U10 U11 U12 U13 U14 U15 U16 U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U10: no free IMUL unit - occupied: IMUL0:U09(issued c6, free c10)
+  ready-not-selected U11: no free IMUL unit - occupied: IMUL0:U09(issued c6, free c10)
+  ready-not-selected U12: no free IMUL unit - occupied: IMUL0:U09(issued c6, free c10)
+  ready-not-selected U13: no free IMUL unit - occupied: IMUL0:U09(issued c6, free c10)
+  ready-not-selected U14: no free IMUL unit - occupied: IMUL0:U09(issued c6, free c10)
+  ready-not-selected U15: no free IMUL unit - occupied: IMUL0:U09(issued c6, free c10)
+  ready-not-selected U16: no free IMUL unit - occupied: IMUL0:U09(issued c6, free c10)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U09(issued c6, free c10)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U04 U05   in-flight(executing) 3
+
+=== cycle 9 ===
+dispatch  : -
+scheduler : 12/24 occupied | ready 8 | waiting 4
+ready     : U10 U11 U12 U13 U14 U15 U16 U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U10: no free IMUL unit - occupied: IMUL0:U09(issued c6, free c10)
+  ready-not-selected U11: no free IMUL unit - occupied: IMUL0:U09(issued c6, free c10)
+  ready-not-selected U12: no free IMUL unit - occupied: IMUL0:U09(issued c6, free c10)
+  ready-not-selected U13: no free IMUL unit - occupied: IMUL0:U09(issued c6, free c10)
+  ready-not-selected U14: no free IMUL unit - occupied: IMUL0:U09(issued c6, free c10)
+  ready-not-selected U15: no free IMUL unit - occupied: IMUL0:U09(issued c6, free c10)
+  ready-not-selected U16: no free IMUL unit - occupied: IMUL0:U09(issued c6, free c10)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U09(issued c6, free c10)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U06 U07   in-flight(executing) 1
+
+=== cycle 10 ===
+dispatch  : -
+scheduler : 12/24 occupied | ready 9 | waiting 3
+ready     : U10 U11 U12 U13 U14 U15 U16 U17 U18
+selected  : U10 U18
+issued    : U10 U18   (2/6 slots)
+  ready-not-selected U11: no free IMUL unit - taken this cycle by older U10
+  ready-not-selected U12: no free IMUL unit - taken this cycle by older U10
+  ready-not-selected U13: no free IMUL unit - taken this cycle by older U10
+  ready-not-selected U14: no free IMUL unit - taken this cycle by older U10
+  ready-not-selected U15: no free IMUL unit - taken this cycle by older U10
+  ready-not-selected U16: no free IMUL unit - taken this cycle by older U10
+  ready-not-selected U17: no free IMUL unit - taken this cycle by older U10
+units busy: ALU 1/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U09   in-flight(executing) 2
+
+=== cycle 11 ===
+dispatch  : -
+scheduler : 10/24 occupied | ready 7 | waiting 3
+ready     : U11 U12 U13 U14 U15 U16 U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U11: no free IMUL unit - occupied: IMUL0:U10(issued c10, free c14)
+  ready-not-selected U12: no free IMUL unit - occupied: IMUL0:U10(issued c10, free c14)
+  ready-not-selected U13: no free IMUL unit - occupied: IMUL0:U10(issued c10, free c14)
+  ready-not-selected U14: no free IMUL unit - occupied: IMUL0:U10(issued c10, free c14)
+  ready-not-selected U15: no free IMUL unit - occupied: IMUL0:U10(issued c10, free c14)
+  ready-not-selected U16: no free IMUL unit - occupied: IMUL0:U10(issued c10, free c14)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U10(issued c10, free c14)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U18   in-flight(executing) 1
+
+=== cycle 12 ===
+dispatch  : -
+scheduler : 10/24 occupied | ready 7 | waiting 3
+ready     : U11 U12 U13 U14 U15 U16 U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U11: no free IMUL unit - occupied: IMUL0:U10(issued c10, free c14)
+  ready-not-selected U12: no free IMUL unit - occupied: IMUL0:U10(issued c10, free c14)
+  ready-not-selected U13: no free IMUL unit - occupied: IMUL0:U10(issued c10, free c14)
+  ready-not-selected U14: no free IMUL unit - occupied: IMUL0:U10(issued c10, free c14)
+  ready-not-selected U15: no free IMUL unit - occupied: IMUL0:U10(issued c10, free c14)
+  ready-not-selected U16: no free IMUL unit - occupied: IMUL0:U10(issued c10, free c14)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U10(issued c10, free c14)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : -   in-flight(executing) 1
+
+=== cycle 13 ===
+dispatch  : -
+scheduler : 10/24 occupied | ready 7 | waiting 3
+ready     : U11 U12 U13 U14 U15 U16 U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U11: no free IMUL unit - occupied: IMUL0:U10(issued c10, free c14)
+  ready-not-selected U12: no free IMUL unit - occupied: IMUL0:U10(issued c10, free c14)
+  ready-not-selected U13: no free IMUL unit - occupied: IMUL0:U10(issued c10, free c14)
+  ready-not-selected U14: no free IMUL unit - occupied: IMUL0:U10(issued c10, free c14)
+  ready-not-selected U15: no free IMUL unit - occupied: IMUL0:U10(issued c10, free c14)
+  ready-not-selected U16: no free IMUL unit - occupied: IMUL0:U10(issued c10, free c14)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U10(issued c10, free c14)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : -   in-flight(executing) 1
+
+=== cycle 14 ===
+dispatch  : -
+scheduler : 10/24 occupied | ready 7 | waiting 3
+ready     : U11 U12 U13 U14 U15 U16 U17
+selected  : U11
+issued    : U11   (1/6 slots)
+  ready-not-selected U12: no free IMUL unit - taken this cycle by older U11
+  ready-not-selected U13: no free IMUL unit - taken this cycle by older U11
+  ready-not-selected U14: no free IMUL unit - taken this cycle by older U11
+  ready-not-selected U15: no free IMUL unit - taken this cycle by older U11
+  ready-not-selected U16: no free IMUL unit - taken this cycle by older U11
+  ready-not-selected U17: no free IMUL unit - taken this cycle by older U11
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U10   in-flight(executing) 1
+
+=== cycle 15 ===
+dispatch  : -
+scheduler : 9/24 occupied | ready 6 | waiting 3
+ready     : U12 U13 U14 U15 U16 U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U12: no free IMUL unit - occupied: IMUL0:U11(issued c14, free c18)
+  ready-not-selected U13: no free IMUL unit - occupied: IMUL0:U11(issued c14, free c18)
+  ready-not-selected U14: no free IMUL unit - occupied: IMUL0:U11(issued c14, free c18)
+  ready-not-selected U15: no free IMUL unit - occupied: IMUL0:U11(issued c14, free c18)
+  ready-not-selected U16: no free IMUL unit - occupied: IMUL0:U11(issued c14, free c18)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U11(issued c14, free c18)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : -   in-flight(executing) 1
+
+=== cycle 16 ===
+dispatch  : -
+scheduler : 9/24 occupied | ready 6 | waiting 3
+ready     : U12 U13 U14 U15 U16 U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U12: no free IMUL unit - occupied: IMUL0:U11(issued c14, free c18)
+  ready-not-selected U13: no free IMUL unit - occupied: IMUL0:U11(issued c14, free c18)
+  ready-not-selected U14: no free IMUL unit - occupied: IMUL0:U11(issued c14, free c18)
+  ready-not-selected U15: no free IMUL unit - occupied: IMUL0:U11(issued c14, free c18)
+  ready-not-selected U16: no free IMUL unit - occupied: IMUL0:U11(issued c14, free c18)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U11(issued c14, free c18)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : -   in-flight(executing) 1
+
+=== cycle 17 ===
+dispatch  : -
+scheduler : 9/24 occupied | ready 6 | waiting 3
+ready     : U12 U13 U14 U15 U16 U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U12: no free IMUL unit - occupied: IMUL0:U11(issued c14, free c18)
+  ready-not-selected U13: no free IMUL unit - occupied: IMUL0:U11(issued c14, free c18)
+  ready-not-selected U14: no free IMUL unit - occupied: IMUL0:U11(issued c14, free c18)
+  ready-not-selected U15: no free IMUL unit - occupied: IMUL0:U11(issued c14, free c18)
+  ready-not-selected U16: no free IMUL unit - occupied: IMUL0:U11(issued c14, free c18)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U11(issued c14, free c18)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : -   in-flight(executing) 1
+
+=== cycle 18 ===
+dispatch  : -
+scheduler : 9/24 occupied | ready 7 | waiting 2
+ready     : U12 U13 U14 U15 U16 U17 U19
+selected  : U12 U19
+issued    : U12 U19   (2/6 slots)
+  ready-not-selected U13: no free IMUL unit - taken this cycle by older U12
+  ready-not-selected U14: no free IMUL unit - taken this cycle by older U12
+  ready-not-selected U15: no free IMUL unit - taken this cycle by older U12
+  ready-not-selected U16: no free IMUL unit - taken this cycle by older U12
+  ready-not-selected U17: no free IMUL unit - taken this cycle by older U12
+units busy: ALU 1/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U11   in-flight(executing) 2
+
+=== cycle 19 ===
+dispatch  : -
+scheduler : 7/24 occupied | ready 5 | waiting 2
+ready     : U13 U14 U15 U16 U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U13: no free IMUL unit - occupied: IMUL0:U12(issued c18, free c22)
+  ready-not-selected U14: no free IMUL unit - occupied: IMUL0:U12(issued c18, free c22)
+  ready-not-selected U15: no free IMUL unit - occupied: IMUL0:U12(issued c18, free c22)
+  ready-not-selected U16: no free IMUL unit - occupied: IMUL0:U12(issued c18, free c22)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U12(issued c18, free c22)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U19   in-flight(executing) 1
+
+=== cycle 20 ===
+dispatch  : -
+scheduler : 7/24 occupied | ready 5 | waiting 2
+ready     : U13 U14 U15 U16 U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U13: no free IMUL unit - occupied: IMUL0:U12(issued c18, free c22)
+  ready-not-selected U14: no free IMUL unit - occupied: IMUL0:U12(issued c18, free c22)
+  ready-not-selected U15: no free IMUL unit - occupied: IMUL0:U12(issued c18, free c22)
+  ready-not-selected U16: no free IMUL unit - occupied: IMUL0:U12(issued c18, free c22)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U12(issued c18, free c22)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : -   in-flight(executing) 1
+
+=== cycle 21 ===
+dispatch  : -
+scheduler : 7/24 occupied | ready 5 | waiting 2
+ready     : U13 U14 U15 U16 U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U13: no free IMUL unit - occupied: IMUL0:U12(issued c18, free c22)
+  ready-not-selected U14: no free IMUL unit - occupied: IMUL0:U12(issued c18, free c22)
+  ready-not-selected U15: no free IMUL unit - occupied: IMUL0:U12(issued c18, free c22)
+  ready-not-selected U16: no free IMUL unit - occupied: IMUL0:U12(issued c18, free c22)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U12(issued c18, free c22)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : -   in-flight(executing) 1
+
+=== cycle 22 ===
+dispatch  : -
+scheduler : 7/24 occupied | ready 5 | waiting 2
+ready     : U13 U14 U15 U16 U17
+selected  : U13
+issued    : U13   (1/6 slots)
+  ready-not-selected U14: no free IMUL unit - taken this cycle by older U13
+  ready-not-selected U15: no free IMUL unit - taken this cycle by older U13
+  ready-not-selected U16: no free IMUL unit - taken this cycle by older U13
+  ready-not-selected U17: no free IMUL unit - taken this cycle by older U13
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U12   in-flight(executing) 1
+
+=== cycle 23 ===
+dispatch  : -
+scheduler : 6/24 occupied | ready 4 | waiting 2
+ready     : U14 U15 U16 U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U14: no free IMUL unit - occupied: IMUL0:U13(issued c22, free c26)
+  ready-not-selected U15: no free IMUL unit - occupied: IMUL0:U13(issued c22, free c26)
+  ready-not-selected U16: no free IMUL unit - occupied: IMUL0:U13(issued c22, free c26)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U13(issued c22, free c26)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : -   in-flight(executing) 1
+
+=== cycle 24 ===
+dispatch  : -
+scheduler : 6/24 occupied | ready 4 | waiting 2
+ready     : U14 U15 U16 U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U14: no free IMUL unit - occupied: IMUL0:U13(issued c22, free c26)
+  ready-not-selected U15: no free IMUL unit - occupied: IMUL0:U13(issued c22, free c26)
+  ready-not-selected U16: no free IMUL unit - occupied: IMUL0:U13(issued c22, free c26)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U13(issued c22, free c26)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : -   in-flight(executing) 1
+
+=== cycle 25 ===
+dispatch  : -
+scheduler : 6/24 occupied | ready 4 | waiting 2
+ready     : U14 U15 U16 U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U14: no free IMUL unit - occupied: IMUL0:U13(issued c22, free c26)
+  ready-not-selected U15: no free IMUL unit - occupied: IMUL0:U13(issued c22, free c26)
+  ready-not-selected U16: no free IMUL unit - occupied: IMUL0:U13(issued c22, free c26)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U13(issued c22, free c26)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : -   in-flight(executing) 1
+
+=== cycle 26 ===
+dispatch  : -
+scheduler : 6/24 occupied | ready 5 | waiting 1
+ready     : U14 U15 U16 U17 U20
+selected  : U14 U20
+issued    : U14 U20   (2/6 slots)
+  ready-not-selected U15: no free IMUL unit - taken this cycle by older U14
+  ready-not-selected U16: no free IMUL unit - taken this cycle by older U14
+  ready-not-selected U17: no free IMUL unit - taken this cycle by older U14
+units busy: ALU 1/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U13   in-flight(executing) 2
+
+=== cycle 27 ===
+dispatch  : -
+scheduler : 4/24 occupied | ready 3 | waiting 1
+ready     : U15 U16 U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U15: no free IMUL unit - occupied: IMUL0:U14(issued c26, free c30)
+  ready-not-selected U16: no free IMUL unit - occupied: IMUL0:U14(issued c26, free c30)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U14(issued c26, free c30)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U20   in-flight(executing) 1
+
+=== cycle 28 ===
+dispatch  : -
+scheduler : 4/24 occupied | ready 3 | waiting 1
+ready     : U15 U16 U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U15: no free IMUL unit - occupied: IMUL0:U14(issued c26, free c30)
+  ready-not-selected U16: no free IMUL unit - occupied: IMUL0:U14(issued c26, free c30)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U14(issued c26, free c30)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : -   in-flight(executing) 1
+
+=== cycle 29 ===
+dispatch  : -
+scheduler : 4/24 occupied | ready 3 | waiting 1
+ready     : U15 U16 U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U15: no free IMUL unit - occupied: IMUL0:U14(issued c26, free c30)
+  ready-not-selected U16: no free IMUL unit - occupied: IMUL0:U14(issued c26, free c30)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U14(issued c26, free c30)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : -   in-flight(executing) 1
+
+=== cycle 30 ===
+dispatch  : -
+scheduler : 4/24 occupied | ready 3 | waiting 1
+ready     : U15 U16 U17
+selected  : U15
+issued    : U15   (1/6 slots)
+  ready-not-selected U16: no free IMUL unit - taken this cycle by older U15
+  ready-not-selected U17: no free IMUL unit - taken this cycle by older U15
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U14   in-flight(executing) 1
+
+=== cycle 31 ===
+dispatch  : -
+scheduler : 3/24 occupied | ready 2 | waiting 1
+ready     : U16 U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U16: no free IMUL unit - occupied: IMUL0:U15(issued c30, free c34)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U15(issued c30, free c34)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : -   in-flight(executing) 1
+
+=== cycle 32 ===
+dispatch  : -
+scheduler : 3/24 occupied | ready 2 | waiting 1
+ready     : U16 U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U16: no free IMUL unit - occupied: IMUL0:U15(issued c30, free c34)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U15(issued c30, free c34)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : -   in-flight(executing) 1
+
+=== cycle 33 ===
+dispatch  : -
+scheduler : 3/24 occupied | ready 2 | waiting 1
+ready     : U16 U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U16: no free IMUL unit - occupied: IMUL0:U15(issued c30, free c34)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U15(issued c30, free c34)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : -   in-flight(executing) 1
+
+=== cycle 34 ===
+dispatch  : -
+scheduler : 3/24 occupied | ready 3 | waiting 0
+ready     : U16 U17 U21
+selected  : U16 U21
+issued    : U16 U21   (2/6 slots)
+  ready-not-selected U17: no free IMUL unit - taken this cycle by older U16
+units busy: ALU 1/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U15   in-flight(executing) 2
+
+=== cycle 35 ===
+dispatch  : -
+scheduler : 1/24 occupied | ready 1 | waiting 0
+ready     : U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U16(issued c34, free c38)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U21   in-flight(executing) 1
+
+=== cycle 36 ===
+dispatch  : -
+scheduler : 1/24 occupied | ready 1 | waiting 0
+ready     : U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U16(issued c34, free c38)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : -   in-flight(executing) 1
+
+=== cycle 37 ===
+dispatch  : -
+scheduler : 1/24 occupied | ready 1 | waiting 0
+ready     : U17
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U17: no free IMUL unit - occupied: IMUL0:U16(issued c34, free c38)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : -   in-flight(executing) 1
+
+=== cycle 38 ===
+dispatch  : -
+scheduler : 1/24 occupied | ready 1 | waiting 0
+ready     : U17
+selected  : U17
+issued    : U17   (1/6 slots)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U16   in-flight(executing) 1
+
+=== cycle 39 ===
+dispatch  : -
+scheduler : 0/24 occupied | ready 0 | waiting 0
+ready     : -
+selected  : -
+issued    : -   (0/6 slots)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : -   in-flight(executing) 1
+
+=== cycle 40 ===
+dispatch  : -
+scheduler : 0/24 occupied | ready 0 | waiting 0
+ready     : -
+selected  : -
+issued    : -   (0/6 slots)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : -   in-flight(executing) 1
+
+=== cycle 41 ===
+dispatch  : -
+scheduler : 0/24 occupied | ready 0 | waiting 0
+ready     : -
+selected  : -
+issued    : -   (0/6 slots)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : -   in-flight(executing) 1
+
+=== cycle 42 ===
+dispatch  : -
+scheduler : 0/24 occupied | ready 0 | waiting 0
+ready     : -
+selected  : -
+issued    : -   (0/6 slots)
+units busy: ALU 0/3  IMUL 0/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U17   in-flight(executing) 0
+
+--- per-uop table ---
+uop  op     text                       res       deps           disp opRdy  sel issue done
+U00  LOAD   LOAD R10, [R40 + 0]        LOAD      -                 0     1    1     1    6
+U01  LOAD   LOAD R11, [R41 + 0]        LOAD      -                 0     1    1     1    6
+U02  LOAD   LOAD R12, [R42 + 0]        LOAD      -                 0     1    2     2    7
+U03  LOAD   LOAD R13, [R43 + 0]        LOAD      -                 0     1    2     2    7
+U04  LOAD   LOAD R14, [R44 + 0]        LOAD      -                 0     1    3     3    8
+U05  LOAD   LOAD R15, [R45 + 0]        LOAD      -                 0     1    3     3    8
+U06  LOAD   LOAD R16, [R46 + 0]        LOAD      -                 1     2    4     4    9
+U07  LOAD   LOAD R17, [R47 + 0]        LOAD      -                 1     2    4     4    9
+U08  IMUL   IMUL R60, R80, R90         IMUL      -                 1     2    2     2    6
+U09  IMUL   IMUL R61, R81, R91         IMUL      -                 1     2    6     6   10
+U10  IMUL   IMUL R62, R82, R92         IMUL      -                 1     2   10    10   14
+U11  IMUL   IMUL R63, R83, R93         IMUL      -                 1     2   14    14   18
+U12  IMUL   IMUL R64, R84, R94         IMUL      -                 2     3   18    18   22
+U13  IMUL   IMUL R65, R85, R95         IMUL      -                 2     3   22    22   26
+U14  IMUL   IMUL R66, R86, R96         IMUL      -                 2     3   26    26   30
+U15  IMUL   IMUL R67, R87, R97         IMUL      -                 2     3   30    30   34
+U16  IMUL   IMUL R68, R88, R98         IMUL      -                 2     3   34    34   38
+U17  IMUL   IMUL R69, R89, R99         IMUL      -                 2     3   38    38   42
+U18  ADD    ADD R120, R60, R61         ALU       U08,U09           3    10   10    10   11
+U19  ADD    ADD R121, R62, R63         ALU       U10,U11           3    18   18    18   19
+U20  ADD    ADD R122, R64, R65         ALU       U12,U13           3    26   26    26   27
+U21  ADD    ADD R123, R66, R67         ALU       U14,U15           3    34   34    34   35

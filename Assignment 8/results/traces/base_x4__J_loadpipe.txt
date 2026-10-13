@@ -1,0 +1,1222 @@
+# base_x4__J_loadpipe   [SCHED=24 DISP=6 ISSUE=6 WAKE=6 ALU=3 MUL=1 FADD=2 FMUL=2 LD=2 PIPE=LOAD]
+# total execution time (last completion) = 95 cycles
+
+=== cycle 0 ===
+dispatch  : U00 U01 U02 U03 U04 U05
+scheduler : 6/24 occupied | ready 0 | waiting 6
+ready     : -
+selected  : -
+issued    : -   (0/6 slots)
+units busy: ALU 0/3  IMUL 0/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : -   in-flight(executing) 0
+
+=== cycle 1 ===
+dispatch  : U06 U07 U08 U09 U10 U11
+scheduler : 12/24 occupied | ready 4 | waiting 8
+ready     : U00 U01 U04 U05
+selected  : U00 U01 U04 U05
+issued    : U00 U01 U04 U05   (4/6 slots)
+units busy: ALU 2/3  IMUL 0/1  FADD 1/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 3/6 used, demand 3, deferred 0
+completed : -   in-flight(executing) 4
+
+=== cycle 2 ===
+dispatch  : U12 U13 U14 U15 U16 U17
+scheduler : 14/24 occupied | ready 4 | waiting 10
+ready     : U02 U03 U06 U08
+selected  : U02 U03 U06 U08
+issued    : U02 U03 U06 U08   (4/6 slots)
+units busy: ALU 2/3  IMUL 0/1  FADD 1/2  FMUL 1/2  LOAD 2/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 3/6 used, demand 3, deferred 0
+completed : U00 U01   in-flight(executing) 6
+
+=== cycle 3 ===
+dispatch  : U18 U19 U20 U21 U22 U23
+scheduler : 16/24 occupied | ready 3 | waiting 13
+ready     : U07 U09 U12
+selected  : U07 U09 U12
+issued    : U07 U09 U12   (3/6 slots)
+units busy: ALU 1/3  IMUL 1/1  FADD 1/2  FMUL 1/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 3/6 used, demand 3, deferred 0
+completed : U06 U08   in-flight(executing) 7
+
+=== cycle 4 ===
+dispatch  : U24 U25 U26 U27 U28 U29
+scheduler : 19/24 occupied | ready 3 | waiting 16
+ready     : U11 U13 U14
+selected  : U11 U13
+issued    : U11 U13   (2/6 slots)
+  ready-not-selected U14: no free IMUL unit - occupied: IMUL0:U07(issued c3, free c7)
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 1/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : U05 U12   in-flight(executing) 7
+
+=== cycle 5 ===
+dispatch  : U30 U31 U32 U33 U34 U35
+scheduler : 23/24 occupied | ready 2 | waiting 21
+ready     : U10 U14
+selected  : U10
+issued    : U10   (1/6 slots)
+  ready-not-selected U14: no free IMUL unit - occupied: IMUL0:U07(issued c3, free c7)
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U04   in-flight(executing) 7
+
+=== cycle 6 ===
+dispatch  : U36 U37   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 3 | waiting 21
+ready     : U14 U32 U33
+selected  : U32 U33
+issued    : U32 U33   (2/6 slots)
+  ready-not-selected U14: no free IMUL unit - occupied: IMUL0:U07(issued c3, free c7)
+units busy: ALU 2/3  IMUL 1/1  FADD 1/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 3/6 used, demand 3, deferred 0
+completed : -   in-flight(executing) 9
+
+=== cycle 7 ===
+dispatch  : U38 U39   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 4 | waiting 20
+ready     : U14 U18 U34 U35
+selected  : U14 U18 U34 U35
+issued    : U14 U18 U34 U35   (4/6 slots)
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 1/2  LOAD 2/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U02 U03 U07 U11 U32 U33   in-flight(executing) 7
+
+=== cycle 8 ===
+dispatch  : U40 U41 U42 U43   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 1 | waiting 23
+ready     : U38
+selected  : U38
+issued    : U38   (1/6 slots)
+units busy: ALU 1/3  IMUL 1/1  FADD 1/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 3/6 used, demand 3, deferred 0
+completed : U09   in-flight(executing) 7
+
+=== cycle 9 ===
+dispatch  : U44   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 2 | waiting 22
+ready     : U17 U39
+selected  : U17
+issued    : U17   (1/6 slots)
+  ready-not-selected U39: no free IMUL unit - occupied: IMUL0:U14(issued c7, free c11)
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U10 U13 U38   in-flight(executing) 5
+
+=== cycle 10 ===
+dispatch  : U45   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 1 | waiting 23
+ready     : U39
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U39: no free IMUL unit - occupied: IMUL0:U14(issued c7, free c11)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U18   in-flight(executing) 4
+
+=== cycle 11 ===
+dispatch  : -   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 2 | waiting 22
+ready     : U15 U39
+selected  : U15 U39
+issued    : U15 U39   (2/6 slots)
+units busy: ALU 1/3  IMUL 1/1  FADD 0/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U14   in-flight(executing) 5
+
+=== cycle 12 ===
+dispatch  : U46 U47   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 1 | waiting 23
+ready     : U16
+selected  : U16
+issued    : U16   (1/6 slots)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 1/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U15 U34 U35   in-flight(executing) 3
+
+=== cycle 13 ===
+dispatch  : U48   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 2 | waiting 22
+ready     : U23 U47
+selected  : U23 U47
+issued    : U23 U47   (2/6 slots)
+units busy: ALU 1/3  IMUL 1/1  FADD 1/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U17   in-flight(executing) 4
+
+=== cycle 14 ===
+dispatch  : U49 U50   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 1 | waiting 23
+ready     : U48
+selected  : U48
+issued    : U48   (1/6 slots)
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 1/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : U47   in-flight(executing) 4
+
+=== cycle 15 ===
+dispatch  : U51   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 4 | waiting 20
+ready     : U40 U42 U49 U50
+selected  : U40 U42 U49 U50
+issued    : U40 U42 U49 U50   (4/6 slots)
+units busy: ALU 3/3  IMUL 0/1  FADD 1/2  FMUL 0/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 5/6 used, demand 5, deferred 0
+completed : U39 U48   in-flight(executing) 6
+
+=== cycle 16 ===
+dispatch  : U52 U53 U54 U55   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 4 | waiting 20
+ready     : U25 U43 U45 U51
+selected  : U25 U43 U45 U51
+issued    : U25 U43 U45 U51   (4/6 slots)
+units busy: ALU 1/3  IMUL 0/1  FADD 0/2  FMUL 1/2  LOAD 2/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : U23 U42 U49 U50   in-flight(executing) 6
+
+=== cycle 17 ===
+dispatch  : U56 U57 U58 U59   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 6 | waiting 18
+ready     : U19 U46.STA U52 U53 U54 U55
+selected  : U19 U46.STA U52 U53 U54 U55
+issued    : U19 U46.STA U52 U53 U54 U55   (6/6 slots)
+units busy: ALU 2/3  IMUL 0/1  FADD 1/2  FMUL 2/2  LOAD 1/2  STA 1/1  STD 0/1  BR 0/1
+wakeup    : 3/6 used, demand 3, deferred 0
+completed : U16 U45   in-flight(executing) 9
+
+=== cycle 18 ===
+dispatch  : U60 U61 U62 U63 U64   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 4 | waiting 20
+ready     : U20 U21 U56 U57
+selected  : U20 U21 U57
+issued    : U20 U21 U57   (3/6 slots)
+  ready-not-selected U56: no free IMUL unit - taken this cycle by older U21
+units busy: ALU 1/3  IMUL 1/1  FADD 1/2  FMUL 2/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U19 U55   in-flight(executing) 10
+
+=== cycle 19 ===
+dispatch  : U65 U66 U67   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 3 | waiting 21
+ready     : U56 U58 U61
+selected  : U58 U61
+issued    : U58 U61   (2/6 slots)
+  ready-not-selected U56: no free IMUL unit - occupied: IMUL0:U21(issued c18, free c22)
+units busy: ALU 1/3  IMUL 1/1  FADD 1/2  FMUL 2/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 5/6 used, demand 5, deferred 0
+completed : U57   in-flight(executing) 11
+
+=== cycle 20 ===
+dispatch  : U68 U69   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 5 | waiting 19
+ready     : U28 U56 U60 U62 U63
+selected  : U28 U60 U62
+issued    : U28 U60 U62   (3/6 slots)
+  ready-not-selected U56: no free IMUL unit - occupied: IMUL0:U21(issued c18, free c22)
+  ready-not-selected U63: no free IMUL unit - occupied: IMUL0:U21(issued c18, free c22)
+units busy: ALU 0/3  IMUL 1/1  FADD 2/2  FMUL 1/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : U25 U40 U54 U61   in-flight(executing) 10
+
+=== cycle 21 ===
+dispatch  : U70 U71 U72   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 4 | waiting 20
+ready     : U46.STD U56 U59 U63
+selected  : U46.STD U59
+issued    : U46.STD U59   (2/6 slots)
+  ready-not-selected U56: no free IMUL unit - occupied: IMUL0:U21(issued c18, free c22)
+  ready-not-selected U63: no free IMUL unit - occupied: IMUL0:U21(issued c18, free c22)
+units busy: ALU 0/3  IMUL 1/1  FADD 2/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 1/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U43 U51 U53   in-flight(executing) 9
+
+=== cycle 22 ===
+dispatch  : U73 U74   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 3 | waiting 21
+ready     : U22 U56 U63
+selected  : U22 U56
+issued    : U22 U56   (2/6 slots)
+  ready-not-selected U63: no free IMUL unit - taken this cycle by older U56
+units busy: ALU 1/3  IMUL 1/1  FADD 2/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 4/6 used, demand 4, deferred 0
+completed : U21 U46 U52   in-flight(executing) 8
+
+=== cycle 23 ===
+dispatch  : U75 U76   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 5 | waiting 19
+ready     : U24 U26 U36 U63 U67
+selected  : U24 U26 U36 U67
+issued    : U24 U26 U36 U67   (4/6 slots)
+  ready-not-selected U63: no free IMUL unit - occupied: IMUL0:U56(issued c22, free c26)
+units busy: ALU 1/3  IMUL 1/1  FADD 1/2  FMUL 2/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : U20 U22 U28 U60   in-flight(executing) 8
+
+=== cycle 24 ===
+dispatch  : U77 U78 U79 U80   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 3 | waiting 21
+ready     : U27 U29 U63
+selected  : U27
+issued    : U27   (1/6 slots)
+  ready-not-selected U29: no free IMUL unit - occupied: IMUL0:U56(issued c22, free c26)
+  ready-not-selected U63: no free IMUL unit - occupied: IMUL0:U56(issued c22, free c26)
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 2/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U26 U58   in-flight(executing) 7
+
+=== cycle 25 ===
+dispatch  : U81   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 3 | waiting 21
+ready     : U29 U63 U66
+selected  : U66
+issued    : U66   (1/6 slots)
+  ready-not-selected U29: no free IMUL unit - occupied: IMUL0:U56(issued c22, free c26)
+  ready-not-selected U63: no free IMUL unit - occupied: IMUL0:U56(issued c22, free c26)
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 2/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U59 U62   in-flight(executing) 6
+
+=== cycle 26 ===
+dispatch  : U82   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 3 | waiting 21
+ready     : U29 U63 U81
+selected  : U29 U81
+issued    : U29 U81   (2/6 slots)
+  ready-not-selected U63: no free IMUL unit - taken this cycle by older U29
+units busy: ALU 1/3  IMUL 1/1  FADD 0/2  FMUL 2/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : U56 U67   in-flight(executing) 6
+
+=== cycle 27 ===
+dispatch  : U83 U84   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 3 | waiting 21
+ready     : U37 U63 U82
+selected  : U37 U82
+issued    : U37 U82   (2/6 slots)
+  ready-not-selected U63: no free IMUL unit - occupied: IMUL0:U29(issued c26, free c30)
+units busy: ALU 1/3  IMUL 1/1  FADD 1/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U36 U81   in-flight(executing) 6
+
+=== cycle 28 ===
+dispatch  : U85 U86   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 3 | waiting 21
+ready     : U63 U83 U84
+selected  : U83 U84
+issued    : U83 U84   (2/6 slots)
+  ready-not-selected U63: no free IMUL unit - occupied: IMUL0:U29(issued c26, free c30)
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 1/2  LOAD 2/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : U24 U82   in-flight(executing) 6
+
+=== cycle 29 ===
+dispatch  : U87 U88   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 3 | waiting 21
+ready     : U31.STD U63 U72
+selected  : U31.STD U72
+issued    : U31.STD U72   (2/6 slots)
+  ready-not-selected U63: no free IMUL unit - occupied: IMUL0:U29(issued c26, free c30)
+units busy: ALU 0/3  IMUL 1/1  FADD 2/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 1/1  BR 0/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : U27 U66   in-flight(executing) 5
+
+=== cycle 30 ===
+dispatch  : U89   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 4 | waiting 20
+ready     : U30 U41 U63 U87
+selected  : U30 U41 U63 U87
+issued    : U30 U41 U63 U87   (4/6 slots)
+units busy: ALU 2/3  IMUL 1/1  FADD 2/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : U29 U37   in-flight(executing) 7
+
+=== cycle 31 ===
+dispatch  : U90 U91 U92 U93   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 2 | waiting 22
+ready     : U31.STA U88
+selected  : U31.STA
+issued    : U31.STA   (1/6 slots)
+  ready-not-selected U88: no free IMUL unit - occupied: IMUL0:U63(issued c30, free c34)
+units busy: ALU 0/3  IMUL 1/1  FADD 2/2  FMUL 0/2  LOAD 0/2  STA 1/1  STD 0/1  BR 0/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : U30 U87   in-flight(executing) 6
+
+=== cycle 32 ===
+dispatch  : U94   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 2 | waiting 22
+ready     : U74 U88
+selected  : U74
+issued    : U74   (1/6 slots)
+  ready-not-selected U88: no free IMUL unit - occupied: IMUL0:U63(issued c30, free c34)
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U31 U72   in-flight(executing) 5
+
+=== cycle 33 ===
+dispatch  : U95   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 2 | waiting 22
+ready     : U44 U88
+selected  : U44
+issued    : U44   (1/6 slots)
+  ready-not-selected U88: no free IMUL unit - occupied: IMUL0:U63(issued c30, free c34)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 2/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U41 U83 U84   in-flight(executing) 3
+
+=== cycle 34 ===
+dispatch  : U96   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 2 | waiting 22
+ready     : U64 U88
+selected  : U64 U88
+issued    : U64 U88   (2/6 slots)
+units busy: ALU 1/3  IMUL 1/1  FADD 0/2  FMUL 2/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U63   in-flight(executing) 4
+
+=== cycle 35 ===
+dispatch  : U97 U98   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 2 | waiting 22
+ready     : U65 U96
+selected  : U65 U96
+issued    : U65 U96   (2/6 slots)
+units busy: ALU 1/3  IMUL 1/1  FADD 0/2  FMUL 2/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 3/6 used, demand 3, deferred 0
+completed : U64   in-flight(executing) 5
+
+=== cycle 36 ===
+dispatch  : U99 U100   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 3 | waiting 21
+ready     : U77 U97 U98
+selected  : U77 U97 U98
+issued    : U77 U97 U98   (3/6 slots)
+units busy: ALU 1/3  IMUL 1/1  FADD 1/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 1/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U74 U96   in-flight(executing) 6
+
+=== cycle 37 ===
+dispatch  : U101 U102 U103   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 2 | waiting 22
+ready     : U99 U100
+selected  : U99 U100
+issued    : U99 U100   (2/6 slots)
+units busy: ALU 1/3  IMUL 1/1  FADD 1/2  FMUL 0/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 3/6 used, demand 3, deferred 0
+completed : U44 U97 U98   in-flight(executing) 5
+
+=== cycle 38 ===
+dispatch  : U104 U105   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 5 | waiting 19
+ready     : U89 U91 U101 U102 U103
+selected  : U89 U91 U101 U102 U103
+issued    : U89 U91 U101 U102 U103   (5/6 slots)
+units busy: ALU 1/3  IMUL 0/1  FADD 2/2  FMUL 1/2  LOAD 2/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 3/6 used, demand 3, deferred 0
+completed : U88 U99   in-flight(executing) 8
+
+=== cycle 39 ===
+dispatch  : U106 U107 U108 U109 U110   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 4 | waiting 20
+ready     : U85 U92 U94 U104
+selected  : U85 U92 U94 U104
+issued    : U85 U92 U94 U104   (4/6 slots)
+units busy: ALU 2/3  IMUL 0/1  FADD 1/2  FMUL 2/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 4/6 used, demand 4, deferred 0
+completed : U77 U91   in-flight(executing) 10
+
+=== cycle 40 ===
+dispatch  : U111 U112 U113 U114   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 5 | waiting 19
+ready     : U68 U95.STA U105 U106 U110
+selected  : U68 U95.STA U105 U106 U110
+issued    : U68 U95.STA U105 U106 U110   (5/6 slots)
+units busy: ALU 3/3  IMUL 1/1  FADD 1/2  FMUL 2/2  LOAD 0/2  STA 1/1  STD 0/1  BR 0/1
+wakeup    : 6/6 used, demand 6, deferred 0
+completed : U65 U94 U104   in-flight(executing) 11
+
+=== cycle 41 ===
+dispatch  : U115 U116 U117 U118   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 6 | waiting 18
+ready     : U69 U70 U107 U109 U111 U112
+selected  : U69 U107 U109
+issued    : U69 U107 U109   (3/6 slots)
+  ready-not-selected U70: no free IMUL unit - occupied: IMUL0:U105(issued c40, free c44)
+  ready-not-selected U111: no free LOAD unit - taken this cycle by older U69,U107
+  ready-not-selected U112: no free IMUL unit - occupied: IMUL0:U105(issued c40, free c44)
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 2/2  LOAD 2/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U68 U103 U106 U110   in-flight(executing) 10
+
+=== cycle 42 ===
+dispatch  : U119 U120 U121   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 4 | waiting 20
+ready     : U70 U108 U111 U112
+selected  : U108 U111
+issued    : U108 U111   (2/6 slots)
+  ready-not-selected U70: no free IMUL unit - occupied: IMUL0:U105(issued c40, free c44)
+  ready-not-selected U112: no free IMUL unit - occupied: IMUL0:U105(issued c40, free c44)
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 2/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : U100 U102   in-flight(executing) 10
+
+=== cycle 43 ===
+dispatch  : U122 U123   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 3 | waiting 21
+ready     : U70 U86 U112
+selected  : U86
+issued    : U86   (1/6 slots)
+  ready-not-selected U70: no free IMUL unit - occupied: IMUL0:U105(issued c40, free c44)
+  ready-not-selected U112: no free IMUL unit - occupied: IMUL0:U105(issued c40, free c44)
+units busy: ALU 0/3  IMUL 1/1  FADD 2/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : U85 U89 U101   in-flight(executing) 8
+
+=== cycle 44 ===
+dispatch  : U124   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 4 | waiting 20
+ready     : U70 U95.STD U112 U116
+selected  : U70 U95.STD U116
+issued    : U70 U95.STD U116   (3/6 slots)
+  ready-not-selected U112: no free IMUL unit - taken this cycle by older U70
+units busy: ALU 0/3  IMUL 1/1  FADD 2/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 1/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U92 U105 U109   in-flight(executing) 8
+
+=== cycle 45 ===
+dispatch  : U125 U126 U127   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 1 | waiting 23
+ready     : U112
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U112: no free IMUL unit - occupied: IMUL0:U70(issued c44, free c48)
+units busy: ALU 0/3  IMUL 1/1  FADD 2/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : U95   in-flight(executing) 7
+
+=== cycle 46 ===
+dispatch  : -   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 3 | waiting 21
+ready     : U90 U112 U115
+selected  : U90 U115
+issued    : U90 U115   (2/6 slots)
+  ready-not-selected U112: no free IMUL unit - occupied: IMUL0:U70(issued c44, free c48)
+units busy: ALU 0/3  IMUL 1/1  FADD 2/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U69 U86 U107 U108   in-flight(executing) 5
+
+=== cycle 47 ===
+dispatch  : U128 U129   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 1 | waiting 23
+ready     : U112
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U112: no free IMUL unit - occupied: IMUL0:U70(issued c44, free c48)
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U111 U116   in-flight(executing) 3
+
+=== cycle 48 ===
+dispatch  : -   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 2 | waiting 22
+ready     : U71 U112
+selected  : U71 U112
+issued    : U71 U112   (2/6 slots)
+units busy: ALU 1/3  IMUL 1/1  FADD 1/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 3/6 used, demand 3, deferred 0
+completed : U70   in-flight(executing) 4
+
+=== cycle 49 ===
+dispatch  : U130 U131   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 3 | waiting 21
+ready     : U73 U75 U93
+selected  : U73 U75 U93
+issued    : U73 U75 U93   (3/6 slots)
+units busy: ALU 1/3  IMUL 1/1  FADD 0/2  FMUL 2/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 3/6 used, demand 3, deferred 0
+completed : U71 U90   in-flight(executing) 5
+
+=== cycle 50 ===
+dispatch  : U132 U133 U134   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 5 | waiting 19
+ready     : U76 U78 U121 U130 U131
+selected  : U76 U121 U130 U131
+issued    : U76 U121 U130 U131   (4/6 slots)
+  ready-not-selected U78: no free IMUL unit - occupied: IMUL0:U112(issued c48, free c52)
+units busy: ALU 2/3  IMUL 1/1  FADD 1/2  FMUL 1/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : U75 U115   in-flight(executing) 7
+
+=== cycle 51 ===
+dispatch  : U135 U136 U137 U138   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 3 | waiting 21
+ready     : U78 U132 U133
+selected  : U132 U133
+issued    : U132 U133   (2/6 slots)
+  ready-not-selected U78: no free IMUL unit - occupied: IMUL0:U112(issued c48, free c52)
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 1/2  LOAD 2/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U130 U131   in-flight(executing) 7
+
+=== cycle 52 ===
+dispatch  : U139 U140   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 3 | waiting 21
+ready     : U78 U113 U136
+selected  : U78 U113 U136
+issued    : U78 U113 U136   (3/6 slots)
+units busy: ALU 2/3  IMUL 1/1  FADD 1/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 4/6 used, demand 4, deferred 0
+completed : U112   in-flight(executing) 9
+
+=== cycle 53 ===
+dispatch  : U141 U142 U143   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 3 | waiting 21
+ready     : U114 U123 U137
+selected  : U114 U123
+issued    : U114 U123   (2/6 slots)
+  ready-not-selected U137: no free IMUL unit - occupied: IMUL0:U78(issued c52, free c56)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 1/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U93 U113 U121 U136   in-flight(executing) 7
+
+=== cycle 54 ===
+dispatch  : U144 U145   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 1 | waiting 23
+ready     : U137
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U137: no free IMUL unit - occupied: IMUL0:U78(issued c52, free c56)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U73   in-flight(executing) 6
+
+=== cycle 55 ===
+dispatch  : -   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 3 | waiting 21
+ready     : U80.STD U137 U145
+selected  : U80.STD U145
+issued    : U80.STD U145   (2/6 slots)
+  ready-not-selected U137: no free IMUL unit - occupied: IMUL0:U78(issued c52, free c56)
+units busy: ALU 1/3  IMUL 1/1  FADD 0/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 1/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U76   in-flight(executing) 6
+
+=== cycle 56 ===
+dispatch  : U146   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 2 | waiting 22
+ready     : U79 U137
+selected  : U79 U137
+issued    : U79 U137   (2/6 slots)
+units busy: ALU 1/3  IMUL 1/1  FADD 0/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 3/6 used, demand 3, deferred 0
+completed : U78 U132 U133 U145   in-flight(executing) 4
+
+=== cycle 57 ===
+dispatch  : U147 U148   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 3 | waiting 21
+ready     : U80.STA U126 U146
+selected  : U80.STA U126 U146
+issued    : U80.STA U126 U146   (3/6 slots)
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 0/2  LOAD 0/2  STA 1/1  STD 0/1  BR 1/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U79 U123   in-flight(executing) 5
+
+=== cycle 58 ===
+dispatch  : U149 U150 U151   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 3 | waiting 21
+ready     : U117 U147 U148
+selected  : U117 U147 U148
+issued    : U117 U147 U148   (3/6 slots)
+units busy: ALU 3/3  IMUL 1/1  FADD 1/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 4/6 used, demand 4, deferred 0
+completed : U80 U114 U146   in-flight(executing) 5
+
+=== cycle 59 ===
+dispatch  : U152 U153 U154   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 5 | waiting 19
+ready     : U118 U119 U149 U150 U151
+selected  : U118 U149 U151
+issued    : U118 U149 U151   (3/6 slots)
+  ready-not-selected U119: no free IMUL unit - occupied: IMUL0:U137(issued c56, free c60)
+  ready-not-selected U150: no free LOAD unit - taken this cycle by older U118,U149
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 1/2  LOAD 2/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 3/6 used, demand 3, deferred 0
+completed : U117 U147 U148   in-flight(executing) 5
+
+=== cycle 60 ===
+dispatch  : U155 U156 U157   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 7 | waiting 17
+ready     : U119 U134 U138 U140 U150 U152 U153
+selected  : U119 U134 U138 U140 U150 U152 U153
+issued    : U119 U134 U138 U140 U150 U152   (6/6 slots)
+  selected-not-issued U153: selected but issue width 6 exhausted by older U119,U134,U138,U140,U150,U152
+units busy: ALU 1/3  IMUL 1/1  FADD 1/2  FMUL 2/2  LOAD 2/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : U126 U137   in-flight(executing) 9
+
+=== cycle 61 ===
+dispatch  : U158 U159 U160 U161 U162 U163
+scheduler : 24/24 occupied | ready 4 | waiting 20
+ready     : U141 U143 U153 U155
+selected  : U141 U143 U153 U155
+issued    : U141 U143 U153 U155   (4/6 slots)
+units busy: ALU 3/3  IMUL 1/1  FADD 1/2  FMUL 2/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 4/6 used, demand 4, deferred 0
+completed : U140   in-flight(executing) 12
+
+=== cycle 62 ===
+dispatch  : U164 U165 U166 U167   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 4 | waiting 20
+ready     : U144.STA U154 U156 U159
+selected  : U144.STA U156 U159
+issued    : U144.STA U156 U159   (3/6 slots)
+  ready-not-selected U154: no free IMUL unit - occupied: IMUL0:U119(issued c60, free c64)
+units busy: ALU 1/3  IMUL 1/1  FADD 1/2  FMUL 2/2  LOAD 1/2  STA 1/1  STD 0/1  BR 0/1
+wakeup    : 4/6 used, demand 4, deferred 0
+completed : U143 U153 U155   in-flight(executing) 11
+
+=== cycle 63 ===
+dispatch  : U168 U169   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 5 | waiting 19
+ready     : U154 U157 U158 U160 U161
+selected  : U157 U158 U160
+issued    : U157 U158 U160   (3/6 slots)
+  ready-not-selected U154: no free IMUL unit - occupied: IMUL0:U119(issued c60, free c64)
+  ready-not-selected U161: no free IMUL unit - occupied: IMUL0:U119(issued c60, free c64)
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 2/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 3/6 used, demand 3, deferred 0
+completed : U151 U152 U159   in-flight(executing) 11
+
+=== cycle 64 ===
+dispatch  : U170 U171 U172   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 4 | waiting 20
+ready     : U120 U135 U154 U161
+selected  : U120 U135 U154
+issued    : U120 U135 U154   (3/6 slots)
+  ready-not-selected U161: no free IMUL unit - taken this cycle by older U154
+units busy: ALU 1/3  IMUL 1/1  FADD 2/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : U118 U119 U134 U149   in-flight(executing) 10
+
+=== cycle 65 ===
+dispatch  : U173 U174 U175   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 3 | waiting 21
+ready     : U122 U124 U161
+selected  : U122 U124
+issued    : U122 U124   (2/6 slots)
+  ready-not-selected U161: no free IMUL unit - occupied: IMUL0:U154(issued c64, free c68)
+units busy: ALU 1/3  IMUL 1/1  FADD 2/2  FMUL 1/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 4/6 used, demand 4, deferred 0
+completed : U120 U138 U150   in-flight(executing) 9
+
+=== cycle 66 ===
+dispatch  : U176 U177   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 5 | waiting 19
+ready     : U125 U127 U144.STD U161 U165
+selected  : U125 U144.STD U165
+issued    : U125 U144.STD U165   (3/6 slots)
+  ready-not-selected U127: no free IMUL unit - occupied: IMUL0:U154(issued c64, free c68)
+  ready-not-selected U161: no free IMUL unit - occupied: IMUL0:U154(issued c64, free c68)
+units busy: ALU 0/3  IMUL 1/1  FADD 2/2  FMUL 1/2  LOAD 1/2  STA 0/1  STD 1/1  BR 0/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : U124 U141 U158   in-flight(executing) 9
+
+=== cycle 67 ===
+dispatch  : U178 U179 U180   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 4 | waiting 20
+ready     : U127 U139 U161 U164
+selected  : U139 U164
+issued    : U139 U164   (2/6 slots)
+  ready-not-selected U127: no free IMUL unit - occupied: IMUL0:U154(issued c64, free c68)
+  ready-not-selected U161: no free IMUL unit - occupied: IMUL0:U154(issued c64, free c68)
+units busy: ALU 0/3  IMUL 1/1  FADD 2/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U135 U144 U156 U157   in-flight(executing) 7
+
+=== cycle 68 ===
+dispatch  : U181 U182   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 4 | waiting 20
+ready     : U127 U161 U179 U180
+selected  : U127 U179 U180
+issued    : U127 U179 U180   (3/6 slots)
+  ready-not-selected U161: no free IMUL unit - taken this cycle by older U127
+units busy: ALU 2/3  IMUL 1/1  FADD 2/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 3/6 used, demand 3, deferred 0
+completed : U154 U160   in-flight(executing) 8
+
+=== cycle 69 ===
+dispatch  : U183 U184 U185   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 3 | waiting 21
+ready     : U161 U181 U182
+selected  : U181 U182
+issued    : U181 U182   (2/6 slots)
+  ready-not-selected U161: no free IMUL unit - occupied: IMUL0:U127(issued c68, free c72)
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 1/2  LOAD 2/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U165 U179 U180   in-flight(executing) 7
+
+=== cycle 70 ===
+dispatch  : U186 U187   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 3 | waiting 21
+ready     : U142 U161 U185
+selected  : U142 U185
+issued    : U142 U185   (2/6 slots)
+  ready-not-selected U161: no free IMUL unit - occupied: IMUL0:U127(issued c68, free c72)
+units busy: ALU 1/3  IMUL 1/1  FADD 0/2  FMUL 2/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 3/6 used, demand 3, deferred 0
+completed : U122 U139   in-flight(executing) 7
+
+=== cycle 71 ===
+dispatch  : U188 U189   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 4 | waiting 20
+ready     : U129.STD U161 U170 U186
+selected  : U129.STD U170
+issued    : U129.STD U170   (2/6 slots)
+  ready-not-selected U161: no free IMUL unit - occupied: IMUL0:U127(issued c68, free c72)
+  ready-not-selected U186: no free IMUL unit - occupied: IMUL0:U127(issued c68, free c72)
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 1/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U125 U164 U185   in-flight(executing) 5
+
+=== cycle 72 ===
+dispatch  : U190   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 3 | waiting 21
+ready     : U128 U161 U186
+selected  : U128 U161
+issued    : U128 U161   (2/6 slots)
+  ready-not-selected U186: no free IMUL unit - taken this cycle by older U161
+units busy: ALU 1/3  IMUL 1/1  FADD 1/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U127   in-flight(executing) 6
+
+=== cycle 73 ===
+dispatch  : U191 U192   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 2 | waiting 22
+ready     : U129.STA U186
+selected  : U129.STA
+issued    : U129.STA   (1/6 slots)
+  ready-not-selected U186: no free IMUL unit - occupied: IMUL0:U161(issued c72, free c76)
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 1/2  LOAD 0/2  STA 1/1  STD 0/1  BR 0/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : U128   in-flight(executing) 6
+
+=== cycle 74 ===
+dispatch  : U193   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 2 | waiting 22
+ready     : U172 U186
+selected  : U172
+issued    : U172   (1/6 slots)
+  ready-not-selected U186: no free IMUL unit - occupied: IMUL0:U161(issued c72, free c76)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U129 U142 U170 U181 U182   in-flight(executing) 2
+
+=== cycle 75 ===
+dispatch  : U194   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 1 | waiting 23
+ready     : U186
+selected  : -
+issued    : -   (0/6 slots)
+  ready-not-selected U186: no free IMUL unit - occupied: IMUL0:U161(issued c72, free c76)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : -   in-flight(executing) 2
+
+=== cycle 76 ===
+dispatch  : -   <-- BLOCKED: scheduler full
+scheduler : 24/24 occupied | ready 3 | waiting 21
+ready     : U162 U186 U194
+selected  : U162 U186 U194
+issued    : U162 U186 U194   (3/6 slots)
+units busy: ALU 2/3  IMUL 1/1  FADD 0/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U161   in-flight(executing) 4
+
+=== cycle 77 ===
+dispatch  : U195
+scheduler : 22/24 occupied | ready 1 | waiting 21
+ready     : U163
+selected  : U163
+issued    : U163   (1/6 slots)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 1/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : U162 U194   in-flight(executing) 3
+
+=== cycle 78 ===
+dispatch  : -
+scheduler : 21/24 occupied | ready 2 | waiting 19
+ready     : U175 U195
+selected  : U175 U195
+issued    : U175 U195   (2/6 slots)
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 1/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U172   in-flight(executing) 4
+
+=== cycle 79 ===
+dispatch  : -
+scheduler : 19/24 occupied | ready 0 | waiting 19
+ready     : -
+selected  : -
+issued    : -   (0/6 slots)
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : U195   in-flight(executing) 3
+
+=== cycle 80 ===
+dispatch  : -
+scheduler : 19/24 occupied | ready 2 | waiting 17
+ready     : U187 U189
+selected  : U187 U189
+issued    : U187 U189   (2/6 slots)
+units busy: ALU 1/3  IMUL 0/1  FADD 1/2  FMUL 0/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 3/6 used, demand 3, deferred 0
+completed : U186   in-flight(executing) 4
+
+=== cycle 81 ===
+dispatch  : -
+scheduler : 17/24 occupied | ready 3 | waiting 14
+ready     : U183 U190 U192
+selected  : U183 U190 U192
+issued    : U183 U190 U192   (3/6 slots)
+units busy: ALU 1/3  IMUL 0/1  FADD 0/2  FMUL 1/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : U175 U189   in-flight(executing) 5
+
+=== cycle 82 ===
+dispatch  : -
+scheduler : 14/24 occupied | ready 2 | waiting 12
+ready     : U166 U193.STA
+selected  : U166 U193.STA
+issued    : U166 U193.STA   (2/6 slots)
+units busy: ALU 1/3  IMUL 0/1  FADD 0/2  FMUL 1/2  LOAD 0/2  STA 1/1  STD 0/1  BR 0/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : U163 U192   in-flight(executing) 4
+
+=== cycle 83 ===
+dispatch  : -
+scheduler : 13/24 occupied | ready 2 | waiting 11
+ready     : U167 U168
+selected  : U167 U168
+issued    : U167 U168   (2/6 slots)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 1/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U166   in-flight(executing) 5
+
+=== cycle 84 ===
+dispatch  : -
+scheduler : 11/24 occupied | ready 0 | waiting 11
+ready     : -
+selected  : -
+issued    : -   (0/6 slots)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : -   in-flight(executing) 5
+
+=== cycle 85 ===
+dispatch  : -
+scheduler : 11/24 occupied | ready 1 | waiting 10
+ready     : U184
+selected  : U184
+issued    : U184   (1/6 slots)
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U183 U187   in-flight(executing) 4
+
+=== cycle 86 ===
+dispatch  : -
+scheduler : 10/24 occupied | ready 1 | waiting 9
+ready     : U193.STD
+selected  : U193.STD
+issued    : U193.STD   (1/6 slots)
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 1/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : U190   in-flight(executing) 4
+
+=== cycle 87 ===
+dispatch  : -
+scheduler : 9/24 occupied | ready 1 | waiting 8
+ready     : U169
+selected  : U169
+issued    : U169   (1/6 slots)
+units busy: ALU 1/3  IMUL 0/1  FADD 1/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 3/6 used, demand 3, deferred 0
+completed : U168 U193   in-flight(executing) 3
+
+=== cycle 88 ===
+dispatch  : -
+scheduler : 8/24 occupied | ready 3 | waiting 5
+ready     : U171 U173 U188
+selected  : U171 U173 U188
+issued    : U171 U173 U188   (3/6 slots)
+units busy: ALU 1/3  IMUL 0/1  FADD 1/2  FMUL 0/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : U167 U169 U184   in-flight(executing) 3
+
+=== cycle 89 ===
+dispatch  : -
+scheduler : 5/24 occupied | ready 2 | waiting 3
+ready     : U174 U176
+selected  : U174 U176
+issued    : U174 U176   (2/6 slots)
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 0/2  LOAD 1/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U173   in-flight(executing) 4
+
+=== cycle 90 ===
+dispatch  : -
+scheduler : 3/24 occupied | ready 0 | waiting 3
+ready     : -
+selected  : -
+issued    : -   (0/6 slots)
+units busy: ALU 0/3  IMUL 1/1  FADD 1/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : -   in-flight(executing) 4
+
+=== cycle 91 ===
+dispatch  : -
+scheduler : 3/24 occupied | ready 1 | waiting 2
+ready     : U191
+selected  : U191
+issued    : U191   (1/6 slots)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U188   in-flight(executing) 4
+
+=== cycle 92 ===
+dispatch  : -
+scheduler : 2/24 occupied | ready 0 | waiting 2
+ready     : -
+selected  : -
+issued    : -   (0/6 slots)
+units busy: ALU 0/3  IMUL 1/1  FADD 0/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 1/6 used, demand 1, deferred 0
+completed : -   in-flight(executing) 4
+
+=== cycle 93 ===
+dispatch  : -
+scheduler : 2/24 occupied | ready 1 | waiting 1
+ready     : U177
+selected  : U177
+issued    : U177   (1/6 slots)
+units busy: ALU 1/3  IMUL 0/1  FADD 0/2  FMUL 1/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 2/6 used, demand 2, deferred 0
+completed : U171 U176   in-flight(executing) 3
+
+=== cycle 94 ===
+dispatch  : -
+scheduler : 1/24 occupied | ready 1 | waiting 0
+ready     : U178.STA U178.STD
+selected  : U178.STA U178.STD
+issued    : U178.STA U178.STD   (2/6 slots)
+units busy: ALU 0/3  IMUL 0/1  FADD 0/2  FMUL 1/2  LOAD 0/2  STA 1/1  STD 1/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U174 U177   in-flight(executing) 2
+
+=== cycle 95 ===
+dispatch  : -
+scheduler : 0/24 occupied | ready 0 | waiting 0
+ready     : -
+selected  : -
+issued    : -   (0/6 slots)
+units busy: ALU 0/3  IMUL 0/1  FADD 0/2  FMUL 0/2  LOAD 0/2  STA 0/1  STD 0/1  BR 0/1
+wakeup    : 0/6 used, demand 0, deferred 0
+completed : U178 U191   in-flight(executing) 0
+
+--- per-uop table ---
+uop  op     text                       res       deps           disp opRdy  sel issue done
+U00  ADD    ADD R20, R1, R2            ALU       -                 0     1    1     1    2
+U01  ADD    ADD R21, R3, R4            ALU       -                 0     1    1     1    2
+U02  LOAD   LOAD R10, [R20 + 0]        LOAD      U00               0     2    2     2    7
+U03  LOAD   LOAD R11, [R21 + 0]        LOAD      U01               0     2    2     2    7
+U04  FMUL   FMUL F10, F2, F3           FMUL      -                 0     1    1     1    5
+U05  FADD   FADD F11, F4, F5           FADD      -                 0     1    1     1    4
+U06  ADD    ADD R22, R20, R6           ALU       U00               1     2    2     2    3
+U07  IMUL   IMUL R23, R22, R7          IMUL      U06               1     3    3     3    7
+U08  ADD    ADD R24, R8, R9            ALU       -                 1     2    2     2    3
+U09  LOAD   LOAD R12, [R24 + 0]        LOAD      U08               1     3    3     3    8
+U10  FMUL   FMUL F12, F10, F6          FMUL      U04               1     5    5     5    9
+U11  FADD   FADD F13, F11, F7          FADD      U05               1     4    4     4    7
+U12  ADD    ADD R25, R22, R26          ALU       U06               2     3    3     3    4
+U13  LOAD   LOAD R14, [R25 + 0]        LOAD      U12               2     4    4     4    9
+U14  IMUL   IMUL R27, R25, R28         IMUL      U12               2     4    7     7   11
+U15  ADD    ADD R29, R27, R30          ALU       U14               2    11   11    11   12
+U16  LOAD   LOAD R15, [R29 + 0]        LOAD      U15               2    12   12    12   17
+U17  FMUL   FMUL F14, F12, F8          FMUL      U10               2     9    9     9   13
+U18  FADD   FADD F15, F13, F9          FADD      U11               3     7    7     7   10
+U19  ADD    ADD R31, R15, R32          ALU       U16               3    17   17    17   18
+U20  LOAD   LOAD R16, [R31 + 0]        LOAD      U19               3    18   18    18   23
+U21  IMUL   IMUL R33, R31, R34         IMUL      U19               3    18   18    18   22
+U22  ADD    ADD R35, R33, R36          ALU       U21               3    22   22    22   23
+U23  FADD   FADD F16, F14, F15         FADD      U17,U18           3    13   13    13   16
+U24  LOAD   LOAD R17, [R35 + 0]        LOAD      U22               4    23   23    23   28
+U25  FMUL   FMUL F17, F16, F10         FMUL      U04,U23           4    16   16    16   20
+U26  ADD    ADD R37, R35, R38          ALU       U22               4    23   23    23   24
+U27  LOAD   LOAD R18, [R37 + 0]        LOAD      U26               4    24   24    24   29
+U28  FADD   FADD F18, F17, F11         FADD      U05,U25           4    20   20    20   23
+U29  IMUL   IMUL R39, R37, R40         IMUL      U26               4    24   26    26   30
+U30  ADD    ADD R41, R39, R42          ALU       U29               5    30   30    30   31
+U31  STORE  STORE [R41 + 0], R18       STA+STD   U27,U30           5    31   29    31   32
+U32  ADD    ADD R43, R20, R44          ALU       U00               5     6    6     6    7
+U33  ADD    ADD R45, R24, R46          ALU       U08               5     6    6     6    7
+U34  LOAD   LOAD R19, [R43 + 0]        LOAD      U32               5     7    7     7   12
+U35  LOAD   LOAD R20, [R45 + 0]        LOAD      U33               5     7    7     7   12
+U36  FMUL   FMUL F19, F18, F12         FMUL      U10,U28           6    23   23    23   27
+U37  FADD   FADD F20, F19, F16         FADD      U23,U36           6    27   27    27   30
+U38  ADD    ADD R47, R43, R48          ALU       U32               7     8    8     8    9
+U39  IMUL   IMUL R49, R47, R50         IMUL      U38               7     9   11    11   15
+U40  LOAD   LOAD R21, [R49 + 0]        LOAD      U39               8    15   15    15   20
+U41  FADD   FADD F21, F20, F17         FADD      U25,U37           8    30   30    30   33
+U42  ADD    ADD R51, R49, R52          ALU       U39               8    15   15    15   16
+U43  LOAD   LOAD R22, [R51 + 0]        LOAD      U42               8    16   16    16   21
+U44  FMUL   FMUL F22, F21, F19         FMUL      U36,U41           9    33   33    33   37
+U45  ADD    ADD R53, R51, R54          ALU       U42              10    16   16    16   17
+U46  STORE  STORE [R53 + 0], R22       STA+STD   U43,U45          12    21   17    21   22
+U47  ADD    ADD R55, R55, R56          ALU       -                12    13   13    13   14
+U48  BR     BR R55                     BR        U47              13    14   14    14   15
+U49  ADD    ADD R20, R1, R2            ALU       -                14    15   15    15   16
+U50  ADD    ADD R21, R3, R4            ALU       -                14    15   15    15   16
+U51  LOAD   LOAD R10, [R20 + 0]        LOAD      U49              15    16   16    16   21
+U52  LOAD   LOAD R11, [R21 + 0]        LOAD      U50              16    17   17    17   22
+U53  FMUL   FMUL F10, F2, F3           FMUL      -                16    17   17    17   21
+U54  FADD   FADD F11, F4, F5           FADD      -                16    17   17    17   20
+U55  ADD    ADD R22, R20, R6           ALU       U49              16    17   17    17   18
+U56  IMUL   IMUL R23, R22, R7          IMUL      U55              17    18   22    22   26
+U57  ADD    ADD R24, R8, R9            ALU       -                17    18   18    18   19
+U58  LOAD   LOAD R12, [R24 + 0]        LOAD      U57              17    19   19    19   24
+U59  FMUL   FMUL F12, F10, F6          FMUL      U53              17    21   21    21   25
+U60  FADD   FADD F13, F11, F7          FADD      U54              18    20   20    20   23
+U61  ADD    ADD R25, R22, R26          ALU       U55              18    19   19    19   20
+U62  LOAD   LOAD R14, [R25 + 0]        LOAD      U61              18    20   20    20   25
+U63  IMUL   IMUL R27, R25, R28         IMUL      U61              18    20   30    30   34
+U64  ADD    ADD R29, R27, R30          ALU       U63              18    34   34    34   35
+U65  LOAD   LOAD R15, [R29 + 0]        LOAD      U64              19    35   35    35   40
+U66  FMUL   FMUL F14, F12, F8          FMUL      U59              19    25   25    25   29
+U67  FADD   FADD F15, F13, F9          FADD      U60              19    23   23    23   26
+U68  ADD    ADD R31, R15, R32          ALU       U65              20    40   40    40   41
+U69  LOAD   LOAD R16, [R31 + 0]        LOAD      U68              20    41   41    41   46
+U70  IMUL   IMUL R33, R31, R34         IMUL      U68              21    41   44    44   48
+U71  ADD    ADD R35, R33, R36          ALU       U70              21    48   48    48   49
+U72  FADD   FADD F16, F14, F15         FADD      U66,U67          21    29   29    29   32
+U73  LOAD   LOAD R17, [R35 + 0]        LOAD      U71              22    49   49    49   54
+U74  FMUL   FMUL F17, F16, F10         FMUL      U53,U72          22    32   32    32   36
+U75  ADD    ADD R37, R35, R38          ALU       U71              23    49   49    49   50
+U76  LOAD   LOAD R18, [R37 + 0]        LOAD      U75              23    50   50    50   55
+U77  FADD   FADD F18, F17, F11         FADD      U54,U74          24    36   36    36   39
+U78  IMUL   IMUL R39, R37, R40         IMUL      U75              24    50   52    52   56
+U79  ADD    ADD R41, R39, R42          ALU       U78              24    56   56    56   57
+U80  STORE  STORE [R41 + 0], R18       STA+STD   U76,U79          24    57   55    57   58
+U81  ADD    ADD R43, R20, R44          ALU       U49              25    26   26    26   27
+U82  ADD    ADD R45, R24, R46          ALU       U57              26    27   27    27   28
+U83  LOAD   LOAD R19, [R43 + 0]        LOAD      U81              27    28   28    28   33
+U84  LOAD   LOAD R20, [R45 + 0]        LOAD      U82              27    28   28    28   33
+U85  FMUL   FMUL F19, F18, F12         FMUL      U59,U77          28    39   39    39   43
+U86  FADD   FADD F20, F19, F16         FADD      U72,U85          28    43   43    43   46
+U87  ADD    ADD R47, R43, R48          ALU       U81              29    30   30    30   31
+U88  IMUL   IMUL R49, R47, R50         IMUL      U87              29    31   34    34   38
+U89  LOAD   LOAD R21, [R49 + 0]        LOAD      U88              30    38   38    38   43
+U90  FADD   FADD F21, F20, F17         FADD      U74,U86          31    46   46    46   49
+U91  ADD    ADD R51, R49, R52          ALU       U88              31    38   38    38   39
+U92  LOAD   LOAD R22, [R51 + 0]        LOAD      U91              31    39   39    39   44
+U93  FMUL   FMUL F22, F21, F19         FMUL      U85,U90          31    49   49    49   53
+U94  ADD    ADD R53, R51, R54          ALU       U91              32    39   39    39   40
+U95  STORE  STORE [R53 + 0], R22       STA+STD   U92,U94          33    44   40    44   45
+U96  ADD    ADD R55, R55, R56          ALU       U47              34    35   35    35   36
+U97  BR     BR R55                     BR        U96              35    36   36    36   37
+U98  ADD    ADD R20, R1, R2            ALU       -                35    36   36    36   37
+U99  ADD    ADD R21, R3, R4            ALU       -                36    37   37    37   38
+U100 LOAD   LOAD R10, [R20 + 0]        LOAD      U98              36    37   37    37   42
+U101 LOAD   LOAD R11, [R21 + 0]        LOAD      U99              37    38   38    38   43
+U102 FMUL   FMUL F10, F2, F3           FMUL      -                37    38   38    38   42
+U103 FADD   FADD F11, F4, F5           FADD      -                37    38   38    38   41
+U104 ADD    ADD R22, R20, R6           ALU       U98              38    39   39    39   40
+U105 IMUL   IMUL R23, R22, R7          IMUL      U104             38    40   40    40   44
+U106 ADD    ADD R24, R8, R9            ALU       -                39    40   40    40   41
+U107 LOAD   LOAD R12, [R24 + 0]        LOAD      U106             39    41   41    41   46
+U108 FMUL   FMUL F12, F10, F6          FMUL      U102             39    42   42    42   46
+U109 FADD   FADD F13, F11, F7          FADD      U103             39    41   41    41   44
+U110 ADD    ADD R25, R22, R26          ALU       U104             39    40   40    40   41
+U111 LOAD   LOAD R14, [R25 + 0]        LOAD      U110             40    41   42    42   47
+U112 IMUL   IMUL R27, R25, R28         IMUL      U110             40    41   48    48   52
+U113 ADD    ADD R29, R27, R30          ALU       U112             40    52   52    52   53
+U114 LOAD   LOAD R15, [R29 + 0]        LOAD      U113             40    53   53    53   58
+U115 FMUL   FMUL F14, F12, F8          FMUL      U108             41    46   46    46   50
+U116 FADD   FADD F15, F13, F9          FADD      U109             41    44   44    44   47
+U117 ADD    ADD R31, R15, R32          ALU       U114             41    58   58    58   59
+U118 LOAD   LOAD R16, [R31 + 0]        LOAD      U117             41    59   59    59   64
+U119 IMUL   IMUL R33, R31, R34         IMUL      U117             42    59   60    60   64
+U120 ADD    ADD R35, R33, R36          ALU       U119             42    64   64    64   65
+U121 FADD   FADD F16, F14, F15         FADD      U115,U116        42    50   50    50   53
+U122 LOAD   LOAD R17, [R35 + 0]        LOAD      U120             43    65   65    65   70
+U123 FMUL   FMUL F17, F16, F10         FMUL      U102,U121        43    53   53    53   57
+U124 ADD    ADD R37, R35, R38          ALU       U120             44    65   65    65   66
+U125 LOAD   LOAD R18, [R37 + 0]        LOAD      U124             45    66   66    66   71
+U126 FADD   FADD F18, F17, F11         FADD      U103,U123        45    57   57    57   60
+U127 IMUL   IMUL R39, R37, R40         IMUL      U124             45    66   68    68   72
+U128 ADD    ADD R41, R39, R42          ALU       U127             47    72   72    72   73
+U129 STORE  STORE [R41 + 0], R18       STA+STD   U125,U128        47    73   71    73   74
+U130 ADD    ADD R43, R20, R44          ALU       U98              49    50   50    50   51
+U131 ADD    ADD R45, R24, R46          ALU       U106             49    50   50    50   51
+U132 LOAD   LOAD R19, [R43 + 0]        LOAD      U130             50    51   51    51   56
+U133 LOAD   LOAD R20, [R45 + 0]        LOAD      U131             50    51   51    51   56
+U134 FMUL   FMUL F19, F18, F12         FMUL      U108,U126        50    60   60    60   64
+U135 FADD   FADD F20, F19, F16         FADD      U121,U134        51    64   64    64   67
+U136 ADD    ADD R47, R43, R48          ALU       U130             51    52   52    52   53
+U137 IMUL   IMUL R49, R47, R50         IMUL      U136             51    53   56    56   60
+U138 LOAD   LOAD R21, [R49 + 0]        LOAD      U137             51    60   60    60   65
+U139 FADD   FADD F21, F20, F17         FADD      U123,U135        52    67   67    67   70
+U140 ADD    ADD R51, R49, R52          ALU       U137             52    60   60    60   61
+U141 LOAD   LOAD R22, [R51 + 0]        LOAD      U140             53    61   61    61   66
+U142 FMUL   FMUL F22, F21, F19         FMUL      U134,U139        53    70   70    70   74
+U143 ADD    ADD R53, R51, R54          ALU       U140             53    61   61    61   62
+U144 STORE  STORE [R53 + 0], R22       STA+STD   U141,U143        54    66   62    66   67
+U145 ADD    ADD R55, R55, R56          ALU       U96              54    55   55    55   56
+U146 BR     BR R55                     BR        U145             56    57   57    57   58
+U147 ADD    ADD R20, R1, R2            ALU       -                57    58   58    58   59
+U148 ADD    ADD R21, R3, R4            ALU       -                57    58   58    58   59
+U149 LOAD   LOAD R10, [R20 + 0]        LOAD      U147             58    59   59    59   64
+U150 LOAD   LOAD R11, [R21 + 0]        LOAD      U148             58    59   60    60   65
+U151 FMUL   FMUL F10, F2, F3           FMUL      -                58    59   59    59   63
+U152 FADD   FADD F11, F4, F5           FADD      -                59    60   60    60   63
+U153 ADD    ADD R22, R20, R6           ALU       U147             59    60   60    61   62
+U154 IMUL   IMUL R23, R22, R7          IMUL      U153             59    62   64    64   68
+U155 ADD    ADD R24, R8, R9            ALU       -                60    61   61    61   62
+U156 LOAD   LOAD R12, [R24 + 0]        LOAD      U155             60    62   62    62   67
+U157 FMUL   FMUL F12, F10, F6          FMUL      U151             60    63   63    63   67
+U158 FADD   FADD F13, F11, F7          FADD      U152             61    63   63    63   66
+U159 ADD    ADD R25, R22, R26          ALU       U153             61    62   62    62   63
+U160 LOAD   LOAD R14, [R25 + 0]        LOAD      U159             61    63   63    63   68
+U161 IMUL   IMUL R27, R25, R28         IMUL      U159             61    63   72    72   76
+U162 ADD    ADD R29, R27, R30          ALU       U161             61    76   76    76   77
+U163 LOAD   LOAD R15, [R29 + 0]        LOAD      U162             61    77   77    77   82
+U164 FMUL   FMUL F14, F12, F8          FMUL      U157             62    67   67    67   71
+U165 FADD   FADD F15, F13, F9          FADD      U158             62    66   66    66   69
+U166 ADD    ADD R31, R15, R32          ALU       U163             62    82   82    82   83
+U167 LOAD   LOAD R16, [R31 + 0]        LOAD      U166             62    83   83    83   88
+U168 IMUL   IMUL R33, R31, R34         IMUL      U166             63    83   83    83   87
+U169 ADD    ADD R35, R33, R36          ALU       U168             63    87   87    87   88
+U170 FADD   FADD F16, F14, F15         FADD      U164,U165        64    71   71    71   74
+U171 LOAD   LOAD R17, [R35 + 0]        LOAD      U169             64    88   88    88   93
+U172 FMUL   FMUL F17, F16, F10         FMUL      U151,U170        64    74   74    74   78
+U173 ADD    ADD R37, R35, R38          ALU       U169             65    88   88    88   89
+U174 LOAD   LOAD R18, [R37 + 0]        LOAD      U173             65    89   89    89   94
+U175 FADD   FADD F18, F17, F11         FADD      U152,U172        65    78   78    78   81
+U176 IMUL   IMUL R39, R37, R40         IMUL      U173             66    89   89    89   93
+U177 ADD    ADD R41, R39, R42          ALU       U176             66    93   93    93   94
+U178 STORE  STORE [R41 + 0], R18       STA+STD   U174,U177        67    94   94    94   95
+U179 ADD    ADD R43, R20, R44          ALU       U147             67    68   68    68   69
+U180 ADD    ADD R45, R24, R46          ALU       U155             67    68   68    68   69
+U181 LOAD   LOAD R19, [R43 + 0]        LOAD      U179             68    69   69    69   74
+U182 LOAD   LOAD R20, [R45 + 0]        LOAD      U180             68    69   69    69   74
+U183 FMUL   FMUL F19, F18, F12         FMUL      U157,U175        69    81   81    81   85
+U184 FADD   FADD F20, F19, F16         FADD      U170,U183        69    85   85    85   88
+U185 ADD    ADD R47, R43, R48          ALU       U179             69    70   70    70   71
+U186 IMUL   IMUL R49, R47, R50         IMUL      U185             70    71   76    76   80
+U187 LOAD   LOAD R21, [R49 + 0]        LOAD      U186             70    80   80    80   85
+U188 FADD   FADD F21, F20, F17         FADD      U172,U184        71    88   88    88   91
+U189 ADD    ADD R51, R49, R52          ALU       U186             71    80   80    80   81
+U190 LOAD   LOAD R22, [R51 + 0]        LOAD      U189             72    81   81    81   86
+U191 FMUL   FMUL F22, F21, F19         FMUL      U183,U188        73    91   91    91   95
+U192 ADD    ADD R53, R51, R54          ALU       U189             73    81   81    81   82
+U193 STORE  STORE [R53 + 0], R22       STA+STD   U190,U192        74    86   82    86   87
+U194 ADD    ADD R55, R55, R56          ALU       U145             75    76   76    76   77
+U195 BR     BR R55                     BR        U194             77    78   78    78   79

@@ -1,0 +1,10 @@
+| resource | uops | units | lat | unit-cycles demanded | cycles if perfectly spread |
+|---|---|---|---|---|---|
+| ALU | 16 | 3 | 1 | 16 | 5.3 |
+| IMUL | 5 | 1 | 4 | 20 | 20.0 |
+| FADD | 7 | 2 | 3 | 21 | 10.5 |
+| FMUL | 6 | 2 | 4 | 24 | 12.0 |
+| LOAD | 12 | 2 | 5 | 60 | 30.0 |
+| STA | 2 | 1 | 1 | 2 | 2.0 |
+| STD | 2 | 1 | 1 | 2 | 2.0 |
+| BR | 1 | 1 | 1 | 1 | 1.0 |

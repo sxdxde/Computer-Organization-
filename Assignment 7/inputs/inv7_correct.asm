@@ -1,0 +1,8 @@
+# inv7_correct
+ADD R1, R2, R3
+ADD R4, R5, R6
+BRANCH B1 pred=NT actual=NT
+ADD R7, R1, R8
+ADD R9, R4, R10
+MUL R11, R7, R12
+ADD R13, R14, R15

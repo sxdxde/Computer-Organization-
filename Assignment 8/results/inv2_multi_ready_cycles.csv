@@ -1,0 +1,28 @@
+cycle,ready,selected,issued,unselected,issue_slots,wake
+1,U00 U01 U04 U05,U00 U01 U04 U05,U00 U01 U04 U05,,4/6,3/6
+2,U02 U03 U06 U08,U02 U03 U06 U08,U02 U03 U06 U08,,4/6,3/6
+3,U07 U09 U12,U07 U12,U07 U12,"U09: no free LOAD unit - occupied: LOAD0:U02(issued c2, free c7); LOAD1:U03(issued c2, free c7)",2/6,3/6
+4,U09 U11 U13 U14,U11,U11,"U09: no free LOAD unit - occupied: LOAD0:U02(issued c2, free c7); LOAD1:U03(issued c2, free c7) | U13: no free LOAD unit - occupied: LOAD0:U02(issued c2, free c7); LOAD1:U03(issued c2, free c7) | U14: no free IMUL unit - occupied: IMUL0:U07(issued c3, free c7)",1/6,2/6
+5,U09 U10 U13 U14,U10,U10,"U09: no free LOAD unit - occupied: LOAD0:U02(issued c2, free c7); LOAD1:U03(issued c2, free c7) | U13: no free LOAD unit - occupied: LOAD0:U02(issued c2, free c7); LOAD1:U03(issued c2, free c7) | U14: no free IMUL unit - occupied: IMUL0:U07(issued c3, free c7)",1/6,0/6
+6,U09 U13 U14 U32 U33,U32 U33,U32 U33,"U09: no free LOAD unit - occupied: LOAD0:U02(issued c2, free c7); LOAD1:U03(issued c2, free c7) | U13: no free LOAD unit - occupied: LOAD0:U02(issued c2, free c7); LOAD1:U03(issued c2, free c7) | U14: no free IMUL unit - occupied: IMUL0:U07(issued c3, free c7)",2/6,3/6
+7,U09 U13 U14 U18 U34 U35,U09 U13 U14 U18,U09 U13 U14 U18,"U34: no free LOAD unit - taken this cycle by older U09,U13 | U35: no free LOAD unit - taken this cycle by older U09,U13",4/6,0/6
+8,U34 U35,,,"U34: no free LOAD unit - occupied: LOAD0:U09(issued c7, free c12); LOAD1:U13(issued c7, free c12) | U35: no free LOAD unit - occupied: LOAD0:U09(issued c7, free c12); LOAD1:U13(issued c7, free c12)",0/6,2/6
+9,U17 U34 U35 U38,U17 U38,U17 U38,"U34: no free LOAD unit - occupied: LOAD0:U09(issued c7, free c12); LOAD1:U13(issued c7, free c12) | U35: no free LOAD unit - occupied: LOAD0:U09(issued c7, free c12); LOAD1:U13(issued c7, free c12)",2/6,2/6
+10,U34 U35 U39,,,"U34: no free LOAD unit - occupied: LOAD0:U09(issued c7, free c12); LOAD1:U13(issued c7, free c12) | U35: no free LOAD unit - occupied: LOAD0:U09(issued c7, free c12); LOAD1:U13(issued c7, free c12) | U39: no free IMUL unit - occupied: IMUL0:U14(issued c7, free c11)",0/6,1/6
+11,U15 U34 U35 U39,U15 U39,U15 U39,"U34: no free LOAD unit - occupied: LOAD0:U09(issued c7, free c12); LOAD1:U13(issued c7, free c12) | U35: no free LOAD unit - occupied: LOAD0:U09(issued c7, free c12); LOAD1:U13(issued c7, free c12)",2/6,1/6
+12,U16 U34 U35,U16 U34,U16 U34,"U35: no free LOAD unit - taken this cycle by older U16,U34",2/6,1/6
+13,U23 U35,U23,U23,"U35: no free LOAD unit - occupied: LOAD0:U16(issued c12, free c17); LOAD1:U34(issued c12, free c17)",1/6,0/6
+14,U35 U47,U47,U47,"U35: no free LOAD unit - occupied: LOAD0:U16(issued c12, free c17); LOAD1:U34(issued c12, free c17)",1/6,3/6
+15,U35 U40 U42 U48,U42 U48,U42 U48,"U35: no free LOAD unit - occupied: LOAD0:U16(issued c12, free c17); LOAD1:U34(issued c12, free c17) | U40: no free LOAD unit - occupied: LOAD0:U16(issued c12, free c17); LOAD1:U34(issued c12, free c17)",2/6,4/6
+16,U25 U35 U40 U43 U45,U25 U45,U25 U45,"U35: no free LOAD unit - occupied: LOAD0:U16(issued c12, free c17); LOAD1:U34(issued c12, free c17) | U40: no free LOAD unit - occupied: LOAD0:U16(issued c12, free c17); LOAD1:U34(issued c12, free c17) | U43: no free LOAD unit - occupied: LOAD0:U16(issued c12, free c17); LOAD1:U34(issued c12, free c17)",2/6,2/6
+17,U19 U35 U40 U43 U46.STA,U19 U35 U40 U46.STA,U19 U35 U40 U46.STA,"U43: no free LOAD unit - taken this cycle by older U35,U40",4/6,2/6
+18,U20 U21 U43,U21,U21,"U20: no free LOAD unit - occupied: LOAD0:U35(issued c17, free c22); LOAD1:U40(issued c17, free c22) | U43: no free LOAD unit - occupied: LOAD0:U35(issued c17, free c22); LOAD1:U40(issued c17, free c22)",1/6,0/6
+19,U20 U43,,,"U20: no free LOAD unit - occupied: LOAD0:U35(issued c17, free c22); LOAD1:U40(issued c17, free c22) | U43: no free LOAD unit - occupied: LOAD0:U35(issued c17, free c22); LOAD1:U40(issued c17, free c22)",0/6,2/6
+20,U20 U28 U43,U28,U28,"U20: no free LOAD unit - occupied: LOAD0:U35(issued c17, free c22); LOAD1:U40(issued c17, free c22) | U43: no free LOAD unit - occupied: LOAD0:U35(issued c17, free c22); LOAD1:U40(issued c17, free c22)",1/6,0/6
+21,U20 U43,,,"U20: no free LOAD unit - occupied: LOAD0:U35(issued c17, free c22); LOAD1:U40(issued c17, free c22) | U43: no free LOAD unit - occupied: LOAD0:U35(issued c17, free c22); LOAD1:U40(issued c17, free c22)",0/6,1/6
+22,U20 U22 U43,U20 U22 U43,U20 U22 U43,,3/6,3/6
+23,U24 U26 U36,U26 U36,U26 U36,"U24: no free LOAD unit - occupied: LOAD0:U20(issued c22, free c27); LOAD1:U43(issued c22, free c27)",2/6,2/6
+24,U24 U27 U29,U29,U29,"U24: no free LOAD unit - occupied: LOAD0:U20(issued c22, free c27); LOAD1:U43(issued c22, free c27) | U27: no free LOAD unit - occupied: LOAD0:U20(issued c22, free c27); LOAD1:U43(issued c22, free c27)",1/6,0/6
+25,U24 U27,,,"U24: no free LOAD unit - occupied: LOAD0:U20(issued c22, free c27); LOAD1:U43(issued c22, free c27) | U27: no free LOAD unit - occupied: LOAD0:U20(issued c22, free c27); LOAD1:U43(issued c22, free c27)",0/6,0/6
+26,U24 U27,,,"U24: no free LOAD unit - occupied: LOAD0:U20(issued c22, free c27); LOAD1:U43(issued c22, free c27) | U27: no free LOAD unit - occupied: LOAD0:U20(issued c22, free c27); LOAD1:U43(issued c22, free c27)",0/6,3/6
+27,U24 U27 U37 U46.STD,U24 U27 U37 U46.STD,U24 U27 U37 U46.STD,,4/6,1/6

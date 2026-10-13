@@ -1,0 +1,306 @@
+=== inv7b_late_resolve ===
+Config: ROB=24 PRF=32 IQ=12 LQ=6 SQ=4 CKPT=2 RET=4  decode=6 alloc=6 issue=6 decodeQ=12
+
+Cycle 0
+------------------------------------------------------------------------------
+  DECODE 3 uop(s) into decode queue
+  STATE ROB 0/24 (done-unretired 0) | free pregs 32/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 3/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 1
+------------------------------------------------------------------------------
+  ALLOC  I0   LOAD R1, [A]             reads[-] R1->P0 (old ARF) ROB#0
+  ALLOC  I1   ADD R4, R5, R6           reads[R5(ARF), R6(ARF)] R4->P1 (old ARF) ROB#1
+  ALLOC  I2   BRANCH B1 (R1)           reads[R1(P0)] ROB#2
+  DECODE 6 uop(s) into decode queue
+  STATE ROB 3/24 (done-unretired 0) | free pregs 30/32 | IQ 3/12 | LQ 1/6 | SQ 0/4 | CKPT 1/2 | DECQ 6/12
+  COUNT alloc=3 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 2
+------------------------------------------------------------------------------
+  ALLOC  W0   ADD R7, R16, R17         reads[R16(ARF), R17(ARF)] R7->P2 (old ARF) ROB#3 [WRONG-PATH]
+  ALLOC  W1   MUL R9, R7, R18          reads[R7(P2), R18(ARF)] R9->P3 (old ARF) ROB#4 [WRONG-PATH]
+  ALLOC  W2   LOAD R12, [B]            reads[-] R12->P4 (old ARF) ROB#5 [WRONG-PATH]
+  ALLOC  W3   STORE [C], R9            reads[R9(P3)] ROB#6 [WRONG-PATH]
+  ALLOC  W4   ADD R13, R7, R19         reads[R7(P2), R19(ARF)] R13->P5 (old ARF) ROB#7 [WRONG-PATH]
+  ALLOC  W5   ADD R2, R7, R9           reads[R7(P2), R9(P3)] R2->P6 (old ARF) ROB#8 [WRONG-PATH]
+  ISSUE  I0   LOAD   completes @22
+  ISSUE  I1   ADD    completes @3
+  DECODE 1 uop(s) into decode queue
+  STATE ROB 9/24 (done-unretired 0) | free pregs 25/32 | IQ 7/12 | LQ 2/6 | SQ 1/4 | CKPT 1/2 | DECQ 1/12
+  COUNT alloc=6 issue=2 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 3
+------------------------------------------------------------------------------
+  ALLOC  W6   ADD R3, R2, R7           reads[R2(P6), R7(P2)] R3->P7 (old ARF) ROB#9 [WRONG-PATH]
+  COMPLETE I1 (ADD) -> P1 ready
+  ISSUE  W0   ADD    completes @4
+  ISSUE  W2   LOAD   completes @23
+  STATE ROB 10/24 (done-unretired 1) | free pregs 24/32 | IQ 6/12 | LQ 2/6 | SQ 1/4 | CKPT 1/2 | DECQ 0/12
+  COUNT alloc=1 issue=2 complete=1 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 4
+------------------------------------------------------------------------------
+  COMPLETE W0 (ADD) -> P2 ready
+  ISSUE  W1   MUL    completes @8
+  ISSUE  W4   ADD    completes @5
+  STATE ROB 10/24 (done-unretired 2) | free pregs 24/32 | IQ 4/12 | LQ 2/6 | SQ 1/4 | CKPT 1/2 | DECQ 0/12
+  COUNT alloc=0 issue=2 complete=1 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 5
+------------------------------------------------------------------------------
+  COMPLETE W4 (ADD) -> P5 ready
+  STATE ROB 10/24 (done-unretired 3) | free pregs 24/32 | IQ 4/12 | LQ 2/6 | SQ 1/4 | CKPT 1/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=1 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 6
+------------------------------------------------------------------------------
+  STATE ROB 10/24 (done-unretired 3) | free pregs 24/32 | IQ 4/12 | LQ 2/6 | SQ 1/4 | CKPT 1/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 7
+------------------------------------------------------------------------------
+  STATE ROB 10/24 (done-unretired 3) | free pregs 24/32 | IQ 4/12 | LQ 2/6 | SQ 1/4 | CKPT 1/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 8
+------------------------------------------------------------------------------
+  COMPLETE W1 (MUL) -> P3 ready
+  ISSUE  W3   STORE  completes @9
+  ISSUE  W5   ADD    completes @9
+  STATE ROB 10/24 (done-unretired 4) | free pregs 24/32 | IQ 2/12 | LQ 2/6 | SQ 1/4 | CKPT 1/2 | DECQ 0/12
+  COUNT alloc=0 issue=2 complete=1 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 9
+------------------------------------------------------------------------------
+  COMPLETE W3 (STORE)
+  COMPLETE W5 (ADD) -> P6 ready
+  ISSUE  W6   ADD    completes @10
+  STATE ROB 10/24 (done-unretired 6) | free pregs 24/32 | IQ 1/12 | LQ 2/6 | SQ 1/4 | CKPT 1/2 | DECQ 0/12
+  COUNT alloc=0 issue=1 complete=2 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 10
+------------------------------------------------------------------------------
+  COMPLETE W6 (ADD) -> P7 ready
+  STATE ROB 10/24 (done-unretired 7) | free pregs 24/32 | IQ 1/12 | LQ 2/6 | SQ 1/4 | CKPT 1/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=1 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 11
+------------------------------------------------------------------------------
+  STATE ROB 10/24 (done-unretired 7) | free pregs 24/32 | IQ 1/12 | LQ 2/6 | SQ 1/4 | CKPT 1/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 12
+------------------------------------------------------------------------------
+  STATE ROB 10/24 (done-unretired 7) | free pregs 24/32 | IQ 1/12 | LQ 2/6 | SQ 1/4 | CKPT 1/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 13
+------------------------------------------------------------------------------
+  STATE ROB 10/24 (done-unretired 7) | free pregs 24/32 | IQ 1/12 | LQ 2/6 | SQ 1/4 | CKPT 1/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 14
+------------------------------------------------------------------------------
+  STATE ROB 10/24 (done-unretired 7) | free pregs 24/32 | IQ 1/12 | LQ 2/6 | SQ 1/4 | CKPT 1/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 15
+------------------------------------------------------------------------------
+  STATE ROB 10/24 (done-unretired 7) | free pregs 24/32 | IQ 1/12 | LQ 2/6 | SQ 1/4 | CKPT 1/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 16
+------------------------------------------------------------------------------
+  STATE ROB 10/24 (done-unretired 7) | free pregs 24/32 | IQ 1/12 | LQ 2/6 | SQ 1/4 | CKPT 1/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 17
+------------------------------------------------------------------------------
+  STATE ROB 10/24 (done-unretired 7) | free pregs 24/32 | IQ 1/12 | LQ 2/6 | SQ 1/4 | CKPT 1/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 18
+------------------------------------------------------------------------------
+  STATE ROB 10/24 (done-unretired 7) | free pregs 24/32 | IQ 1/12 | LQ 2/6 | SQ 1/4 | CKPT 1/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 19
+------------------------------------------------------------------------------
+  STATE ROB 10/24 (done-unretired 7) | free pregs 24/32 | IQ 1/12 | LQ 2/6 | SQ 1/4 | CKPT 1/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 20
+------------------------------------------------------------------------------
+  STATE ROB 10/24 (done-unretired 7) | free pregs 24/32 | IQ 1/12 | LQ 2/6 | SQ 1/4 | CKPT 1/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 21
+------------------------------------------------------------------------------
+  STATE ROB 10/24 (done-unretired 7) | free pregs 24/32 | IQ 1/12 | LQ 2/6 | SQ 1/4 | CKPT 1/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 22
+------------------------------------------------------------------------------
+  COMPLETE I0 (LOAD) -> P0 ready
+  ISSUE  I2   BRANCH completes @23
+  STATE ROB 10/24 (done-unretired 8) | free pregs 24/32 | IQ 0/12 | LQ 2/6 | SQ 1/4 | CKPT 1/2 | DECQ 0/12
+  COUNT alloc=0 issue=1 complete=1 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 23
+------------------------------------------------------------------------------
+  COMPLETE I2 (BRANCH)
+  MISPREDICT I2 (B1): predicted T, actual NT
+  SQUASH W6   ADD R3, R2, R7           was executing, frees P7
+  SQUASH W5   ADD R2, R7, R9           was executing, frees P6
+  SQUASH W4   ADD R13, R7, R19         was executing, frees P5
+  SQUASH W3   STORE [C], R9            was executing
+  SQUASH W2   LOAD R12, [B]            was executing, frees P4
+  SQUASH W1   MUL R9, R7, R18          was executing, frees P3
+  SQUASH W0   ADD R7, R16, R17         was executing, frees P2
+  RECOVER rename state restored from I2's checkpoint; 7 ROB entries and 0 decode-queue uops discarded
+  REDIRECT frontend re-steered to the correct path (fetch resumes at cycle 24)
+  RETIRE I0   LOAD R1, [A]            
+  RETIRE I1   ADD R4, R5, R6          
+  FRONTEND STALL: recovery/redirect bubble after misprediction
+  STATE ROB 1/24 (done-unretired 1) | free pregs 30/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=1 retire=2 squash=7 | alloc_stalled=no
+
+Cycle 24
+------------------------------------------------------------------------------
+  RETIRE I2   BRANCH B1 (R1)          
+  DECODE 4 uop(s) into decode queue
+  STATE ROB 0/24 (done-unretired 0) | free pregs 30/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 4/12
+  COUNT alloc=0 issue=0 complete=0 retire=1 squash=0 | alloc_stalled=no
+
+Cycle 25
+------------------------------------------------------------------------------
+  ALLOC  I3   ADD R7, R1, R8           reads[R1(P0), R8(ARF)] R7->P8 (old ARF) ROB#3
+  ALLOC  I4   ADD R9, R4, R10          reads[R4(P1), R10(ARF)] R9->P9 (old ARF) ROB#4
+  ALLOC  I5   MUL R11, R7, R12         reads[R7(P8), R12(ARF)] R11->P10 (old ARF) ROB#5
+  ALLOC  I6   ADD R13, R14, R15        reads[R14(ARF), R15(ARF)] R13->P11 (old ARF) ROB#6
+  STATE ROB 4/24 (done-unretired 0) | free pregs 26/32 | IQ 4/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=4 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 26
+------------------------------------------------------------------------------
+  ISSUE  I3   ADD    completes @27
+  ISSUE  I4   ADD    completes @27
+  ISSUE  I6   ADD    completes @27
+  STATE ROB 4/24 (done-unretired 0) | free pregs 26/32 | IQ 1/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=3 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 27
+------------------------------------------------------------------------------
+  COMPLETE I3 (ADD) -> P8 ready
+  COMPLETE I4 (ADD) -> P9 ready
+  COMPLETE I6 (ADD) -> P11 ready
+  ISSUE  I5   MUL    completes @31
+  STATE ROB 4/24 (done-unretired 3) | free pregs 26/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=1 complete=3 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 28
+------------------------------------------------------------------------------
+  RETIRE I3   ADD R7, R1, R8          
+  RETIRE I4   ADD R9, R4, R10         
+  STATE ROB 2/24 (done-unretired 1) | free pregs 26/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=2 squash=0 | alloc_stalled=no
+
+Cycle 29
+------------------------------------------------------------------------------
+  STATE ROB 2/24 (done-unretired 1) | free pregs 26/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 30
+------------------------------------------------------------------------------
+  STATE ROB 2/24 (done-unretired 1) | free pregs 26/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 31
+------------------------------------------------------------------------------
+  COMPLETE I5 (MUL) -> P10 ready
+  STATE ROB 2/24 (done-unretired 2) | free pregs 26/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=1 retire=0 squash=0 | alloc_stalled=no
+
+Cycle 32
+------------------------------------------------------------------------------
+  RETIRE I5   MUL R11, R7, R12        
+  RETIRE I6   ADD R13, R14, R15       
+  STATE ROB 0/24 (done-unretired 0) | free pregs 26/32 | IQ 0/12 | LQ 0/6 | SQ 0/4 | CKPT 0/2 | DECQ 0/12
+  COUNT alloc=0 issue=0 complete=0 retire=2 squash=0 | alloc_stalled=no
+
+ALLOCATION-STALL CAUSAL CHAINS (consecutive cycles with identical cause collapsed)
+------------------------------------------------------------------------------
+(no allocation stalls)
+
+MACHINE-STATE SNAPSHOTS
+==============================================================================
+--- BEFORE RECOVERY (I2 mispredict detected) (cycle 23) ---
+RAT  : R1->P0, R2->P6, R3->P7, R4->P1, R7->P2, R9->P3, R12->P4, R13->P5
+FREE : 24/32  [P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23, P24, P25, P26, P27, P28, P29, P30, P31]
+ROB  : 10/24
+   #0  I0   LOAD R1, [A]               DONE  dst=P0   
+   #1  I1   ADD R4, R5, R6             DONE  dst=P1   
+   #2  I2   BRANCH B1 (R1)             DONE  dst=-    
+   #3  W0   ADD R7, R16, R17           DONE  dst=P2   WRONG-PATH
+   #4  W1   MUL R9, R7, R18            DONE  dst=P3   WRONG-PATH
+   #5  W2   LOAD R12, [B]              EXEC  dst=P4   WRONG-PATH
+   #6  W3   STORE [C], R9              DONE  dst=-    WRONG-PATH
+   #7  W4   ADD R13, R7, R19           DONE  dst=P5   WRONG-PATH
+   #8  W5   ADD R2, R7, R9             DONE  dst=P6   WRONG-PATH
+   #9  W6   ADD R3, R2, R7             DONE  dst=P7   WRONG-PATH
+IQ   : 0/12  []
+LQ   : 2/6  [I0, W2]
+SQ   : 1/4  [W3]
+CKPT : 1/2  [I2]
+DECQ : 0/12  []
+
+--- AFTER RECOVERY (I2) (cycle 23) ---
+RAT  : R1->P0, R4->P1
+FREE : 30/32  [P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23, P24, P25, P26, P27, P28, P29, P30, P31, P7, P6, P5, P4, P3, P2]
+ROB  : 3/24
+   #0  I0   LOAD R1, [A]               DONE  dst=P0   
+   #1  I1   ADD R4, R5, R6             DONE  dst=P1   
+   #2  I2   BRANCH B1 (R1)             DONE  dst=-    
+IQ   : 0/12  []
+LQ   : 1/6  [I0]
+SQ   : 0/4  []
+CKPT : 0/2  []
+DECQ : 0/12  []
+
+
+PER-INSTRUCTION TABLE
+==============================================================================
+seq id   instruction                arch srcs -> phys srcs       dst      old   ROB dec alloc issue cmplt retire squash reclaim
+-------------------------------------------------------------------------------------------------------------------------------
+  0 I0   LOAD R1, [A]               -                            R1->P0   ARF     0   0     1     2    22     23      -       -
+  1 I1   ADD R4, R5, R6             R5->ARF, R6->ARF             R4->P1   ARF     1   0     1     2     3     23      -       -
+  2 I2   BRANCH B1 (R1)             R1->P0                       -        -       2   0     1    22    23     24      -       -
+  3 W0   ADD R7, R16, R17           R16->ARF, R17->ARF           R7->P2   ARF     3   1     2     3     4      -     23       -  [WRONG-PATH]
+  4 W1   MUL R9, R7, R18            R7->P2, R18->ARF             R9->P3   ARF     4   1     2     4     8      -     23       -  [WRONG-PATH]
+  5 W2   LOAD R12, [B]              -                            R12->P4  ARF     5   1     2     3    23      -     23       -  [WRONG-PATH]
+  6 W3   STORE [C], R9              R9->P3                       -        -       6   1     2     8     9      -     23       -  [WRONG-PATH]
+  7 W4   ADD R13, R7, R19           R7->P2, R19->ARF             R13->P5  ARF     7   1     2     4     5      -     23       -  [WRONG-PATH]
+  8 W5   ADD R2, R7, R9             R7->P2, R9->P3               R2->P6   ARF     8   1     2     8     9      -     23       -  [WRONG-PATH]
+  9 W6   ADD R3, R2, R7             R2->P6, R7->P2               R3->P7   ARF     9   2     3     9    10      -     23       -  [WRONG-PATH]
+ 10 I3   ADD R7, R1, R8             R1->P0, R8->ARF              R7->P8   ARF     3  24    25    26    27     28      -       -
+ 11 I4   ADD R9, R4, R10            R4->P1, R10->ARF             R9->P9   ARF     4  24    25    26    27     28      -       -
+ 12 I5   MUL R11, R7, R12           R7->P8, R12->ARF             R11->P10 ARF     5  24    25    27    31     32      -       -
+ 13 I6   ADD R13, R14, R15          R14->ARF, R15->ARF           R13->P11 ARF     6  24    25    26    27     32      -       -
+
+PHYSICAL-REGISTER VERSION TABLE
+==============================================================================
+preg arch writer  alloc ready  readers           lastRdIss lastRdRet freed@ life  freed by
+------------------------------------------------------------------------------------------
+P0   R1   I0          1    22  I2 I3                    26        28      -    -  still live (architectural state)
+P1   R4   I1          1     3  I4                       26        28      -    -  still live (architectural state)
+P2   R7   W0          2     4  W1 W4 W5 W6               9         -     23   21  squash of W0
+P3   R9   W1          2     8  W3 W5                     8         -     23   21  squash of W1
+P4   R12  W2          2     -  -                         -         -     23   21  squash of W2
+P5   R13  W4          2     5  -                         -         -     23   21  squash of W4
+P6   R2   W5          2     9  W6                        9         -     23   21  squash of W5
+P7   R3   W6          3    10  -                         -         -     23   20  squash of W6
+P8   R7   I3         25    27  I5                       27        32      -    -  still live (architectural state)
+P9   R9   I4         25    27  -                         -         -      -    -  still live (architectural state)
+P10  R11  I5         25    31  -                         -         -      -    -  still live (architectural state)
+P11  R13  I6         25    27  -                         -         -      -    -  still live (architectural state)
