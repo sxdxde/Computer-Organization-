@@ -1,0 +1,116 @@
+\appendix
+\chapter{Formula and Number Sheet}\label{app:formulas}
+Everything numeric you may need to quote, in one place. $\dagger$ = standard formula not spelled out in the slide text.
+
+\section{Performance, power, cost, dependability}
+\begin{center}
+\small
+\begin{tabular}{L{5.4cm}L{10cm}}
+\toprule
+\tblhead{\textbf{Item} & \textbf{Formula}}\\
+\midrule
+CPU time & $\text{IC}\times\CPI\times T_{clk}$ \\
+Average CPI & $\sum_i(\text{IC}_i\times\CPI_i)/\text{IC}$ \\
+Speedup & $\text{Time}_{old}/\text{Time}_{new}$ \\
+Amdahl$^\dagger$ & $1/[(1-f)+f/s]$ \\
+Dynamic energy & $\tfrac12 C V^2$ \\
+Dynamic power & $\tfrac12 C V^2 f$ \\
+Static power & $I_{static}\times V$ (reduce by power gating) \\
+Die yield$^\dagger$ & $\text{wafer yield}\times(1+\text{defects/area}\times\text{die area})^{-N}$, $N=11.5$--$15.5$ \\
+MTBF; availability & $\text{MTBF}=\text{MTTF}+\text{MTTR}$; $\text{Availability}=\text{MTTF}/\text{MTBF}$ \\
+Price vs.\ volume & $-10\%$ per doubling of volume \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Pipeline and branches}
+\begin{center}
+\small
+\begin{tabular}{L{6.2cm}L{9.2cm}}
+\toprule
+\tblhead{\textbf{Item} & \textbf{Formula / value}}\\
+\midrule
+Branch stall cycles per instruction & $f_{branch}\times\text{penalty}$ \\
+With prediction$^\dagger$ & $\CPI=\CPI_{base}+f_{branch}\times(1-\text{accuracy})\times\text{penalty}$ \\
+5-stage MIPS branch penalty & MEM-resolve 3; EX-resolve 2; ID early-eval 1 (+1 if ALU feeds branch, +2 if load feeds branch) \\
+R4000 & 8 stages; load delay 2; branch delay 3 \\
+FP unit latency / initiation & ALU 0/1; load 1/1; FP add 3/1; FP mul 6/1; FP div 24/25 \\
+Latencies between dependent ops & FP ALU$\to$FP ALU 3; FP ALU$\to$store 2; load$\to$FP ALU 1; load$\to$store 0; int$\to$int 0 \\
+1-bit BHT loop (9 taken/1 not) & 80\% accuracy (2 misses per loop execution) \\
+2-bit BHT & 1 miss per loop; 4K entries: 82--99\% accuracy \\
+$(m,n)$ predictor storage & $2^m$ BHTs of $n$-bit counters; index $=$ PC bits $\Vert$ $m$ history bits \\
+$(2,2)$ with 64 entries & 6-bit index = 2 history + 4 PC bits; 16 entries per BHT \\
+Delay slots & Compiler fills $\approx$50\% usefully \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{ILP}
+\begin{center}
+\small
+\begin{tabular}{L{6.2cm}L{9.2cm}}
+\toprule
+\tblhead{\textbf{Item} & \textbf{Value}}\\
+\midrule
+FP loop (slides) & 9 cycles/iter $\to$ 6 (reordered) $\to$ unroll$\times$4 naive 27 cycles (6.75/iter) $\to$ scheduled 14 cycles (3.5/iter) \\
+Scoreboard vs.\ Tomasulo (6-instr.\ example) & Last write: cycle 62 vs.\ 57 \\
+Window size & Tomasulo $\le14$; scoreboard $\le5$ \\
+Practical issue width & 3--6; window 32--126 \\
+Independent instructions needed & Pipeline depth $\times$ number of FUs ($\approx$15--20) \\
+Branch frequency (rule) & 1 in 5 instructions \\
+VLIW register ports (example) & 7 read/3 write int; 5 read/3 write FP \\
+Doubling issue 6$\to$12 needs & 3--4 memory accesses/cycle, 2--3 branches/cycle, rename $>20$ registers/cycle, fetch 12--24 instr./cycle \\
+Power5 model & 4 issue/clk; 48 int + 40 FP rename regs; 2--6\% mispredict; 64\,KB I, 32\,KB D, 1.92\,MB L2, 36\,MB L3 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Memory}
+\begin{center}
+\small
+\begin{tabular}{L{6.2cm}L{9.2cm}}
+\toprule
+\tblhead{\textbf{Item} & \textbf{Formula / value}}\\
+\midrule
+AMAT & $t_{hit}+m\times P$ \\
+Two-level AMAT & $t_{L1}+m_{L1}(t_{L2}+m^{loc}_{L2}P_{L2})$; global $m_{L2}=m_{L1}m^{loc}_{L2}$ \\
+Stalls/instruction (two-level) & $\text{misses}_{L1}/\text{instr}\times t_{L2}+\text{misses}_{L2}/\text{instr}\times P_{L2}$ \\
+Slide example & $1+0.04(10+0.5\times100)=3.4$; stalls $(3.4-1)\times1.5=3.6$ \\
+L2 associativity example & DM $10+0.25\times100=35$; 2-way $10+0.20\times100=30$ \\
+CPI with memory & $\CPI_{base}+\text{refs/instr}\times m\times P$ (e.g.\ $2+1.2\times0.03\times64=4.3$) \\
+Block-size penalty model & 80 cc + 2 cc per 16 B: 82/84/88/96/112 for 16/32/64/128/256 B \\
+Best block per cache (AMAT) & 4K: 32 B; 16K, 64K, 256K: 64 B \\
+Associativity clock factors & $\times1.10$ (2-way), $\times1.12$ (4-way), $\times1.14$ (8-way) \\
+2:1 rule & 2-way of size $N/2\approx$ DM of size $N$ (caches $<128$\,KB) \\
+Victim cache & 20--95\% miss reduction, 4\,KB DM, 1--5 entries \\
+Way prediction accuracy & $>85\%$ (Alpha 21264, 2-way I-cache) \\
+Prefetch AMAT & $t+m\,p\,t_p+m(1-p)P$; example $2.41525$ \\
+Stream buffers & ISB 1/4/16 blocks catch 15--25\%/50\%/72\% of I-misses \\
+Loop interchange & $1{,}048{,}576\to65{,}536$ (per array); $-93.75\%$ \\
+Loop fusion & $262{,}144\to196{,}608$ ($-25\%$) \\
+Blocking & $2N^3+N^2\to2N^3/B+N^2$; 3 tiles of $B^2$ words must fit \\
+Interleaving & bank = addr mod $\#$banks; banks $\ge$ cycles to access a word \\
+Memory-width CPI example & 1-word 4.30; 2-word: simple 5.07 / interleaved 3.63 / wide 3.54; 4-word: 5.69 / 3.09 / 3.84 \\
+TLB & 128--256 entries typical; fully associative on high-end \\
+Page size / VA split & 4--8\,KB; 32-bit VA = 20-bit VPN + 12-bit offset \\
+DRAM refresh & $\sim$8\,ms, $\sim$1\% of time \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Threads and multicore}
+\begin{center}
+\small
+\begin{tabular}{L{6.2cm}L{9.2cm}}
+\toprule
+\tblhead{\textbf{Item} & \textbf{Value}}\\
+\midrule
+Pentium 4 SMT & 1.01 (int rate), 1.07 (FP rate); pairs 0.90--1.58, avg 1.20 \\
+Power5 SMT & 1.23 (int rate), 1.16 (FP rate); 0.89--1.41 for two copies \\
+Power5 core size & $+24\%$ vs.\ Power4; physical regs 152$\to$240; L2 1.44$\to$1.92\,MB \\
+SMT threads per core & 2, 4, or sometimes 8 (Power5: 2) \\
+Hardware thread switch & vs.\ 100s--1000s of clocks for a process switch \\
+General SMT gain & up to 30\% \\
+\bottomrule
+\end{tabular}
+\end{center}

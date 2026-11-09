@@ -1,0 +1,163 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(./main.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-01-19>
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/extsizes/extarticle.cls
+Document Class: extarticle 1996/10/08 v1.0 Non Standard LaTeX document class
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/extsizes/size9.clo)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/base/exscale.sty))
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/geometry/geometry.sty
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/graphics/keyval.sty)
+(/usr/local/texlive/2026basic/texmf-dist/tex/generic/iftex/ifvtex.sty
+(/usr/local/texlive/2026basic/texmf-dist/tex/generic/iftex/iftex.sty)))
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/base/fontenc.sty)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/lm/lmodern.sty)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/microtype/microtype.sty
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/etoolbox/etoolbox.sty)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/microtype/microtype-pdftex.d
+ef) (/usr/local/texlive/2026basic/texmf-dist/tex/latex/microtype/microtype.cfg)
+) (/usr/local/texlive/2026basic/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/xcolor/xcolor.sty
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/graphics-cfg/color.cfg)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/graphics-def/pdftex.def)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/graphics/mathcolor.ltx))
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/graphics/dvipsnam.def)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/colortbl/colortbl.sty
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/tools/array.sty))
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/booktabs/booktabs.sty)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/tools/longtable.sty)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/tools/tabularx.sty)
+(/Users/sudarshansudhakar/Library/texmf/tex/latex/enumitem/enumitem.sty)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/listings/listings.sty
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/listings/lstpatch.sty)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/listings/lstmisc.sty)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/listings/listings.cfg))
+==> First Aid for listings.sty no longer applied!
+    Expected:
+        2024/09/23 1.10c (Carsten Heinz)
+    but found:
+        2025/11/14 1.11b (Carsten Heinz)
+    so I'm assuming it got fixed.
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty)
+(/usr/local/texlive/2026basic/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.
+sty)
+(/usr/local/texlive/2026basic/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+(/usr/local/texlive/2026basic/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty)
+(/usr/local/texlive/2026basic/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+(/usr/local/texlive/2026basic/texmf-dist/tex/generic/infwarerr/infwarerr.sty)))
+ (/usr/local/texlive/2026basic/texmf-dist/tex/latex/hycolor/hycolor.sty)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/hyperref/nameref.sty
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/refcount/refcount.sty)
+(/usr/local/texlive/2026basic/texmf-dist/tex/generic/gettitlestring/gettitlestr
+ing.sty
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/kvoptions/kvoptions.sty)))
+(/usr/local/texlive/2026basic/texmf-dist/tex/generic/stringenc/stringenc.sty)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/usr/local/texlive/2026basic/texmf-dist/tex/generic/intcalc/intcalc.sty)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/hyperref/puenc.def)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/url/url.sty)
+(/usr/local/texlive/2026basic/texmf-dist/tex/generic/bitset/bitset.sty
+(/usr/local/texlive/2026basic/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty)
+)) (/usr/local/texlive/2026basic/texmf-dist/tex/latex/hyperref/hpdftex.def
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/rerunfilecheck/rerunfilechec
+k.sty
+(/usr/local/texlive/2026basic/texmf-dist/tex/generic/uniquecounter/uniquecounte
+r.sty))) (/usr/local/texlive/2026basic/texmf-dist/tex/latex/lm/t1lmr.fd)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/l3backend/l3backend-pdftex.d
+ef) (./main.aux)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/microtype/mt-cmr.cfg)
+(/usr/local/texlive/2026basic/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (./main.out) (./main.out)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/lm/ot1lmr.fd)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/lm/omllmm.fd)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/lm/omslmsy.fd)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/lm/omxlmex.fd)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/microtype/mt-msa.cfg)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/amsfonts/umsb.fd)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/microtype/mt-msb.cfg)
+(./ch0_method.tex
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 19.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\rightarrow' on input line 19.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 19.
+
+ [1{/usr/local/texlive/2026basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{
+/usr/local/texlive/2026basic/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/loca
+l/texlive/2026basic/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/local/tex
+live/2026basic/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/2026
+basic/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}]) (./ch1_fundamentals.tex
+Underfull \hbox (badness 10000) in paragraph at lines 17--17
+[]|\T1/lmr/m/n/8 (+20) Multicore/multithreading, large caches, high mem-ory ban
+d-width,
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/lm/ts1lmr.fd) [2{/usr/local/
+texlive/2026basic/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}] [3{/usr/local/texl
+ive/2026basic/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}])
+(./ch2_pipeline_branch.tex
+Overfull \hbox (1.24806pt too wide) in paragraph at lines 30--30
+\T1/lmr/m/n/8 (-20) (RAW/WAR/WAW)|  
+[4] [5] [6]) (./ch3_ilp.tex
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/lm/t1lmtt.fd) [7] [8]
+[9]) (./ch4_memory.tex [10] [11] [12] [13] [14]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 286.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\rightarrow' on input line 286.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 286.
+
+[15]) (./ch5_tlp.tex [16] [17]) (./ch6_scenarios.tex [18] [19] [20])
+(./appA_formulas.tex [21]) (./appB_sources.tex) [22] (./main.aux)
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ )
+(see the transcript file for additional information)</usr/local/texlive/2026bas
+ic/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/local/texlive/2026basic/te
+xmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2026basic/texmf-d
+ist/fonts/type1/public/lm/lmbx8.pfb></usr/local/texlive/2026basic/texmf-dist/fo
+nts/type1/public/lm/lmbx9.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/ty
+pe1/public/lm/lmbxi10.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/
+public/lm/lmex10.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/publi
+c/lm/lmmi6.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/lm/l
+mmi8.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/lm/lmmi9.p
+fb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/lm/lmr6.pfb></us
+r/local/texlive/2026basic/texmf-dist/fonts/type1/public/lm/lmr8.pfb></usr/local
+/texlive/2026basic/texmf-dist/fonts/type1/public/lm/lmr9.pfb></usr/local/texliv
+e/2026basic/texmf-dist/fonts/type1/public/lm/lmri7.pfb></usr/local/texlive/2026
+basic/texmf-dist/fonts/type1/public/lm/lmri8.pfb></usr/local/texlive/2026basic/
+texmf-dist/fonts/type1/public/lm/lmri9.pfb></usr/local/texlive/2026basic/texmf-
+dist/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2026basic/texmf-dist/
+fonts/type1/public/lm/lmsy6.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/
+type1/public/lm/lmsy8.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/
+public/lm/lmsy9.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public
+/lm/lmtt8.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/lm/lm
+tt9.pfb>
+Output written on main.pdf (22 pages, 534809 bytes).
+Transcript written on main.log.

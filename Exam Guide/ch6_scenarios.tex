@@ -1,0 +1,181 @@
+\section{Putting It Together: Scenarios, Dependencies, Checklist}\label{ch:scen}
+
+\subsection{Which features only work together (check your design for consistency)}
+Exam answers lose marks for choosing a feature whose prerequisite is missing. Use this table as a consistency check.
+
+\small
+\begin{longtable}{L{4.6cm}L{5.4cm}L{5.4cm}}
+\toprule
+\tblhead{\textbf{If you choose\ldots} & \textbf{You also need\ldots} & \textbf{Otherwise\ldots}}\\
+\midrule
+\endhead
+Non-blocking cache (hit-under-miss) & Out-of-order CPU (scoreboard/Tomasulo), multiple memory banks & Blocking CPU stalls anyway; cannot support multiple outstanding misses \\
+Hardware speculation & Dynamic branch prediction, reorder buffer (commit in order), recovery/flush & No way to undo wrong-path work; imprecise exceptions \\
+Wide issue (superscalar) & Accurate predictor + BTB, more register-file/memory ports, renaming, enough independent instructions & Issue slots idle; clock rate and power suffer \\
+SMT & Out-of-order superscalar core, renaming, larger physical register file, per-thread PC/rename/ROB, cache associativity/size increase & Needless on narrow in-order core; shared-resource conflicts \\
+Predict-taken static scheme & Branch target known early (BTB/early BTA) & No benefit \\
+VLIW & Strong compiler (alias analysis, unrolling, scheduling), no need for binary compatibility & Poor code size/utilisation, lock-step stalls \\
+Hardware prefetch & Spare memory bandwidth & Prefetches compete with demand misses \\
+Compiler prefetch & Non-blocking cache; issue slots & Wasted instructions; stalls \\
+Way prediction / pseudo-associative & Set/column structure; tolerance for variable hit latency (better for L2 than L1 for pseudo) & Pipeline problems when hit time varies \\
+Virtual-address cache & PID tags, anti-aliasing (page colouring), protection bits & Flushes on context switch; synonyms \\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\subsection{Reusable full-answer skeleton}
+\begin{enumerate}[leftmargin=*]
+\item \textbf{Class and goal:} (e.g.\ ``PMD: energy-efficient, real-time'').
+\item \textbf{Workload analysis:} parallelism type, branch behaviour, memory behaviour, latency tolerance.
+\item \textbf{Core:} pipeline depth, issue width, scheduling (static/dynamic/speculative), why.
+\item \textbf{Control:} branch predictor type and size, BTB, return stack.
+\item \textbf{Memory:} L1 (size, associativity, block, hit time), L2/L3, miss-penalty/miss-rate/hit-time techniques, main memory organisation, TLB.
+\item \textbf{Parallelism beyond ILP:} threads per core, number of cores.
+\item \textbf{Quantify at least one claim} using AMAT / CPI / stalls-per-instruction.
+\item \textbf{Costs and rejected alternatives.}
+\end{enumerate}
+
+\subsection{Worked scenarios (model answers)}
+
+\subsubsection*{Scenario 1 --- Battery-powered smartphone SoC}
+\textbf{Constraints:} battery life, thermal limit, real-time UI/media, low cost, mixed integer code, occasional bursts.
+
+{\small
+\begin{longtable}{L{3.2cm}L{5.6cm}L{6.6cm}}
+\toprule
+\tblhead{\textbf{Block} & \textbf{Choice} & \textbf{Why}}\\
+\midrule
+\endhead
+Class/goal & PMD: energy efficiency + real-time & Slide emphasis. Optimise energy per task, not clock. \\
+Core & Narrow (2-way) in-order or modest OoO core, shallow pipeline (5--8 stages) & ILP techniques are energy-inefficient (transistors switch with peak issue rate, performance follows sustained rate); deep pipelines magnify branch penalty. \\
+Branch & Small 2-bit BHT (+ small BTB, return stack) or BTFNT/static & Cheap and accurate on loops; avoids large predictor area/energy. \\
+L1 & 32--64\,KB, 2-way with \textbf{way prediction}, 32--64\,B blocks & Way prediction does one tag comparison (energy); 32--64\,B minimise AMAT. \\
+L2 & 256\,KB, no L3 & Slide PMD hierarchy: L1 64\,KB $\rightarrow$ L2 256\,KB $\rightarrow$ 1--2\,GB DRAM $\rightarrow$ flash. \\
+Memory & Interleaved (or modestly wide) DRAM; low-power DRAM states & Bandwidth at low cost; DRAM low-power states listed in slides. \\
+Power & DVFS, power gating, turn off idle cores & Dynamic power $\tfrac12CV^2f$; static power cut by gating. \\
+Parallelism & Several small cores (big.LITTLE-like)\bs; \textbf{no SMT} & Small cores are easy to build; SMT adds area/power for $\sim$20\%. \\
+\bottomrule
+\end{longtable}}
+\textbf{Rejected:} wide speculative core (power), trace cache (area/energy), large L3 (not in PMD hierarchy), VLIW (binary compatibility for apps).
+
+\subsubsection*{Scenario 2 --- High-throughput web/database server}
+\textbf{Constraints:} thousands of independent client requests, availability 24/7, memory-bound database queries, cost per request.
+
+{\small
+\begin{longtable}{L{3.2cm}L{5.6cm}L{6.6cm}}
+\toprule
+\tblhead{\textbf{Block} & \textbf{Choice} & \textbf{Why}}\\
+\midrule
+\endhead
+Class/goal & Server: availability, scalability, throughput & Request-level parallelism: threads are independent. \\
+Cores & \textbf{Many cores (CMP) + 2--4 SMT/fine-grained threads per core} & TLP is abundant; ILP of one thread is limited (most units idle). DB/web are listed as the best multi-core beneficiaries. \\
+Core style & Moderate-width (4-issue) OoO with speculation, or simpler fine-grained cores & Cores are smaller/easier to build; throughput over latency. \\
+Multithreading & Fine-grained or SMT & Hides short and long (DRAM) stalls; DB workloads are memory-bound. \\
+L1/L2/L3 & Private L1; L2 private or shared; \textbf{large shared L3 (16--64\,MB)} & Slide server hierarchy; global miss rate matters; high-associativity L2 is cost-effective. \\
+Memory & Large DRAM (32--256\,GB), \textbf{interleaved/independent banks}, non-blocking caches & Many outstanding misses from many threads; banks support multiprocessor traffic. \\
+Dependability & ECC memory, redundancy; availability $=$ MTTF/(MTTF+MTTR) & Server emphasis on availability. \\
+Coherence & Aware of true/false sharing & Cores share data; coherence misses appear. \\
+\bottomrule
+\end{longtable}}
+\textbf{Rejected:} very wide single core (ILP saturates), coarse-grained MT only (short stalls), aggressive deep speculation burning power per request.
+
+\subsubsection*{Scenario 3 --- Desktop/gaming: single-thread speed is the priority}
+\textbf{Constraints:} one dominant thread, integer + some FP, branchy code, price-performance.
+
+{\small
+\begin{longtable}{L{3.2cm}L{5.6cm}L{6.6cm}}
+\toprule
+\tblhead{\textbf{Block} & \textbf{Choice} & \textbf{Why}}\\
+\midrule
+\endhead
+Core & \textbf{4-wide dynamically scheduled speculative (Tomasulo + ROB)}, moderate-deep pipeline & Needs ILP and precise exceptions; 3--6 issue is the practical sweet spot (Athlon led SPECInt with 3-issue). \\
+Branch & \textbf{Two-level / gshare predictor + BTB + return-address stack}, integrated fetch unit & Branchy code; deep pipe $\Rightarrow$ misprediction cost high. \\
+L1 & Small (32--64\,KB), low associativity, pipelined writes, 64\,B block & Hit time sets the clock; DM/low-way wins AMAT $\ge$16\,KB. \\
+L2/L3 & 256\,KB L2 (higher associativity) + 8--32\,MB L3 & Desktop hierarchy; L2 associativity cheap relative to penalty. \\
+Latency hiding & Non-blocking cache (hit under multiple misses), HW prefetch & Out-of-order core can overlap L1-miss/L2-hit. \\
+Parallelism & 2--4 cores; SMT optional (with preferred-thread priority) & Games/AI/physics in threads, but single thread still primary. \\
+\bottomrule
+\end{longtable}}
+\textbf{Rejected:} VLIW (irregular integer code, compatibility), coarse-grained MT (no gain for one thread), very wide issue (clock/power).
+
+\subsubsection*{Scenario 4 --- Scientific kernel engine (regular FP loops, huge arrays)}
+\textbf{Constraints:} floating-point throughput, long-latency FP ops (add 3, mult 6, divide 24/25), matrices much larger than cache, predictable loops.
+
+{\small
+\begin{longtable}{L{3.2cm}L{5.6cm}L{6.6cm}}
+\toprule
+\tblhead{\textbf{Block} & \textbf{Choice} & \textbf{Why}}\\
+\midrule
+\endhead
+FP units & Fully pipelined adder (4-stage) and multiplier (7-stage); \textbf{pipelined or duplicated divider} if divides are frequent & Initiation interval 1 for add/mult; divider with interval 25 would serialise divides. \\
+Scheduling & Compiler loop unrolling + software pipelining on a VLIW/static design, \emph{or} Tomasulo with renaming & Independent iterations, known latencies: unrolling reaches 3.5 cycles/iter vs 9. Tomasulo is better if latencies vary (cache misses). \\
+Branches & BTFNT or 2-bit BHT; delay slot from target & Loop back-edges almost always taken. \\
+Cache software & Blocking, interchange, fusion, array merging & Capacity/conflict misses: interchange cut misses 93.75\%; blocking reduces capacity misses to $2N^3/B$. \\
+Cache hardware & Stream-buffer prefetch, non-blocking cache, 64\,B blocks & Sequential/stride access, plentiful bandwidth. \\
+Memory & Wide or heavily interleaved banks & Bandwidth-bound; bank count $\ge$ access cycles. \\
+Parallelism & Multiple cores (DLP across data), SIMD/vector\bs{} & Same operation on lots of data. \\
+\bottomrule
+\end{longtable}}
+\textbf{Rejected:} large BTB/predictor budget (loops are easy), heavy speculation machinery (little control-flow irregularity), SMT (FP code showed least SMT gain and most cache conflicts).
+
+\subsubsection*{Scenario 5 --- Low-cost embedded controller}
+\textbf{Constraints:} price is the emphasis, fixed firmware, modest performance, limited power.
+
+\textbf{Design:} classic 5-stage in-order pipeline with forwarding and \textbf{early branch resolution in ID} (1-cycle penalty); \textbf{static} prediction (predict-not-taken, or BTFNT/profile-driven) plus \textbf{one delay slot} filled by the compiler (about 50\% useful); small direct-mapped I- and D-caches (small and simple $\Rightarrow$ fast hit, low area), maybe a single level; software techniques (loop unrolling, loop interchange, blocking) since the firmware is compiled offline; no SMT, no multiple issue. If a compiler team and fixed firmware exist and the application is a regular numeric kernel, \textbf{VLIW} reduces control hardware, but only because \emph{binary compatibility is irrelevant}.\\
+\textbf{Why:} price emphasis $\Rightarrow$ minimal hardware; static techniques need no predictor memory; software cache optimisations cost zero hardware. \textbf{Rejected:} Tomasulo+ROB, BTB, trace cache, victim cache (area).
+
+\subsubsection*{Scenario 8 --- Numeric cache comparison (practice, constructed numbers)}
+\textbf{Problem.} L1 miss penalty 40\,cc, hit time 1\,cc. Option A: 16\,KB direct-mapped, miss rate 3.0\%. Option B: 16\,KB 2-way, miss rate 2.6\%, clock stretched by 10\% (slide: 2-way $\times1.10$). Option C: option A plus a 4-entry victim cache removing 40\% of misses (slide range 20--95\%). Which is best?
+
+\begin{ex}[Solution (AMAT in direct-mapped cycles)]
+A: $1+0.030\times40=2.20$. B: $1.10+0.026\times40=2.14$ --- only 2.7\% better \emph{in AMAT}, but the 10\% longer clock also slows \emph{every non-memory instruction}, so B is a net loss. C: $1+0.030\times0.6\times40=1.72$ (assuming the victim probe hides inside the normal miss path, per the slide). \textbf{Choose C}: keeps the direct-mapped hit time (clock) and removes conflict misses cheaply. Quote the slide table: at 16\,KB, 1-way has the lowest AMAT.
+\end{ex}
+
+\subsubsection*{Scenario 9 --- Numeric branch-handling comparison (practice, constructed numbers)}
+\textbf{Problem.} Deep pipeline (R4000-like): branch penalty 3 cycles, 20\% of instructions are branches, 60\% of branches are taken, base CPI 1.0. Compare (a) stall always, (b) predict-not-taken, (c) 2-bit BHT+BTB 90\% accurate, (d) correlating/two-level predictor 95\% accurate.
+
+\begin{ex}[Solution]
+\begin{center}
+\small
+\begin{tabular}{L{6cm}C{4.2cm}C{2.4cm}}
+\toprule
+\tblhead{\textbf{Scheme} & \textbf{Extra CPI} & \textbf{CPI}}\\
+\midrule
+(a) Stall always & $0.20\times3=0.60$ & 1.60 \\
+(b) Predict not taken (wrong when taken) & $0.20\times0.60\times3=0.36$ & 1.36 \\
+(c) 2-bit BHT + BTB, 90\% & $0.20\times0.10\times3=0.06$ & 1.06 \\
+(d) Two-level, 95\% & $0.20\times0.05\times3=0.03$ & 1.03 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Speedup of (c) over (a): $1.60/1.06\approx1.5$; (d) over (c): $\approx1.03$. \textbf{Conclusion:} in a deep pipe the dynamic predictor is mandatory; the extra complexity of (d) is justified only if area allows (diminishing returns), or if branch frequency is higher or the pipeline deeper.
+\end{ex}
+
+\subsection{Conflict resolution: when two constraints disagree}
+\begin{center}
+\small
+\begin{tabular}{L{5.2cm}L{10.2cm}}
+\toprule
+\tblhead{\textbf{Conflict} & \textbf{Resolution}}\\
+\midrule
+High clock vs.\ low CPI & Deeper pipeline raises clock but adds load/branch delay; compensate with prediction and forwarding. Decide by the \emph{product} IC$\times$CPI$\times T_{clk}$. \\
+Low miss rate vs.\ fast hit & Large/associative cache cuts misses but stretches the clock; use small DM L1 + big associative L2; victim cache/way prediction as compromises. \\
+Throughput vs.\ single-thread latency & Fine-grained MT/SMT raise throughput but slow a thread; add priority or fewer threads; or heterogeneous cores. \\
+Performance vs.\ power & ILP/speculation/prefetch cost energy; prefer TLP/multicore and DVFS; energy per task is the right metric. \\
+Compiler simplicity vs.\ hardware simplicity & Dynamic scheduling = simple compiler, complex hardware; VLIW = opposite. Choose by compatibility and cost. \\
+Bandwidth vs.\ latency & Buy bandwidth (wide/interleaved memory, banks); hide latency (OoO, non-blocking, MT, prefetch). \\
+Compatibility vs.\ simplicity & Compatibility $\Rightarrow$ superscalar; fixed product $\Rightarrow$ VLIW. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Final ten-minute exam checklist}
+\begin{enumerate}[leftmargin=*]
+\item Did I state the machine class and its priority (energy / cost / throughput / availability / single-thread)?
+\item For \emph{every} block (core, predictor, L1, L2/L3, memory, threads) did I give a choice \emph{and} a reason tied to a constraint?
+\item Did I give at least one number (AMAT, CPI, stalls/instr, speedup)?
+\item Did I check feature dependencies (Section above)? (OoO $\Rightarrow$ non-blocking; speculation $\Rightarrow$ ROB+predictor; SMT $\Rightarrow$ OoO.)
+\item Did I state costs (area, power, clock, complexity) of each choice?
+\item Did I list rejected alternatives and why?
+\item If the scenario hints at compatibility, did I avoid VLIW (or justify)?
+\end{enumerate}

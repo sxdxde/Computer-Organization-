@@ -1,0 +1,100 @@
+\contentsline {chapter}{\numberline {0}How to Attack a Design Question}{4}{chapter.0}%
+\contentsline {section}{\numberline {0.1}The six-step answer template}{4}{section.0.1}%
+\contentsline {section}{\numberline {0.2}Master lookup: constraint keyword $\rightarrow $ what it implies}{4}{section.0.2}%
+\contentsline {section}{\numberline {0.3}Roadmap of the chapters}{6}{section.0.3}%
+\contentsline {chapter}{\numberline {1}Fundamentals, Constraints and Trade-offs}{7}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Classes of computers: what each one optimises}{7}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Kinds of parallelism and which hardware exploits them}{7}{section.1.2}%
+\contentsline {section}{\numberline {1.3}The quantitative toolbox}{8}{section.1.3}%
+\contentsline {subsection}{\numberline {1.3.1}Performance}{8}{subsection.1.3.1}%
+\contentsline {subsection}{\numberline {1.3.2}Power and energy}{8}{subsection.1.3.2}%
+\contentsline {subsection}{\numberline {1.3.3}Cost}{8}{subsection.1.3.3}%
+\contentsline {subsection}{\numberline {1.3.4}Dependability}{9}{subsection.1.3.4}%
+\contentsline {section}{\numberline {1.4}Technology trends that justify design choices}{9}{section.1.4}%
+\contentsline {section}{\numberline {1.5}Chapter 1 cheat-sheet}{9}{section.1.5}%
+\contentsline {chapter}{\numberline {2}Pipeline, Long-Latency Units and Branch Handling}{10}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Decision map}{10}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Pipeline hazards: the three kinds and their standard cures}{10}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Long-latency functional units (FP pipeline)}{11}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Deeper pipelines: the MIPS R4000 case study}{11}{section.2.4}%
+\contentsline {section}{\numberline {2.5}The control hazard problem in numbers}{12}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}Where the branch resolves determines the penalty (5-stage MIPS)}{12}{subsection.2.5.1}%
+\contentsline {section}{\numberline {2.6}Static branch prediction (decided at compile time)}{12}{section.2.6}%
+\contentsline {subsection}{\numberline {2.6.1}Choosing where the delay-slot instruction comes from}{13}{subsection.2.6.1}%
+\contentsline {section}{\numberline {2.7}Dynamic branch prediction (decided by hardware at run time)}{13}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}Branch history table (BHT) and counters}{13}{subsection.2.7.1}%
+\contentsline {subsection}{\numberline {2.7.2}Correlating (two-level) predictors}{13}{subsection.2.7.2}%
+\contentsline {subsection}{\numberline {2.7.3}Branch target buffer (BTB) and fetch-unit support}{13}{subsection.2.7.3}%
+\contentsline {subsection}{\numberline {2.7.4}Which dynamic predictor for which scenario}{14}{subsection.2.7.4}%
+\contentsline {section}{\numberline {2.8}Chapter 2 cheat-sheet}{14}{section.2.8}%
+\contentsline {chapter}{\numberline {3}Instruction-Level Parallelism: Scheduling, Speculation, Multiple Issue}{15}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Decision map}{15}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Dependences: what limits ILP}{15}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Static (compiler) scheduling}{16}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Loop unrolling: the slides' worked example}{16}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Software pipelining and static renaming}{16}{subsection.3.3.2}%
+\contentsline {section}{\numberline {3.4}Dynamic scheduling: why do it in hardware}{16}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Scoreboard (CDC 6600, 1963)}{17}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}Tomasulo's algorithm (IBM 360/91, 1966)}{17}{subsection.3.4.2}%
+\contentsline {subsection}{\numberline {3.4.3}Hardware speculation: Tomasulo $+$ reorder buffer (ROB)}{18}{subsection.3.4.3}%
+\contentsline {section}{\numberline {3.5}Multiple issue: superscalar vs.\ VLIW}{18}{section.3.5}%
+\contentsline {section}{\numberline {3.6}Limits of ILP (use these to argue \emph {against} very wide issue)}{19}{section.3.6}%
+\contentsline {subsection}{\numberline {3.6.1}Practical limits}{19}{subsection.3.6.1}%
+\contentsline {subsection}{\numberline {3.6.2}The ideal-processor study}{19}{subsection.3.6.2}%
+\contentsline {subsection}{\numberline {3.6.3}Head-to-head of four real ILP designs}{20}{subsection.3.6.3}%
+\contentsline {section}{\numberline {3.7}Chapter 3 cheat-sheet}{21}{section.3.7}%
+\contentsline {chapter}{\numberline {4}Memory Hierarchy: Caches, Main Memory, Virtual Memory}{22}{chapter.4}%
+\contentsline {section}{\numberline {4.1}The framework: AMAT and the four levers}{22}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Step 1: diagnose the miss type (the ``3 C's'' + coherence)}{22}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Reducing miss penalty}{23}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Multilevel caches (``probably the best miss-penalty reduction'')}{23}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Critical word first and early restart}{23}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.3}Read-miss priority over writes; merging write buffer}{23}{subsection.4.3.3}%
+\contentsline {subsection}{\numberline {4.3.4}Victim cache}{24}{subsection.4.3.4}%
+\contentsline {section}{\numberline {4.4}Reducing miss rate}{24}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Larger block size}{24}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}Larger caches and higher associativity}{24}{subsection.4.4.2}%
+\contentsline {subsection}{\numberline {4.4.3}Way prediction}{25}{subsection.4.4.3}%
+\contentsline {subsection}{\numberline {4.4.4}Pseudo-associative (column-associative) cache}{25}{subsection.4.4.4}%
+\contentsline {subsection}{\numberline {4.4.5}Compiler optimisations (zero hardware cost)}{25}{subsection.4.4.5}%
+\contentsline {section}{\numberline {4.5}Reducing penalty/rate through parallelism}{26}{section.4.5}%
+\contentsline {subsection}{\numberline {4.5.1}Non-blocking (lockup-free) cache}{26}{subsection.4.5.1}%
+\contentsline {subsection}{\numberline {4.5.2}Hardware prefetching (stream buffers)}{26}{subsection.4.5.2}%
+\contentsline {subsection}{\numberline {4.5.3}Compiler-controlled prefetching}{26}{subsection.4.5.3}%
+\contentsline {section}{\numberline {4.6}Reducing hit time}{26}{section.4.6}%
+\contentsline {section}{\numberline {4.7}Cache optimisation summary table (from the slides)}{27}{section.4.7}%
+\contentsline {section}{\numberline {4.8}Main memory}{28}{section.4.8}%
+\contentsline {subsection}{\numberline {4.8.1}DRAM vs.\ SRAM and key metrics}{28}{subsection.4.8.1}%
+\contentsline {subsection}{\numberline {4.8.2}Three ways to raise memory bandwidth}{28}{subsection.4.8.2}%
+\contentsline {subsection}{\numberline {4.8.3}Memory hierarchy by device class (slide figures)}{29}{subsection.4.8.3}%
+\contentsline {section}{\numberline {4.9}Virtual memory}{29}{section.4.9}%
+\contentsline {section}{\numberline {4.10}Scenario $\rightarrow $ memory design, quick reference}{29}{section.4.10}%
+\contentsline {section}{\numberline {4.11}Chapter 4 cheat-sheet}{30}{section.4.11}%
+\contentsline {chapter}{\numberline {5}Thread-Level Parallelism: Multithreading, SMT, Multicore}{31}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Decision map}{31}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Why TLP at all}{31}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Multithreading on one core}{32}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Why SMT is cheap on an OoO core}{32}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}SMT design challenges and costs (IBM Power5 case study)}{32}{subsection.5.3.2}%
+\contentsline {subsection}{\numberline {5.3.3}SMT performance data to quote}{33}{subsection.5.3.3}%
+\contentsline {section}{\numberline {5.4}Multicore (chip multiprocessor, CMP)}{33}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}Multicore vs.\ SMT, and combining them}{33}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.2}Memory hierarchy in threaded designs}{34}{subsection.5.4.2}%
+\contentsline {section}{\numberline {5.5}Chapter 5 cheat-sheet}{34}{section.5.5}%
+\contentsline {chapter}{\numberline {6}Putting It Together: Scenarios, Dependencies, Checklist}{35}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Which features only work together (check your design for consistency)}{35}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Reusable full-answer skeleton}{36}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Worked scenarios (model answers)}{36}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Conflict resolution: when two constraints disagree}{39}{section.6.4}%
+\contentsline {section}{\numberline {6.5}Final ten-minute exam checklist}{39}{section.6.5}%
+\contentsline {chapter}{\numberline {A}Formula and Number Sheet}{41}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Performance, power, cost, dependability}{41}{section.A.1}%
+\contentsline {section}{\numberline {A.2}Pipeline and branches}{41}{section.A.2}%
+\contentsline {section}{\numberline {A.3}ILP}{42}{section.A.3}%
+\contentsline {section}{\numberline {A.4}Memory}{42}{section.A.4}%
+\contentsline {section}{\numberline {A.5}Threads and multicore}{42}{section.A.5}%
+\contentsline {chapter}{\numberline {B}Source Map, Gaps and Glossary}{43}{appendix.B}%
+\contentsline {section}{\numberline {B.1}Which deck covers what}{43}{section.B.1}%
+\contentsline {section}{\numberline {B.2}Gaps: topics in the course outline but \emph {not} in the provided slides}{43}{section.B.2}%
+\contentsline {section}{\numberline {B.3}Known inconsistencies in the slides (avoid losing marks)}{44}{section.B.3}%
+\contentsline {section}{\numberline {B.4}Glossary}{44}{section.B.4}%

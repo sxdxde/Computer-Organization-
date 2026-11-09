@@ -1,0 +1,70 @@
+\chapter{Source Map, Gaps and Glossary}\label{app:src}
+
+\section{Which deck covers what}
+\small
+\begin{longtable}{L{4.2cm}L{3.0cm}L{8.2cm}}
+\toprule
+\tblhead{\textbf{Deck (file name)} & \textbf{Slides} & \textbf{Content}}\\
+\midrule
+\endhead
+\texttt{ca01 (1).pdf} & 28 & Course outline; classes of computers; parallelism; Flynn; technology trends; power/energy; cost; dependability; performance equation \\
+\texttt{ca03\_noor.pdf} & 88 & Advanced pipelining intro; R4000; FP loop hazards; unrolling; dependences; scoreboard (full worked example); Tomasulo intro; register renaming; VLIW vs.\ superscalar (``ca03'') \\
+\texttt{ca03\_noorNew.pdf} & 19 & FP pipeline (latencies, initiation intervals), RISC-V FP, R4000 integer and FP pipeline (``ca03N'') \\
+\texttt{ca04\_noorNew.pdf} & 109 & Branch prediction (static, delayed branch, BHT, correlating, two-level, gshare, BTB); hardware speculation, ROB; multiple issue; VLIW; limits of multi-issue and ILP; Superscalar vs.\ VLIW (``ca04'') \\
+\texttt{ca05\_noor (1).pdf} & 102 & Cache performance (all techniques), summary table; main memory; DDR; memory hierarchy by device; virtual memory, TLB (``ca05'') \\
+\texttt{ca06\_noor.pdf} & 36 & Limits to ILP; multithreading (fine, coarse, SMT); Power5; SMT performance; head-to-head processors (``ca06'') \\
+\texttt{ca08\_noorNew.pdf} & 30 & Multicore, SMT, multicore vs.\ SMT, memory hierarchy in multicore (``ca08'') \\
+\texttt{lec06-dynasched.pdf} & 69 & Tomasulo vs.\ scoreboard; Tomasulo examples; loop example; speculative Tomasulo with reorder buffer (Kubiatowicz CS252) \\
+\texttt{CachePerformance2.pdf} & 54 & Way prediction; pseudo-associative cache; loop interchange/fusion/blocking numeric examples \\
+\texttt{Cache-Misses.pdf} & 10 & Taxonomy of cache misses: cold, capacity, conflict, coherence (true/false sharing) \\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\section{Gaps: topics in the course outline but \emph{not} in the provided slides}
+If the exam touches these, supplement from the textbook (Hennessy \& Patterson):
+\begin{itemize}
+\item Vector architectures, SIMD multimedia extensions, GPUs (only named as DLP).
+\item Centralised shared-memory vs.\ distributed shared-memory / directory-based coherence, snooping protocols (MSI/MESI), synchronisation, memory consistency models. (Only \emph{coherence misses} are covered.)
+\item Warehouse-scale computers, request-level parallelism, cloud computing, physical infrastructure.
+\item Detailed treatment of non-blocking cache hit-under-miss statistics beyond the chart; DRAM internals beyond RAS/CAS; flash/disk details.
+\end{itemize}
+
+\section{Known inconsistencies in the slides (avoid losing marks)}
+\begin{itemize}
+\item \textbf{R4000 load delay:} one slide title says ``x1'', the table beneath it shows \emph{two} stall cycles, and the older deck says ``TWO cycle load latency''. Use \textbf{2}.
+\item \textbf{Correlating-predictor storage:} the slide compares a 2-bit predictor with 4K entries to a $(2,2)$ predictor with 1K entries and says ``the same number of total bits''; state the claim as ``same hardware budget'' and avoid quoting bit counts.
+\item \textbf{Memory-width CPI example:} the slide labels buses ``64-bit'' and ``128-bit'' but the arithmetic treats them as 1-word and 2-word wide; quote the CPI values (4.30, 5.07, 3.63, 3.54, 5.69, 3.09, 3.84) rather than the labels.
+\item \textbf{Blocking numbers} ($\approx1.07$ billion $\to\approx2.1$ million) come from a \emph{simplified} model (one miss per column access, tile reuse); present them as illustrative.
+\item \textbf{Predict-taken} is described as useless in the base MIPS pipeline only because the target isn't known before the outcome; with a BTB it is meaningful.
+\end{itemize}
+
+\section{Glossary}
+\small
+\begin{longtable}{L{2.4cm}L{13cm}}
+\toprule
+\tblhead{\textbf{Term} & \textbf{Meaning}}\\
+\midrule
+\endhead
+AMAT & Average memory access time $=t_{hit}+$ miss rate $\times$ miss penalty. \\
+BHT/BHR/PHT & Branch history table / branch history register / pattern history table. \\
+BTB & Branch target buffer: cache of predicted branch targets (tag + target + optional state). \\
+BTFNT & Backward-taken, forward-not-taken static prediction. \\
+CDB & Common data bus: broadcast result bus (data + source tag) in Tomasulo. \\
+CMP & Chip multiprocessor (multicore). \\
+DLP / ILP / TLP / RLP & Data / instruction / thread / request-level parallelism. \\
+DVFS & Dynamic voltage and frequency scaling. \\
+EPIC & Explicitly parallel instruction computing (IA-64/Itanium, VLIW-style). \\
+ISB & Instruction stream buffer (prefetch buffer). \\
+MIMD / SIMD / SISD / MISD & Flynn taxonomy classes. \\
+OoO & Out-of-order execution. \\
+PID & Process identifier used in tags of virtual caches. \\
+RAW/WAR/WAW & Read-after-write (true), write-after-read (anti), write-after-write (output) hazards. \\
+ROB & Reorder buffer: holds uncommitted results for in-order commit and speculation recovery. \\
+RS & Reservation station (Tomasulo buffer with op, operands, tags). \\
+SMT & Simultaneous multithreading. \\
+TDP & Thermal design power. \\
+TLB & Translation lookaside buffer: cache of page-table translations. \\
+VLIW & Very long instruction word: compiler packs independent operations into one wide instruction. \\
+\bottomrule
+\end{longtable}

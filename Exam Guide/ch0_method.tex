@@ -1,0 +1,98 @@
+\section{How to Attack a Design Question}\label{ch:method}
+
+\subsection{The six-step answer template}
+Every ``design a processor for this scenario'' question can be answered with the same skeleton. Examiners award marks for \emph{linking a constraint to a feature with a reason}, so do this explicitly and in this order.
+
+\begin{enumerate}[leftmargin=*]
+\item \textbf{Classify the machine.} Which class from the course: personal mobile device (PMD), desktop, server, cluster/warehouse-scale, supercomputer, embedded? The class fixes what to optimise: PMD = energy and real-time; desktop = price-performance; server = availability, scalability, throughput; embedded = price.
+\item \textbf{Classify the workload's parallelism.} Lots of independent requests/threads (TLP/RLP)? Regular loops over arrays (DLP, loop-level ILP)? A single branchy thread (ILP-limited)? Memory-bound with poor locality? This decides core style (wide OoO vs.\ many small cores vs.\ multithreaded).
+\item \textbf{Find the bottleneck with a number.} Use the processor-performance equation and AMAT: is $\CPI$ dominated by data hazards, branch penalty, or memory stalls? Quote $f_{branch}\times penalty$, $\AMAT$, miss rate, etc.
+\item \textbf{Choose one feature per bottleneck} (from the decision maps in the sections below), and state \emph{why it matches this workload}.
+\item \textbf{State the cost and risk} of each choice (area, power, clock-rate impact, complexity, compatibility). A design with no stated cost looks naive.
+\item \textbf{Name what you rejected and why} (``VLIW rejected because binary compatibility is required''). This is where a good answer separates from a good-enough answer.
+\end{enumerate}
+
+\begin{key}[One-sentence justification pattern]
+``Because the workload is \underline{X} (evidence: \underline{number/constraint}), the bottleneck is \underline{Y}; therefore I choose \underline{feature}, which reduces \underline{CPI term / AMAT term / power} by \underline{mechanism}, at the cost of \underline{cost}; I rejected \underline{alternative} because \underline{constraint}.''
+\end{key}
+
+\subsection{Master lookup: constraint keyword $\rightarrow$ what it implies}
+Scan the scenario for these keywords first. The right-hand column is the default direction; later chapters refine it.
+
+\small
+\begin{longtable}{L{3.6cm}L{6.3cm}L{6.4cm}}
+\toprule
+\tblhead{\textbf{If the scenario says\ldots} & \textbf{Lean towards\ldots} & \textbf{Lean away from\ldots}}\\
+\midrule
+\endfirsthead
+\toprule
+\tblhead{\textbf{If the scenario says\ldots} & \textbf{Lean towards\ldots} & \textbf{Lean away from\ldots}}\\
+\midrule
+\endhead
+Battery / energy / thermal limit / PMD &
+Simple or modestly-wide core, small caches, few cache levels, way-predicted caches, DVFS, power gating, turning off idle cores, multicore of small cores instead of one huge core &
+Very wide issue, deep speculation, trace cache, large windows, aggressive prefetch that burns bandwidth (ILP techniques are \emph{energy-inefficient}: slide ``Limits to ILP'') \\
+\addlinespace
+Low cost / embedded / price-sensitive &
+Simple pipeline, static branch prediction / delay slot, direct-mapped small cache, VLIW if code is fixed and compiler is good (simple hardware) &
+Tomasulo+ROB, SMT, large L2/L3, large BTB \\
+\addlinespace
+Server, throughput, many independent requests, database, web &
+Multicore + multithreading (fine-grained or SMT), large shared L2/L3, interleaved/banked memory, non-blocking caches, dependability (availability) &
+Spending area on single-thread ILP (diminishing returns) \\
+\addlinespace
+Single-thread latency / desktop / gaming / one big program &
+Wide dynamically-scheduled speculative superscalar (Tomasulo+ROB), good branch predictor (two-level / gshare + BTB + return-address stack), small fast L1 + big L2, non-blocking caches, prefetch &
+Coarse-grained multithreading (does nothing for one thread), VLIW (if code is irregular) \\
+\addlinespace
+Regular FP loops, arrays, scientific, matrix &
+Loop unrolling + software pipelining + compiler scheduling, pipelined FP units, blocking/interchange/fusion, hardware or compiler prefetch, interleaved memory, VLIW is viable; (vector/SIMD/GPU\bs{}) &
+Large dependence on branch prediction (loops are predictable anyway), big victim caches (conflicts are fixable in software) \\
+\addlinespace
+Binary compatibility across generations / legacy software &
+Dynamically scheduled superscalar (hardware finds parallelism; same code runs on next generation) &
+VLIW (breaks when number of units or latencies change) \\
+\addlinespace
+Unpredictable latencies (cache misses) / data-dependent latencies &
+Dynamic scheduling (scoreboard/Tomasulo), non-blocking cache, multithreading to hide stalls &
+Static scheduling relying on fixed latencies; VLIW lock-step (one stall stalls everything) \\
+\addlinespace
+Deep pipeline / very high clock &
+Strong branch prediction (misprediction cost grows with depth), BTB, small simple L1 so hit time fits cycle, pipelined cache access &
+Delayed branch (slots become hard to fill), large associative L1 (hit time $\uparrow$) \\
+\addlinespace
+High branch frequency (compilers, interpreters, control code) &
+Dynamic predictor: 2-bit counters $\rightarrow$ correlating / two-level / gshare; BTB; return-address predictor &
+Predict-not-taken alone, 1-bit predictor \\
+\addlinespace
+Many outstanding misses possible; out-of-order core present &
+Non-blocking cache (hit-under-miss / miss-under-miss), multiple memory banks &
+Blocking cache (wastes the OoO core) \\
+\addlinespace
+Large working set, poor locality, pointer-chasing &
+Multithreading to hide latency (fine-grained/SMT), large last-level cache, victim cache, deeper hierarchy &
+Blocking/tiling and stream prefetch (need regular access patterns) \\
+\addlinespace
+Memory bandwidth limited, sequential accesses &
+Interleaved or wide main memory, larger blocks (up to the AMAT optimum), prefetch stream buffers &
+Very large blocks in a small cache \\
+\addlinespace
+Limited die area &
+Multicore of smaller cores (each core simpler, easier to design/manufacture), small-area predictors, SMT as cheap TLP (Power5: SMT cost $\approx$24\% core area) &
+Wide issue (logic and ports grow faster than issue width) \\
+\addlinespace
+Real-time / predictability &
+Static techniques (fixed delay slots, static prediction, static schedule); small caches with known behaviour\bs{} &
+Heavy speculation and large caches with variable timing\bs{} \\
+\addlinespace
+High availability (24/7) &
+Redundancy, ECC memory, fast repair; compute availability = MTTF/(MTTF+MTTR) &
+--- \\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\begin{trap}[Common failure mode]
+Choosing ``the most advanced thing'' for every box. The exam rewards \emph{fit}. A PMD answer containing a 12-wide speculative core and a trace cache loses marks; so does a server answer built around a single fast core with no multithreading.
+\end{trap}
+

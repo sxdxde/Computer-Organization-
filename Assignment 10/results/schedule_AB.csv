@@ -1,0 +1,81 @@
+stream,model,id,instruction,cat,issue,complete
+A,M1,A#0,"vaddps ymm0, ymm1, ymm2",FA,0,3
+A,M1,A#1,"vfmadd231ps ymm3, ymm0, ymm4",FMA,3,7
+A,M1,A#2,"vaddps ymm5, ymm3, ymm6",FA,7,10
+A,M1,A#3,"vmulps ymm7, ymm5, ymm8",MUL,11,15
+A,M1,A#4,"vaddps ymm9, ymm7, ymm10",FA,15,18
+A,M1,A#5,"vshufps ymm11, ymm9, ymm12, 0x4E",SHUF,18,19
+A,M1,A#6,"vmulps ymm13, ymm11, ymm14",MUL,20,24
+A,M1,A#7,"vaddps ymm15, ymm13, ymm1",FA,24,27
+A,M1,A#8,"vfmadd231ps ymm2, ymm15, ymm4",FMA,27,31
+A,M1,A#9,"vaddps ymm6, ymm2, ymm8",FA,31,34
+A,M2,A#0,"vaddps ymm0, ymm1, ymm2",FA,0,3
+A,M2,A#1,"vfmadd231ps ymm3, ymm0, ymm4",FMA,3,7
+A,M2,A#2,"vaddps ymm5, ymm3, ymm6",FA,7,10
+A,M2,A#3,"vmulps ymm7, ymm5, ymm8",MUL,10,14
+A,M2,A#4,"vaddps ymm9, ymm7, ymm10",FA,14,17
+A,M2,A#5,"vshufps ymm11, ymm9, ymm12, 0x4E",SHUF,17,18
+A,M2,A#6,"vmulps ymm13, ymm11, ymm14",MUL,18,22
+A,M2,A#7,"vaddps ymm15, ymm13, ymm1",FA,22,25
+A,M2,A#8,"vfmadd231ps ymm2, ymm15, ymm4",FMA,25,29
+A,M2,A#9,"vaddps ymm6, ymm2, ymm8",FA,29,32
+A,M3,A#0,"vaddps ymm0, ymm1, ymm2",FA,0,2
+A,M3,A#1,"vfmadd231ps ymm3, ymm0, ymm4",FMA,2,6
+A,M3,A#2,"vaddps ymm5, ymm3, ymm6",FA,6,8
+A,M3,A#3,"vmulps ymm7, ymm5, ymm8",MUL,8,12
+A,M3,A#4,"vaddps ymm9, ymm7, ymm10",FA,12,14
+A,M3,A#5,"vshufps ymm11, ymm9, ymm12, 0x4E",SHUF,14,15
+A,M3,A#6,"vmulps ymm13, ymm11, ymm14",MUL,15,19
+A,M3,A#7,"vaddps ymm15, ymm13, ymm1",FA,19,21
+A,M3,A#8,"vfmadd231ps ymm2, ymm15, ymm4",FMA,21,25
+A,M3,A#9,"vaddps ymm6, ymm2, ymm8",FA,25,27
+A,M4,A#0,"vaddps ymm0, ymm1, ymm2",FA,0,2
+A,M4,A#1,"vfmadd231ps ymm3, ymm0, ymm4",FMA,2,6
+A,M4,A#2,"vaddps ymm5, ymm3, ymm6",FA,6,8
+A,M4,A#3,"vmulps ymm7, ymm5, ymm8",MUL,9,13
+A,M4,A#4,"vaddps ymm9, ymm7, ymm10",FA,13,15
+A,M4,A#5,"vshufps ymm11, ymm9, ymm12, 0x4E",SHUF,15,16
+A,M4,A#6,"vmulps ymm13, ymm11, ymm14",MUL,17,21
+A,M4,A#7,"vaddps ymm15, ymm13, ymm1",FA,21,23
+A,M4,A#8,"vfmadd231ps ymm2, ymm15, ymm4",FMA,23,27
+A,M4,A#9,"vaddps ymm6, ymm2, ymm8",FA,27,29
+B,M1,B#0,"vshufps ymm0, ymm1, ymm2, 0x4E",SHUF,0,1
+B,M1,B#1,"vmulps ymm3, ymm0, ymm4",MUL,2,6
+B,M1,B#2,"vfmadd231ps ymm5, ymm3, ymm6",FMA,6,10
+B,M1,B#3,"vaddps ymm7, ymm5, ymm8",FA,10,13
+B,M1,B#4,"vshufps ymm9, ymm7, ymm10, 0xB1",SHUF,13,14
+B,M1,B#5,"vaddps ymm11, ymm9, ymm12",FA,14,17
+B,M1,B#6,"vmulps ymm13, ymm11, ymm14",MUL,18,22
+B,M1,B#7,"vfmadd231ps ymm15, ymm13, ymm1",FMA,22,26
+B,M1,B#8,"vaddps ymm2, ymm15, ymm4",FA,26,29
+B,M1,B#9,"vshufps ymm6, ymm2, ymm8, 0x1B",SHUF,29,30
+B,M2,B#0,"vshufps ymm0, ymm1, ymm2, 0x4E",SHUF,0,1
+B,M2,B#1,"vmulps ymm3, ymm0, ymm4",MUL,1,5
+B,M2,B#2,"vfmadd231ps ymm5, ymm3, ymm6",FMA,5,9
+B,M2,B#3,"vaddps ymm7, ymm5, ymm8",FA,9,12
+B,M2,B#4,"vshufps ymm9, ymm7, ymm10, 0xB1",SHUF,12,13
+B,M2,B#5,"vaddps ymm11, ymm9, ymm12",FA,13,16
+B,M2,B#6,"vmulps ymm13, ymm11, ymm14",MUL,16,20
+B,M2,B#7,"vfmadd231ps ymm15, ymm13, ymm1",FMA,20,24
+B,M2,B#8,"vaddps ymm2, ymm15, ymm4",FA,24,27
+B,M2,B#9,"vshufps ymm6, ymm2, ymm8, 0x1B",SHUF,27,28
+B,M3,B#0,"vshufps ymm0, ymm1, ymm2, 0x4E",SHUF,0,1
+B,M3,B#1,"vmulps ymm3, ymm0, ymm4",MUL,1,5
+B,M3,B#2,"vfmadd231ps ymm5, ymm3, ymm6",FMA,5,9
+B,M3,B#3,"vaddps ymm7, ymm5, ymm8",FA,9,11
+B,M3,B#4,"vshufps ymm9, ymm7, ymm10, 0xB1",SHUF,11,12
+B,M3,B#5,"vaddps ymm11, ymm9, ymm12",FA,12,14
+B,M3,B#6,"vmulps ymm13, ymm11, ymm14",MUL,14,18
+B,M3,B#7,"vfmadd231ps ymm15, ymm13, ymm1",FMA,18,22
+B,M3,B#8,"vaddps ymm2, ymm15, ymm4",FA,22,24
+B,M3,B#9,"vshufps ymm6, ymm2, ymm8, 0x1B",SHUF,24,25
+B,M4,B#0,"vshufps ymm0, ymm1, ymm2, 0x4E",SHUF,0,1
+B,M4,B#1,"vmulps ymm3, ymm0, ymm4",MUL,2,6
+B,M4,B#2,"vfmadd231ps ymm5, ymm3, ymm6",FMA,6,10
+B,M4,B#3,"vaddps ymm7, ymm5, ymm8",FA,10,12
+B,M4,B#4,"vshufps ymm9, ymm7, ymm10, 0xB1",SHUF,12,13
+B,M4,B#5,"vaddps ymm11, ymm9, ymm12",FA,13,15
+B,M4,B#6,"vmulps ymm13, ymm11, ymm14",MUL,16,20
+B,M4,B#7,"vfmadd231ps ymm15, ymm13, ymm1",FMA,20,24
+B,M4,B#8,"vaddps ymm2, ymm15, ymm4",FA,24,26
+B,M4,B#9,"vshufps ymm6, ymm2, ymm8, 0x1B",SHUF,26,27

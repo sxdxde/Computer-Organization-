@@ -1,0 +1,105 @@
+\documentclass[9pt,a4paper]{extarticle}
+\usepackage[margin=1.3cm,top=1.4cm,bottom=1.4cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage[dvipsnames,table]{xcolor}
+\usepackage{booktabs,longtable,array,tabularx}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage[colorlinks=true,linkcolor=NavyBlue,urlcolor=NavyBlue,citecolor=NavyBlue]{hyperref}
+
+\setlist{itemsep=1pt,topsep=3pt,parsep=0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+\renewcommand{\arraystretch}{1.05}
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{2}
+\emergencystretch=2em
+
+% ---------- column helpers ----------
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+
+% ---------- colours ----------
+\definecolor{pickc}{HTML}{1B7F3B}
+\definecolor{avoidc}{HTML}{B3261E}
+\definecolor{trapc}{HTML}{C26A00}
+\definecolor{exc}{HTML}{1F5FA8}
+\definecolor{keyc}{HTML}{555555}
+\definecolor{decc}{HTML}{6A2C91}
+\definecolor{hdrc}{HTML}{E8EEF7}
+
+% ---------- boxes (no external packages: lrbox + fcolorbox) ----------
+\newsavebox{\cboxbin}
+\setlength{\fboxsep}{3pt}
+\setlength{\fboxrule}{0.8pt}
+\newenvironment{cbox}[3]{%
+  \par\vspace{2pt}\noindent
+  \def\cboxfc{#1}\def\cboxbg{#2}%
+  \begin{lrbox}{\cboxbin}\begin{minipage}{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}
+  \setlength{\parskip}{3pt}\textbf{\textcolor{#1}{#3}}\ \ignorespaces
+}{%
+  \end{minipage}\end{lrbox}\fcolorbox{\cboxfc}{\cboxbg}{\usebox{\cboxbin}}\par\vspace{2pt}}
+
+\newenvironment{pick}[1][Choose it when]{\begin{cbox}{pickc}{pickc!6}{#1:}}{\end{cbox}}
+\newenvironment{avoid}[1][Do NOT choose it when]{\begin{cbox}{avoidc}{avoidc!5}{#1:}}{\end{cbox}}
+\newenvironment{trap}[1][Exam trap]{\begin{cbox}{trapc}{trapc!7}{#1:}}{\end{cbox}}
+\newenvironment{ex}[1][Worked example]{\begin{cbox}{exc}{exc!5}{#1.}}{\end{cbox}}
+\newenvironment{key}[1][Key facts]{\begin{cbox}{keyc}{black!4}{#1.}}{\end{cbox}}
+\newenvironment{dec}[1][Decision rule]{\begin{cbox}{decc}{decc!5}{#1:}}{\end{cbox}}
+
+% ---------- small helpers ----------
+% source tag: which deck(s) to open in the exam
+\newcommand{\src}[1]{\par\vspace{-2pt}\hfill{\footnotesize\itshape\textcolor{gray}{Slides: #1}}\par}
+% material NOT stated in the slides (general knowledge / my derivation) -- verify before relying
+\newcommand{\bs}{\textsuperscript{\textcolor{avoidc}{$\dagger$}}}
+\newcommand{\cc}{\,cc}
+\newcommand{\AMAT}{\mathrm{AMAT}}
+\newcommand{\CPI}{\mathrm{CPI}}
+
+\newcommand{\tblhead}[1]{\rowcolor{hdrc}#1}
+
+% ---------- header/footer ----------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\itshape Processor Design Exam Playbook}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+
+\title{\LARGE\bfseries Processor Design Exam Playbook\\[2pt]
+\normalsize Which architectural feature to choose, for which scenario, and why}
+\author{}
+\date{}
+\usepackage{etoolbox}
+\makeatletter\patchcmd{\@maketitle}{\vskip 2em}{\vskip 0pt}{}{}\makeatother
+
+\begin{document}
+\maketitle
+
+\begin{center}\begin{minipage}{0.95\textwidth}\small
+\noindent This is an open-book \emph{decision manual}. The exam will hand you a scenario (workload, power/cost/area limits, compatibility needs, latency numbers) and ask you to configure a processor and justify the choices. Every part therefore follows the same pattern: (1) a \textbf{decision map} (constraint $\rightarrow$ feature), (2) each feature with \textbf{what it fixes / what it costs / when it wins / when it loses}, (3) the \textbf{numbers from the slides} you can quote, (4) \textbf{exam traps}. Section~\ref{ch:scen} puts it all together with full worked scenarios and a reusable answer template.
+
+\medskip
+\noindent\textbf{Conventions.}
+\emph{Slides:} tags at the end of a section tell you which deck to open (deck names are listed in Appendix~\ref{app:src}).
+A red dagger\bs{} marks something that is \emph{not} stated in the slides (my general knowledge or my own arithmetic on slide numbers); it is correct as far as I know, but treat it as a supplement and prefer slide wording in your answer.
+
+\medskip
+\noindent\textbf{On ``guaranteed''.} No document can guarantee a result. What this one does is make every recommendation traceable to the professor's own material, and give you a method (Section~\ref{ch:method}) that forces you to justify with constraints, numbers and trade-offs, which is what a design question rewards.
+\end{minipage}\end{center}
+
+
+\input{ch0_method}
+\input{ch1_fundamentals}
+\input{ch2_pipeline_branch}
+\input{ch3_ilp}
+\input{ch4_memory}
+\input{ch5_tlp}
+\input{ch6_scenarios}
+\input{appA_formulas}
+\input{appB_sources}
+
+\end{document}

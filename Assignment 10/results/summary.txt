@@ -1,0 +1,28 @@
+A_critical_path: {'M1': 34, 'M2': 32, 'M3': 27, 'M4': 29}
+A_nonzero_edges: 2
+A_bypass_sum: 2
+A_war_waw: (2, 0)
+B_critical_path: {'M1': 30, 'M2': 28, 'M3': 25, 'M4': 27}
+B_nonzero_edges: 2
+B_bypass_sum: 2
+B_war_waw: (2, 0)
+pairs_A_only: [('FA', 'FMA'), ('MUL', 'FA')]
+pairs_B_only: [('MUL', 'FMA'), ('SHUF', 'FA')]
+pairs_common: [('FA', 'MUL'), ('FA', 'SHUF'), ('FMA', 'FA'), ('SHUF', 'MUL')]
+C_chain_alone_asap: {'C1': 22, 'C2': 18, 'C3': 4}
+C_cross_edges: [('C#2', 'C1', 'C#8', 'C2', 'ymm5'), ('C#3', 'C1', 'C#9', 'C2', 'ymm7'), ('C#4', 'C1', 'C#10', 'C2', 'ymm9'), ('C#5', 'C1', 'C#11', 'C2', 'ymm11'), ('C#6', 'C2', 'C#12', 'C3', 'ymm13'), ('C#7', 'C2', 'C#13', 'C3', 'ymm1'), ('C#8', 'C2', 'C#14', 'C3', 'ymm4'), ('C#2', 'C1', 'C#14', 'C3', 'ymm5'), ('C#10', 'C2', 'C#15', 'C3', 'ymm8'), ('C#4', 'C1', 'C#15', 'C3', 'ymm9')]
+C_asap_asWritten: 25
+C_asap_intended: 22
+C_port_asWritten: 25
+C_port_intended: 22
+C_war_waw: (10, 2)
+C_dep_c1: ['C#6', 'C#7', 'C#12', 'C#13']
+C_indep_of_c1: ['C#6', 'C#7', 'C#12', 'C#13']
+C_dep_on_c1: ['C#8', 'C#9', 'C#10', 'C#11', 'C#14', 'C#15']
+C_sum_alone: 44
+D_models: {'M1': {'issue_last': 71, 'complete': 75, 'period': 75, 'wrap': 4}, 'M2': {'issue_last': 66, 'complete': 70, 'period': 70, 'wrap': 4}, 'M3': {'issue_last': 56, 'complete': 60, 'period': 60, 'wrap': 4}, 'M4': {'issue_last': 61, 'complete': 65, 'period': 65, 'wrap': 4}}
+D_mix: {'FA': 10, 'FMA': 5, 'MUL': 5}
+D_census: {('FA', 'FMA'): 5, ('FMA', 'FA'): 5, ('FA', 'MUL'): 5, ('MUL', 'FA'): 4}
+D_independent_ipc: 2.994
+D_ipc_curve: [[1, 400, 1500, 0.267], [2, 800, 1500, 0.533], [3, 1200, 1501, 0.799], [4, 1600, 1501, 1.066], [6, 2400, 1502, 1.598], [8, 3200, 1504, 2.128], [10, 4000, 1506, 2.656], [11, 4400, 1539, 2.859], [12, 4800, 1606, 2.989], [16, 6400, 2139, 2.992], [24, 9600, 3207, 2.993]]
+D_port_bound_cycles_per_20: 7

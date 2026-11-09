@@ -1,0 +1,20 @@
+\section{Source Map, Gaps and Glossary}\label{app:src}
+
+\subsection{Which deck covers what}
+\textbf{ca01}: fundamentals, power, cost. \textbf{ca03\_noor}: pipelining, FP loop, unrolling, dependences, scoreboard, Tomasulo intro, VLIW vs.\ superscalar. \textbf{ca03\_noorNew}: FP pipeline latencies, R4000. \textbf{ca04}: branch prediction, speculation/ROB, multiple issue, limits. \textbf{ca05}: all cache techniques, main memory, virtual memory. \textbf{ca06}: limits to ILP, multithreading, SMT, Power5. \textbf{ca08}: multicore, SMT vs.\ multicore. \textbf{lec06-dynasched}: Tomasulo vs.\ scoreboard, speculative Tomasulo. \textbf{CachePerformance2}: way prediction, pseudo-associative, interchange/fusion/blocking numbers. \textbf{Cache-Misses}: 3 C's + coherence misses.
+
+\subsection{Gaps: topics in the course outline but \emph{not} in the provided slides}
+If the exam touches these, supplement from the textbook (Hennessy \& Patterson):
+\begin{itemize}
+\item Vector architectures, SIMD multimedia extensions, GPUs (only named as DLP).
+\item Centralised shared-memory vs.\ distributed shared-memory / directory-based coherence, snooping protocols (MSI/MESI), synchronisation, memory consistency models. (Only \emph{coherence misses} are covered.)
+\item Warehouse-scale computers, request-level parallelism, cloud computing, physical infrastructure.
+\end{itemize}
+
+\subsection{Known inconsistencies in the slides (avoid losing marks)}
+\begin{itemize}
+\item \textbf{R4000 load delay:} one slide title says ``x1'', the table beneath it shows \emph{two} stall cycles, and the older deck says ``TWO cycle load latency''. Use \textbf{2}.
+\item \textbf{Memory-width CPI example:} the slide labels buses ``64-bit'' and ``128-bit'' but the arithmetic treats them as 1-word and 2-word wide; quote the CPI values (4.30, 5.07, 3.63, 3.54, 5.69, 3.09, 3.84) rather than the labels.
+\item \textbf{Blocking numbers} ($\approx1.07$ billion $\to\approx2.1$ million) come from a \emph{simplified} model (one miss per column access, tile reuse); present them as illustrative.
+\end{itemize}
+

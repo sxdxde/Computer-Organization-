@@ -1,0 +1,252 @@
+\chapter{Instruction-Level Parallelism: Scheduling, Speculation, Multiple Issue}\label{ch:ilp}
+
+\section{Decision map}
+\small
+\begin{tabularx}{\textwidth}{L{4.2cm}L{4.3cm}X}
+\toprule
+\tblhead{\textbf{Scenario} & \textbf{Feature} & \textbf{Why}}\\
+\midrule
+Regular loops, independent iterations, fixed known latencies & Loop unrolling + static scheduling (+ software pipelining) & Compiler creates independent instructions to fill latency slots and removes loop overhead. \\
+Unknown dependences at compile time (memory aliasing, cache-miss latencies) & Dynamic scheduling (Tomasulo / scoreboard) & Hardware reorders at run time; compiler need not know the microarchitecture. \\
+Few architectural registers, lots of WAR/WAW & Tomasulo (register renaming in reservation stations) & Renames in hardware to a larger virtual register set. \\
+Simplest possible out-of-order, few non-pipelined FUs & Scoreboard (CDC 6600 style) & Cheap centralised control; accepts stalls on WAR/WAW and no forwarding. \\
+Need precise exceptions + branch speculation & Tomasulo $+$ reorder buffer (ROB) & Out-of-order execute, in-order commit; easy undo. \\
+Need CPI $<1$ & Multiple issue: superscalar or VLIW & More than one instruction per cycle. \\
+Binary compatibility across generations & Dynamically scheduled superscalar & Same binary, hardware finds ILP. \\
+Fixed-product, compiler-controlled, power/area simplicity & VLIW (static scheduling) & No issue/hazard-detection hardware. \\
+Wider than $\sim$4--6 issue is requested & Don't: go multicore/TLP instead & ILP saturates; energy inefficient; clock rate suffers. \\
+\bottomrule
+\end{tabularx}
+\normalsize
+
+\section{Dependences: what limits ILP}
+\begin{center}
+\small
+\begin{tabular}{L{3.2cm}L{5.2cm}L{6.8cm}}
+\toprule
+\tblhead{\textbf{Type} & \textbf{Meaning} & \textbf{Can it be removed?}}\\
+\midrule
+True (data) dependence & Instruction $j$ uses a result produced by $i$ (RAW if a hazard) & \textbf{No.} It is the real data flow; instructions cannot execute in parallel. \\
+Anti-dependence (name) & $j$ writes a register/memory location that earlier $i$ reads (WAR) & Yes: \emph{register renaming} (just a naming conflict). \\
+Output dependence (name) & $i$ and $j$ write the same location (WAW); order must be kept & Yes: register renaming. \\
+Control dependence & Instruction executes only if a branch goes a certain way & Relaxed by speculation/prediction; must preserve exception behaviour and data flow. \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item Register dependences are easy to detect (fixed names). \textbf{Memory dependences are hard}: does \texttt{100(R4)} equal \texttt{20(R6)}? Do different iterations touch the same address? (alias analysis).
+\item \textbf{Control rules for code motion:} an instruction control-dependent on a branch cannot be moved before it; an instruction not control-dependent on it cannot be moved after it.
+\item \textbf{Loop-carried dependence:} e.g.\ \texttt{A[i+1]=A[i]+C[i]} depends on the previous iteration, so iterations cannot run in parallel and the loop cannot be freely unrolled/parallelised. Safe to unroll when iterations are independent.
+\end{itemize}
+\src{ca03\_noor ``Compiler Perspectives on Code Movement'', ``When Safe to Unroll Loop?''; lec06 ``Review: Exceptions and Compiler Scheduling''}
+
+\section{Static (compiler) scheduling}
+\subsection{Loop unrolling: the slides' worked example}
+Loop: \texttt{LD F0,0(R1); ADDD F4,F0,F2; SD 0(R1),F4; SUBI R1,R1,8; BNEZ R1,Loop} (+ delay slot).
+
+\begin{center}
+\small
+\begin{tabular}{L{8.5cm}C{2.8cm}C{3.4cm}}
+\toprule
+\tblhead{\textbf{Version} & \textbf{Cycles} & \textbf{Cycles / iteration}}\\
+\midrule
+Original (stalls after LD, ADDD, and in branch slot) & 9 & 9 \\
+Reordered: SUBI moved up, store address adjusted (\texttt{SD 8(R1),F4}) to fill delay slot & 6 & 6 \\
+Unrolled $\times$4, straightforward (still stalls) & $15+4\times(1+2)=27$ & 6.75 \\
+Unrolled $\times$4, scheduled with renamed registers (loads together, ADDDs together, stores together) & 14 & \textbf{3.5} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\textbf{Why it works:} loop overhead (SUBI, BNEZ) is amortised; independent instructions from different iterations fill the 1-, 2- and 3-cycle latency gaps. \textbf{What it requires:} (a) \emph{renaming} (use F0/F4, F6/F8, \dots\ instead of reusing F0/F4, otherwise name dependences stall you), (b) knowledge that \texttt{0(R1)}, \texttt{-8(R1)}, \dots\ are different addresses so loads can move before stores, (c) no loop-carried dependence.
+
+\subsection{Software pipelining and static renaming}
+\begin{itemize}
+\item \textbf{Loop unrolling:} multiple iterations in the loop body, all instructions from all iterations; needs compiler register renaming.
+\item \textbf{Software pipelining:} one instruction from each of several iterations in the body; turns dependences into anti-dependences; often used for \emph{floating-point} with long latencies.
+\item Static renaming limits: dependence is only resolved within a window, and \textbf{increases register pressure} for the compiler.
+\end{itemize}
+
+\begin{pick}[Static scheduling / unrolling]
+Regular numeric loops with independent iterations and \emph{known fixed latencies}; in-order or VLIW hardware; embedded/DSP-style kernels where simple hardware and predictable timing matter. Best when many registers are available.
+\end{pick}
+\begin{avoid}
+Code with unknown memory aliasing, pointer chasing, data-dependent branches, or variable latency from cache misses; or when the same binary must run efficiently on future hardware with different latencies.
+\end{avoid}
+\bigskip
+\src{ca03\_noor ``FP Loop Hazards'' through ``Unrolled Loop That Minimizes Stalls''; lec06 ``Review''}
+
+\section{Dynamic scheduling: why do it in hardware}
+\begin{itemize}
+\item Works when the dependence cannot be known at compile time; keeps the \emph{compiler simple}; code tuned for one machine runs well on another.
+\item Key idea: \textbf{allow instructions behind a stalled one to proceed} (e.g.\ in \texttt{DIVD F0,F2,F4; ADDD F10,F0,F8; SUBD F12,F8,F14}, SUBD is independent and need not wait for the divide).
+\item Consequence: out-of-order execution $\Rightarrow$ out-of-order completion $\Rightarrow$ \textbf{WAR and WAW hazards} become possible, and \textbf{precise exceptions} become hard.
+\item Disadvantages: substantial hardware complexity; complicates exceptions.
+\end{itemize}
+
+\subsection{Scoreboard (CDC 6600, 1963)}
+\textbf{In-order issue, out-of-order execution and commit.} Four stages replace ID/EX/WB:
+\begin{enumerate}
+\item \textbf{Issue:} functional unit free \emph{and} no active instruction with the same destination (no WAW); otherwise stall, and nothing behind issues.
+\item \textbf{Read operands:} wait until both operands are available (RAW resolved here); no forwarding.
+\item \textbf{Execute.}
+\item \textbf{Write result:} stall if a WAR hazard exists with an earlier instruction that has not yet read its operand.
+\end{enumerate}
+Three tables: instruction status; functional-unit status (Busy, Op, Fi, Fj, Fk, Qj, Qk, Rj, Rk); register result status.
+
+\textbf{Limitations (slide):} no forwarding hardware; limited to instructions in a basic block (small window, $\le5$ instructions in comparison table); few functional units (structural hazards, especially integer/load-store); no issue on structural hazard; \emph{waits} for WAR; \emph{prevents} WAW.
+
+\subsection{Tomasulo's algorithm (IBM 360/91, 1966)}
+Goal: high performance \emph{without special compilers}. The 360/91 had only \textbf{4 FP registers}, which blocked compiler scheduling; Tomasulo therefore \textbf{renamed registers in hardware}.
+\begin{itemize}
+\item \textbf{Distributed control:} \emph{reservation stations (RS)} sit with each functional unit and hold the op, operand values $V_j,V_k$, and tags $Q_j,Q_k$ (the RS that will produce the operand; $Q=0$ means ready). Register specifiers are replaced by values or RS tags $\Rightarrow$ \textbf{register renaming} that \textbf{eliminates WAR and WAW}. More RS than registers $\Rightarrow$ optimisations compilers cannot do.
+\item \textbf{Common data bus (CDB):} results broadcast with their \emph{source} tag (``come-from'' bus: 64 data bits + 4 FU-id bits) to all RS, store buffers and the register file. Only the last writer updates the register.
+\item Loads and stores are treated as functional units with buffers (load/store buffers hold address and data); memory order is kept through effective-address computation.
+\item Three steps: \textbf{Issue} (if RS free, send operands/tags; else stall), \textbf{Execute} (when operands ready; watch the CDB otherwise), \textbf{Write result} (on CDB). No instruction starts until all earlier branches have resolved (non-speculative version).
+\item \textbf{Overlaps loop iterations:} renaming gives different iterations different destinations (``dynamic loop unrolling''); RS let integer instructions run ahead past branches so FP ops beyond a basic block can be queued; also hides cache misses.
+\end{itemize}
+
+\begin{center}
+\small
+\begin{tabular}{L{3cm}L{6.2cm}L{6.2cm}}
+\toprule
+\tblhead{\textbf{Aspect} & \textbf{Tomasulo (IBM 360/91)} & \textbf{Scoreboard (CDC 6600)}}\\
+\midrule
+Functional units & Pipelined: 6 load, 3 store, 3 add, 2 mult/div & Multiple, not necessarily pipelined: 1 load/store, 1 add, 2 mult, 1 div \\
+Window size & $\le 14$ instructions & $\le 5$ instructions \\
+Structural hazard & No issue & Same \\
+WAR & Renaming avoids stall & Stall completion \\
+WAW & Renaming avoids stall & Stall issue \\
+Result delivery & Broadcast from FU on CDB & Write/read registers (no forwarding) \\
+Control & Distributed (reservation stations) & Centralised scoreboard \\
+Worked example (6-instr.\ sequence) & Last instruction writes in cycle 57 & Same code finishes in cycle 62 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Scoreboard is slower because of \textbf{structural hazards and lack of forwarding}.
+
+\textbf{Tomasulo drawbacks (slide):} complexity; many associative stores (CDB) at high speed; \textbf{performance limited by the CDB} --- each CDB goes to many units (high capacitance, wiring density), and only \textbf{one FU can complete per cycle per CDB}; more CDBs need more associative logic; \textbf{imprecise interrupts} (fixed by the ROB).
+
+\subsection{Hardware speculation: Tomasulo $+$ reorder buffer (ROB)}
+Combines three ideas: \textbf{dynamic branch prediction} (choose what to run), \textbf{speculation} (execute before control dependences resolve, with ability to undo), \textbf{dynamic scheduling} (schedule across basic blocks). Core principle: \textbf{execute out of order, commit in order}; no irrevocable action (register/memory write, exception) before commit.
+
+\begin{itemize}
+\item \textbf{ROB:} circular buffer allocated in program order; entries hold instruction type (branch / store / register op), destination (register number or memory address), value, ready bit. It supplies operands between completion and commit and \emph{replaces the store buffer}.
+\item \textbf{Four steps:} Issue (needs a free RS \emph{and} ROB slot) $\rightarrow$ Execute $\rightarrow$ Write result (CDB $\rightarrow$ ROB) $\rightarrow$ \textbf{Commit} (at ROB head: write register/memory; a mispredicted branch at the head \textbf{flushes the ROB} and restarts at the correct successor).
+\item \textbf{Benefits:} \emph{precise interrupts} (exceptions recorded in the ROB, recognised only at commit; a speculative instruction's exception is flushed with it); \emph{early recovery} from mispredictions (clear entries after the branch, keep older ones); \emph{memory hazards}: stores update memory only at the head, eliminating WAR/WAW through memory; RAW through memory is kept by not letting a load proceed if an earlier store has a matching address.
+\item \textbf{Costs:} large control complexity; associative network to find the latest version of a register (or a future file / register-status buffer); as many ROB ports as register-file ports; ROB sized to window.
+\item \textbf{Design questions:} register renaming (extended physical registers) \emph{versus} ROB for holding values; \textbf{how much to speculate} --- speculation is hurt by exceptional events (cache miss, TLB miss) and speculating through multiple branches complicates recovery.
+\end{itemize}
+
+\begin{dec}[Scoreboard vs.\ Tomasulo vs.\ Tomasulo + ROB]
+\begin{itemize}
+\item \textbf{No dynamic scheduling} (in-order + compiler): cheapest/lowest power; embedded, predictable loops.
+\item \textbf{Scoreboard:} want some out-of-order tolerance with minimal logic and few, non-pipelined units; accept WAR/WAW stalls.
+\item \textbf{Tomasulo:} FP-heavy code with long latencies, \emph{few architectural registers}, or variable latencies (cache misses); you want renaming and loop overlap. Cap: one result per CDB per cycle.
+\item \textbf{Tomasulo + ROB (speculative):} high-performance desktop/server cores needing precise exceptions and branch speculation, especially with multiple issue. Most area/power.
+\end{itemize}
+\end{dec}
+\src{ca03\_noor (``HW Schemes'', ``Scoreboard'', ``Dynamic Scheduling - Tomasulo''); lec06 (whole deck: ``Tomasulo vs.\ Scoreboard'', ``Tomasulo Drawbacks'', ``Four Steps of Speculative Tomasulo''); ca04 ``Hardware-Based Speculation''}
+
+\section{Multiple issue: superscalar vs.\ VLIW}
+To get CPI $<1$ you must complete multiple instructions per clock. Three approaches: \emph{statically scheduled superscalar}, \emph{VLIW}, \emph{dynamically scheduled superscalar}.
+
+\begin{center}
+\small
+\begin{tabular}{L{3cm}L{6.1cm}L{6.3cm}}
+\toprule
+\tblhead{\textbf{} & \textbf{Superscalar (dynamic)} & \textbf{VLIW (static)}}\\
+\midrule
+Who finds parallelism & Hardware at run time (RAW: forwarding; WAR/WAW: renaming) & Compiler at compile time: bundles of $K$ independent operations \\
+Code size & Smaller & Larger: NOPs when bundles cannot be filled; unrolled loops \\
+Binary compatibility & \textbf{Yes} across hardware generations & \textbf{Weak}: changing number of units ($K\to K+5$) or latencies breaks the schedule; fix = emulator, which hurts performance \\
+Hardware & Complex issue/decode, dependence checking, renaming & \textbf{Simple decode/issue}, no interlock hardware (compiler checks) \\
+Registers/ports & --- & More registers; simplified; may need multiple register files; VLIW example needs 7 read/3 write int and 5 read/3 write FP ports \\
+Stalls & Independent instructions continue & \textbf{Lock-step}: one hazard stalls the whole bundle \\
+Examples & Pentium 4, Athlon 64, Power5 & Itanium 2 (IA-64/EPIC) \\
+\bottomrule
+\end{tabular}
+\end{center}
+Example VLIW word: one integer op (or branch), two independent FP ops, two independent memory references. There must be enough parallelism to fill the slots.
+
+\textbf{Dynamic multiple issue with speculation} (modern microarchitecture): limit instruction classes per bundle (e.g.\ one FP, one int, one load, one store); examine dependences among the bundle's instructions and encode them in the reservation stations; need multiple completion/commit (multiple CDBs). \textbf{Issue logic becomes the bottleneck.}
+
+\begin{pick}[Superscalar (dynamic)]
+General-purpose products with many software generations, legacy binaries, irregular integer code and unpredictable latencies.
+\end{pick}
+\begin{pick}[VLIW]
+Embedded/DSP or fixed-function products where the compiler is controlled, the code is regular (loops with abundant ILP), the hardware must be simple, and binary compatibility across generations is \emph{not} needed.
+\end{pick}
+\src{ca03\_noor ``Static Instruction Scheduling'' through ``Dynamic Instruction Scheduling''; ca04 ``Multiple Issue and Static Scheduling'' through ``Superscalar v.\ VLIW''}
+
+\section{Limits of ILP (use these to argue \emph{against} very wide issue)}
+\subsection{Practical limits}
+\begin{itemize}
+\item \textbf{1 branch in 5 instructions:} how do you keep a 5-wide machine busy?
+\item You need roughly \textbf{pipeline depth $\times$ number of FUs} independent instructions (e.g.\ $5\times4=15$--$20$) to keep the machine busy.
+\item Hardware: \emph{easy} --- more instruction bandwidth, duplicate FUs; \emph{hard} --- more register-file ports; \emph{harder} --- more memory ports; wide decode hurts clock rate/pipeline depth.
+\item Practical window sizes 32--126; larger windows are impractical (storage, comparisons, issue rate). Real processors are limited by number of FUs, buses, register ports.
+\item \textbf{Doubling issue from 3--6 to 6--12} would need 3--4 data memory accesses/cycle, 2--3 branches resolved/cycle, renaming/accessing $>20$ registers/cycle, fetching 12--24 instructions/cycle $\Rightarrow$ the \textbf{clock rate suffers} (the widest-issue processor, Itanium 2, has the slowest clock and the highest power).
+\item \textbf{Energy:} transistors switching $\propto$ peak issue rate, performance $\propto$ sustained rate; the gap grows, so \emph{multiple-issue techniques are energy-inefficient}.
+\end{itemize}
+
+\subsection{The ideal-processor study}
+Assumptions: infinite renaming registers (no WAR/WAW), perfect branch and jump prediction, perfect caches (all loads/stores 1 cycle), perfect memory-address alias analysis, unbounded window and issue. ILP is then limited \emph{only by true data dependences}. Real model comparison: IBM Power5 issues 4/clk, 48 int + 40 FP rename registers, 2--6\% misprediction, 64\,KB I / 32\,KB D / 1.92\,MB L2 / 36\,MB L3.
+
+\subsection{Head-to-head of four real ILP designs}
+\begin{center}
+\scriptsize
+\begin{tabular}{L{2.5cm}L{3.7cm}L{1.9cm}L{1.9cm}L{1.1cm}L{1.1cm}L{1.0cm}L{1.0cm}}
+\toprule
+\tblhead{\textbf{Processor} & \textbf{Microarchitecture} & \textbf{Fetch/ issue/ exec} & \textbf{Int/FP units} & \textbf{GHz} & \textbf{Trans.} & \textbf{Die} & \textbf{Power}}\\
+\midrule
+Pentium 4 Extreme & Speculative dynamic; deeply pipelined; SMT & 3/3/4 & 7 int, 1 FP & 3.8 & 125 M & 122 mm$^2$ & 115 W \\
+AMD Athlon 64 FX-57 & Speculative dynamic & 3/3/4 & 6 int, 3 FP & 2.8 & 114 M & 115 mm$^2$ & 104 W \\
+IBM Power5 (1 CPU) & Speculative dynamic; SMT; 2 cores/chip & 8/4/8 & 6 int, 2 FP & 1.9 & 200 M & 300 mm$^2$ (est.) & 80 W (est.) \\
+Itanium 2 & Statically scheduled, VLIW-style & 6/5/11 & 9 int, 2 FP & 1.6 & 592 M & 423 mm$^2$ & 130 W \\
+\bottomrule
+\end{tabular}
+\end{center}
+\normalsize
+
+\begin{center}
+\small
+\begin{tabular}{L{3.6cm}C{2.3cm}C{2.3cm}C{2.3cm}C{2.3cm}}
+\toprule
+\tblhead{\textbf{Efficiency rank (1=best)} & \textbf{Itanium 2} & \textbf{Pentium 4} & \textbf{Athlon 64} & \textbf{Power5}}\\
+\midrule
+SPECInt / transistor & 4 & 2 & 1 & 3 \\
+SPECFP / transistor & 4 & 2 & 1 & 3 \\
+SPECInt / area & 4 & 2 & 1 & 3 \\
+SPECFP / area & 4 & 2 & 1 & 3 \\
+SPECInt / Watt & 4 & 3 & 1 & 2 \\
+SPECFP / Watt & 2 & 4 & 3 & 1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\textbf{Take-aways (slide):} no single leader; Athlon leads SPECInt; Itanium 2 and Power5 dominate on SPECFP; Itanium 2 is the least efficient on everything except SPECFP/Watt; Athlon and Pentium 4 use transistors and area well; Power5 is the best energy user on SPECFP and tied on SPECInt. Itanium (VLIW/EPIC) was ``not a significant breakthrough in scaling ILP''.
+
+\begin{dec}[How wide should the core be?]
+Quote the slide conclusion: \textbf{3--6 issue is the practical limit}. Choose a core width of about 4 for a general-purpose design; go narrower for energy/area-limited designs; beyond that, spend transistors on \emph{TLP} (multithreading, more cores). Right ILP/TLP balance is ``decided in the marketplace'': servers favour TLP, desktops may still prize single-thread speed.
+\end{dec}
+\src{ca04 ``Limits to Multi-Issue Machines'', ``Studies of the Limitations of ILP''; ca06 (whole deck)}
+
+\begin{trap}[ILP traps]
+\begin{itemize}
+\item True dependences cannot be renamed away; only WAR/WAW can.
+\item Scoreboard stalls on WAR/WAW; Tomasulo does not (renaming).
+\item Tomasulo alone gives \emph{imprecise} interrupts; you need the ROB for precise ones/speculation.
+\item VLIW saves hardware but costs code size and binary compatibility, and one stall freezes the whole bundle.
+\item Unrolling is illegal/ineffective with loop-carried dependences or unknown aliasing.
+\end{itemize}
+\end{trap}
+
+\section{Chapter 3 cheat-sheet}
+\begin{key}
+\begin{itemize}
+\item Unrolled-and-scheduled loop: 14 cycles for 4 iterations (3.5/iter) vs.\ 9 originally.
+\item Tomasulo: RS + CDB + renaming; window $\le14$ vs.\ scoreboard $\le5$; Tomasulo last write cycle 57 vs.\ 62.
+\item ROB: out-of-order execute, in-order commit $\Rightarrow$ precise exceptions + speculation recovery.
+\item VLIW: simple hardware, big code, no binary compatibility, lock-step. Superscalar: opposite.
+\item Practical issue width 3--6; need depth$\times$FUs independent instructions; wider $\Rightarrow$ slower clock, more power.
+\end{itemize}
+\end{key}

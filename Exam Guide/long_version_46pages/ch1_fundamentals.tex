@@ -1,0 +1,118 @@
+\chapter{Fundamentals, Constraints and Trade-offs}\label{ch:fund}
+This chapter holds the \emph{constraints} an exam scenario will give you (power, cost, availability, class of machine) and the quantitative tools to reason about them. Everything later is a way of improving one term of the equations here.
+
+\section{Classes of computers: what each one optimises}
+\small
+\begin{tabularx}{\textwidth}{L{2.8cm}L{4.2cm}X}
+\toprule
+\tblhead{\textbf{Class} & \textbf{Emphasis (slides)} & \textbf{Design consequence}}\\
+\midrule
+Personal mobile device (phones, tablets) & Energy efficiency, real-time & Low-power cores, small/few cache levels, DVFS and power gating; throughput per joule beats peak speed. \\
+Desktop & Price-performance & Single-thread performance still matters; balanced OoO core with moderate multicore. \\
+Server & Availability, scalability, throughput & Multicore/multithreading, large caches, high memory bandwidth, ECC/redundancy. \\
+Cluster / warehouse-scale (SaaS) & Availability, price-performance & Request-level parallelism; cost and energy per request dominate. \\
+Supercomputer (sub-class) & FP performance, fast internal network & Wide FP units, high memory bandwidth, data-parallel structure. \\
+Embedded & Price & Cheapest design that just meets the requirement; simple pipeline, small caches. \\
+\bottomrule
+\end{tabularx}
+\normalsize
+\src{ca01 ``Classes of Computers''}
+
+\section{Kinds of parallelism and which hardware exploits them}
+\begin{itemize}
+\item \textbf{Application-level:} data-level parallelism (DLP: same operation on lots of data) and task-level parallelism (TLP: independent tasks).
+\item \textbf{Architecture-level:} instruction-level parallelism (ILP: pipelining, superscalar, VLIW), vector/GPU (DLP), thread-level parallelism (multithreading, multicore), request-level parallelism (clusters/WSC).
+\item \textbf{Flynn's taxonomy:} SISD; SIMD (vector architectures, multimedia extensions, GPUs); MISD (no commercial implementation); MIMD (tightly-coupled = multicore/shared memory; loosely-coupled = clusters).
+\end{itemize}
+
+\begin{dec}[Match workload to parallelism]
+\emph{Same operation on huge regular arrays} $\rightarrow$ SIMD/vector/GPU (the slides only mention these as ``data-level parallelism''; modern graphics cards are SIMD). \emph{Independent threads/requests} $\rightarrow$ MIMD: multicore + multithreading. \emph{One sequential thread} $\rightarrow$ ILP hardware (pipeline, superscalar, speculation), but remember ILP saturates at roughly 3--6 issue.
+\end{dec}
+\src{ca01 ``Parallelism'', ``Flynn's Taxonomy''; ca08 ``General context: Multiprocessors''}
+
+\begin{trap}[Scope warning]
+The course outline lists vector/SIMD/GPU, directory-based coherence, memory consistency and warehouse-scale computers, but \emph{none of the provided slides cover them beyond a definition}. If the exam asks about them, you must supply knowledge beyond this guide.
+\end{trap}
+
+\section{The quantitative toolbox}
+\subsection{Performance}
+\[
+\text{CPU time}=\text{IC}\times\CPI\times T_{clk},\qquad
+\CPI=\frac{\sum_i \text{IC}_i\cdot\CPI_i}{\text{IC}}
+\]
+\begin{itemize}
+\item \textbf{IC} (instruction count): ISA design and the compiler. \textbf{CPI}: microarchitecture (hazards, branches, memory stalls, issue width). \textbf{$T_{clk}$}: technology and pipeline depth.
+\item Every technique in this manual attacks one of these factors, and usually \emph{trades} one against another (deeper pipeline: $T_{clk}\downarrow$ but $\CPI\uparrow$).
+\item Speedup of X relative to Y $=$ execution time$_Y$ / execution time$_X$. Benchmarks: kernels, toy programs, synthetic, suites (SPEC, TPC-C).
+\end{itemize}
+\textbf{Amdahl's law:}\bs\ if a fraction $f$ of execution time is sped up by $s$, overall speedup $=1/\big((1-f)+f/s\big)$. Slide principle: \emph{focus on the common case}.
+\src{ca01 ``Principles of Computer Design'', ``Measuring Performance''}
+
+\subsection{Power and energy}
+\begin{center}
+\begin{tabular}{L{6.2cm}L{9.5cm}}
+\toprule
+\tblhead{\textbf{Quantity} & \textbf{Formula / statement (slides)}}\\
+\midrule
+Dynamic energy per switch & $\tfrac12\times C_{load}\times V^2$ \\
+Dynamic power & $\tfrac12\times C_{load}\times V^2\times f_{switched}$ \\
+Static power & $I_{static}\times V$; scales with number of transistors; reduce by \emph{power gating} \\
+TDP (thermal design power) & Sustained power target for supply and cooling; lower than peak, higher than average \\
+Better metric than power & Energy per task \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item \textbf{Reducing the clock rate reduces power but not energy per task} (slide). Lowering \emph{voltage} (DVFS) reduces energy because of the $V^2$ term.
+\item Techniques the slides list: dynamic voltage-frequency scaling, low-power states for DRAM/disks, turning off cores, overclocking within thermal limits, power gating (static power).
+\item Scale of the problem: Intel 80386 $\approx$2\,W; 3.3\,GHz Core i7 $\approx$130\,W from a 1.5\,cm$\times$1.5\,cm die, ``the limit of what can be cooled by air''.
+\item If voltage scales with frequency, dynamic power falls roughly with $f^3$ (0.8$\times$ clock $\Rightarrow$ $\approx$0.51$\times$ power)\bs; this is why \emph{two slower cores can beat one fast core} on throughput per watt.
+\end{itemize}
+
+\begin{pick}[Energy-first design]
+Choose DVFS/power gating, small caches, narrow issue and multicore of small cores whenever the scenario says battery, thermal envelope, or energy cost per request. Justify with $P\propto CV^2f$ and ``energy per task is the right metric''.
+\end{pick}
+\src{ca01 ``Power and Energy'', ``Dynamic Energy and Power'', ``Reducing Power'', ``Static Power''; ca06 ``Limits to ILP''}
+
+\subsection{Cost}
+\begin{itemize}
+\item Cost falls along a \emph{learning curve} (yield improves). DRAM price tracks cost; microprocessor price depends on volume (10\% less per doubling of volume).
+\item Die yield follows the Bose--Einstein form $\text{yield}=\text{wafer yield}\times(1+\text{defects/area}\times\text{die area})^{-N}$ with $N$ the process-complexity factor (slide: 11.5--15.5; defects 0.016--0.057/cm$^2$)\bs\ (formula is an image in the slide). \textbf{Consequence: bigger dies are disproportionately more expensive}, favouring several small cores over one huge core.
+\end{itemize}
+\src{ca01 ``Trends in Cost'', ``Integrated Circuit Cost''}
+
+\subsection{Dependability}
+\[
+\text{MTBF}=\text{MTTF}+\text{MTTR},\qquad \text{Availability}=\frac{\text{MTTF}}{\text{MTBF}}
+\]
+For servers (availability is their emphasis) quote this and add redundancy and ECC (the slides mention error-correcting codes when discussing wide memory). \src{ca01 ``Dependability''; ca05 ``Wider Main Memory''}
+
+\section{Technology trends that justify design choices}
+\small
+\begin{tabularx}{\textwidth}{L{4.2cm}X}
+\toprule
+\tblhead{\textbf{Trend (slide numbers)} & \textbf{What it implies for design}}\\
+\midrule
+Bandwidth improved 10{,}000--25{,}000$\times$ for processors but only 300--1200$\times$ for memory/disks; latency improved 30--80$\times$ vs.\ 6--8$\times$ &
+Memory is the bottleneck (``memory wall''). Use caches, interleaving/wide memory, prefetching, and latency-hiding (OoO, non-blocking caches, multithreading). Bandwidth is easy to buy; latency is not. \\
+Transistor density $+35\%$/yr; transistor speed scales, \textbf{wire delay does not} &
+Huge centralised structures (many register ports, big CDB, wide issue logic) hurt clock rate. Favours smaller replicated cores and simpler structures. \\
+Single-processor performance improvement ended in 2003; ILP cannot be leveraged further &
+Move to explicit parallelism: DLP, TLP, RLP (``require explicit restructuring of the application''). Justifies multicore. \\
+DRAM capacity growth slowing (25--40\%/yr); flash 15--20$\times$ cheaper per bit than DRAM; disk 15--25$\times$ cheaper than flash &
+Deeper hierarchy: SRAM caches $\rightarrow$ DRAM $\rightarrow$ flash $\rightarrow$ disk, each level sized by cost per bit. \\
+\bottomrule
+\end{tabularx}
+\normalsize
+\src{ca01 ``Trends in Technology'', ``Bandwidth and Latency'', ``Transistors and Wires'', ``Current Trends in Architecture''}
+
+\section{Chapter 1 cheat-sheet}
+\begin{key}
+\begin{itemize}
+\item Optimise \emph{energy per task}, not clock rate, for mobile/server cost; lower voltage is the real lever.
+\item Bigger die $\Rightarrow$ worse yield $\Rightarrow$ cost grows faster than area.
+\item Bandwidth grows much faster than latency: spend hardware on hiding latency.
+\item ILP is capped (3--6 issue); explicit TLP/DLP is the next step.
+\item Availability $=$ MTTF$/($MTTF$+$MTTR$)$.
+\end{itemize}
+\end{key}

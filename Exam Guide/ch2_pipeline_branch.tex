@@ -1,0 +1,210 @@
+\section{Pipeline, Long-Latency Units and Branch Handling}\label{ch:pipe}
+
+\subsection{Decision map}
+\small
+\begin{tabularx}{\textwidth}{L{4.0cm}L{4.4cm}X}
+\toprule
+\tblhead{\textbf{Problem observed} & \textbf{Feature to apply} & \textbf{Why it fits}}\\
+\midrule
+Stalls from RAW hazards between dependent ALU ops & Forwarding/bypassing & Result is available at end of EX; forward instead of waiting for write-back. \\
+Load followed by use & Compiler load-delay scheduling; forwarding from MEM & Load data is late; fill the slot(s) with independent instructions. \\
+Control hazard, shallow pipe, predictable branches & Early PC evaluation in ID + static prediction / delay slot & Cheapest (no predictor memory), penalty already only 1 cycle. \\
+Control hazard, deep pipe or high branch frequency & Dynamic prediction (BHT $\rightarrow$ correlating/two-level $\rightarrow$ gshare) + BTB & Penalty $=$ several cycles; accuracy matters more than anything. \\
+Loop-heavy code & BTFNT or 2-bit counter & Back-edge is taken almost always; 2-bit avoids the double misprediction. \\
+Target address needed early & BTB (and target buffer / branch folding) & Fetch target in IF with 0--1 bubble. \\
+Returns / indirect jumps & Return-address stack & Targets vary at run time; stack predicts them. \\
+Divide-heavy or multiply-heavy FP code & Pipelined (or replicated) FP units & Initiation interval 25 for an unpipelined divider blocks every other divide. \\
+Want higher clock & Deeper pipeline (R4000 8-stage) & Shorter stages; but raises load/branch delay. \\
+\bottomrule
+\end{tabularx}
+\normalsize
+
+\subsection{Pipeline hazards: the three kinds and their standard cures}
+\begin{center}
+\small
+\begin{tabular}{L{2.6cm}L{4.8cm}L{8cm}}
+\toprule
+\tblhead{\textbf{Hazard} & \textbf{Cause} & \textbf{Cure (slides)}}\\
+\midrule
+Structural & Two instructions need the same hardware in the same cycle & More hardware resources (replicate/pipeline units, more ports). \\
+Data (RAW/WAR/WAW) & Dependence between instructions & Forwarding; compiler scheduling; (hardware) register renaming for WAR/WAW. \\
+Control & Next PC unknown until branch resolves & Early evaluation of PC, delayed branch, prediction. \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item Pipelining improves instruction \emph{bandwidth} (throughput), not the latency of one instruction.
+\item \textbf{Longer pipelines increase the impact of hazards}; interrupts, complex ISAs and FP all make pipelining harder.
+\item Compilers reduce the cost of data and control hazards: load delay slots, branch delay slots, branch prediction hints.
+\end{itemize}
+\src{ca03\_noor ``Review: Summary of Pipelining Basics''}
+
+\subsection{Long-latency functional units (FP pipeline)}
+The slides' running example is a RISC-V/MIPS-style pipeline in which EX may repeat, and there are several functional units.
+
+\begin{center}
+\begin{tabular}{L{6cm}C{3cm}C{3.6cm}}
+\toprule
+\tblhead{\textbf{Functional unit} & \textbf{Latency} & \textbf{Initiation interval}}\\
+\midrule
+Integer ALU & 0 & 1 \\
+Data memory (integer and FP loads) & 1 & 1 \\
+FP add (4-stage pipelined) & 3 & 1 \\
+FP/integer multiply (7-stage pipelined) & 6 & 1 \\
+FP/integer divide (not pipelined) & 24 & 25 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\textbf{Latency} $=$ intervening cycles between the producer and a consumer that avoids a RAW stall. \textbf{Initiation interval} $=$ cycles that must separate two operations of the \emph{same} type issued to the unit.
+
+Latency table used in the compiler-scheduling examples (cycles between producer and consumer): FP ALU$\rightarrow$FP ALU 3; FP ALU$\rightarrow$store 2; load$\rightarrow$FP ALU 1; load$\rightarrow$store 0; integer$\rightarrow$integer 0.
+
+\begin{itemize}
+\item Longer pipeline $\Rightarrow$ more frequent RAW stalls (e.g.\ the 4th instruction after an FP add is the first that can use its result without a stall).
+\item New hazards appear: \textbf{structural hazard at the register-file write port} (three instructions wanting write-back in the same cycle), \textbf{structural hazard on the unpipelined divider}, and \textbf{WAW hazards / out-of-order completion} because a short operation can finish before an earlier long one.
+\end{itemize}
+
+\begin{pick}[Pipelined vs.\ unpipelined divider]
+Pipelined divider (or several dividers) when the code has frequent divides close together: with initiation interval 25, a second divide stalls for up to 24 cycles. An unpipelined divider is a cheap, acceptable choice when divides are rare, since it needs far less area and power. Adder and multiplier are worth pipelining almost always (initiation interval 1).
+\end{pick}
+\src{ca03\_noorNew ``RISC V FP Operation'', ``Latencies and initiation intervals'', ``A pipeline that supports multiple outstanding FP operations''; ca03\_noor ``FP Loop: Where are the Hazards?''}
+
+\subsection{Deeper pipelines: the MIPS R4000 case study}
+The R4000 splits the 5-stage integer pipeline into \textbf{8 stages}: IF, IS, RF, EX, DF, DS, TC, WB (cache access takes two stages each for instruction and data; TC is the tag check). The aim is a \textbf{higher clock rate}.
+
+\begin{center}
+\small
+\begin{tabular}{L{5cm}L{10cm}}
+\toprule
+\tblhead{\textbf{Effect} & \textbf{Value / reason}}\\
+\midrule
+Load delay & \textbf{2 cycles} (the older deck states ``TWO cycle load latency''; the newer deck's slide title reads ``x1'' but its pipeline table shows two Stall cycles --- use 2). Data is available at end of DS and is bypassed; if TC reports a miss the pipeline backs up. \\
+Branch delay & \textbf{3 cycles}: condition evaluated in EX; one delay slot plus two stalls; ``branch likely'' cancels the delay slot when not taken. \\
+FP unit & Three units: divider, multiplier, adder; adder also used in the last step of multiply and divide. Stage kinds: U (unpack), S (operand shift), A (mantissa add), R (round), E (exception test), M, N (multiplier stages), D (divide stage, used 28 times in a row for divide). \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{dec}[Deep vs.\ shallow pipeline]
+\emph{Go deeper} when the target is a high clock rate and the code has good branch predictability and few back-to-back load-use pairs (scientific/loop code), \emph{and} you can afford a strong branch predictor. \emph{Stay shallow} for branchy, low-ILP, low-power or area-limited designs: every extra stage adds to the misprediction and load penalty (and, in general, to power\bs) (deeper pipelines also magnify branch cost: slide ``Branch Prediction Techniques'').
+\end{dec}
+\src{ca03\_noor ``Case Study: MIPS R4000''; ca03\_noorNew ``The MIPS R4000 Pipeline'' through ``The Floating-Point Pipeline''}
+
+\subsection{The control hazard problem in numbers}
+\subsubsection{Where the branch resolves determines the penalty (5-stage MIPS)}
+\begin{center}
+\begin{tabular}{L{8.6cm}C{3.2cm}}
+\toprule
+\tblhead{\textbf{Scheme} & \textbf{Stall cycles per branch}}\\
+\midrule
+Resolve at MEM, no forwarding (conservative stall) & 3 \\
+Resolve at EX (with forwarding) & 2 \\
+\textbf{Early evaluation: compare registers, compute target and update PC in ID} & \textbf{1} \\
+\bottomrule
+\end{tabular}
+\end{center}
+Early evaluation has a side-effect: an ALU instruction that produces the branch operand needs \textbf{1 extra stall}; a load that produces it needs \textbf{2 extra stalls}.
+
+\[
+\text{stall cycles per instruction (branches)} = f_{branch}\times \text{penalty};\qquad
+\CPI = \CPI_{base}+f_{branch}\times(\text{mispredict rate})\times\text{penalty}\bs
+\]
+Even a 1-cycle penalty costs 10--30\% performance depending on branch frequency (slide). \textbf{Importance of prediction grows with (a) pipeline depth (penalty) and (b) branch frequency.}
+
+\begin{ex}[Why prediction matters more in deep pipes]\bs
+$f_{branch}=20\%$. Shallow pipe with early evaluation: always stall 1 cycle $\Rightarrow$ $+0.20$ CPI. Deep pipe, penalty 3: always stall $\Rightarrow +0.60$ CPI; with a 90\%-accurate predictor $\Rightarrow 0.20\times0.10\times3=+0.06$ CPI. The predictor recovers 90\% of the loss.
+\end{ex}
+\src{ca04 ``The Problem of Control Hazards'' through ``Branch Prediction Techniques''}
+
+\subsection{Static branch prediction (decided at compile time)}
+Static schemes need no run-time hardware, so they are used where branch behaviour is highly predictable at compile time, and also to assist dynamic predictors.
+
+\small
+\begin{longtable}{L{2.9cm}L{4.4cm}L{4.5cm}L{3.9cm}}
+\toprule
+\tblhead{\textbf{Scheme} & \textbf{How it works} & \textbf{Best scenario} & \textbf{Weakness}}\\
+\midrule
+\endhead
+Predict not taken & Keep fetching fall-through; flush 1 instruction if taken (1-cycle penalty) & Branches mostly not taken (error checks, forward branches); simplest hardware. If 50\% not taken, halves control-hazard cost & Loops (back-edges are taken) \\
+Predict taken & Fetch target once decoded & Only when the \emph{target is known before the outcome} (needs BTA in IF or a BTB). No advantage in the base MIPS pipeline & Needs extra target hardware \\
+BTFNT (backward taken, forward not taken) & Direction of branch decides & Loop-dominated code: back-edge branches almost always taken & Irregular forward branches \\
+Profile-driven & Compiler uses profile from earlier runs/hints & Stable behaviour across inputs (fixed embedded workloads) & Behaviour that changes with input \\
+Delayed branch & Compiler fills slot(s) after branch with a useful instruction; executed whether or not taken & Shallow pipe with a single slot; compiler fills $\approx$50\% usefully & Deep pipelines (several slots, hard to fill); remaining slots become NOPs \\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\subsubsection{Choosing where the delay-slot instruction comes from}
+\begin{center}
+\small
+\begin{tabular}{L{2.6cm}L{6cm}L{6.2cm}}
+\toprule
+\tblhead{\textbf{Source} & \textbf{Use when} & \textbf{Legality}}\\
+\midrule
+From before & Always valid if an independent instruction exists before the branch & Safe: executes the same either way \\
+From target & \textbf{Branch usually taken} (loop back-edges); target instruction must be copied & Must be harmless (e.g.\ writes an unused temporary) if branch falls through \\
+From fall-through & \textbf{Branch usually not taken} (forward branches) & Must be harmless if branch is taken \\
+\bottomrule
+\end{tabular}
+\end{center}
+\textbf{Canceling (nullifying) branch:} the instruction encodes the predicted direction; if the prediction is wrong the delay-slot instruction becomes a NOP, so the compiler need not be conservative. MIPS \emph{branch-likely} is cancel-if-not-taken (slot filled from target) --- ideal for loop back-edges.
+\src{ca04 ``Static Branch Prediction Techniques'' through ``Delayed Branch Technique'' (all pages)}
+
+\subsection{Dynamic branch prediction (decided by hardware at run time)}
+Two cooperating pieces: a \textbf{branch-outcome predictor} (taken?) and a \textbf{branch-target predictor/BTB} (where to?). The fetch unit uses them to pick the next PC in IF.
+
+\subsubsection{Branch history table (BHT) and counters}
+\begin{itemize}
+\item \textbf{1-bit BHT:} table indexed by low-order bits of the branch PC; no tags (every access ``hits''; aliasing is tolerated because the entry is only a hint). Weakness: a loop branch (taken 9, not-taken 1) mispredicts \emph{twice} per loop execution (at exit, and on re-entry) $\Rightarrow$ only \textbf{80\% accuracy}.
+\item \textbf{2-bit saturating counter:} must be wrong twice before the prediction flips; loop exit costs only one misprediction. Predict taken if counter $\ge$ half of max.
+\item \textbf{n-bit counter:} generalisation; studies show 2-bit performs almost as well, so \emph{use 2-bit}.
+\item A 4K-entry 2-bit BHT achieves 82--99\% accuracy (1--18\% misprediction) on SPEC89 and is almost as good as an infinite table; so beyond $\sim$4K entries, make the \emph{predictor smarter}, not bigger. Aliasing is cured by more rows or a hash.
+\end{itemize}
+
+\subsubsection{Correlating (two-level) predictors}
+Idea: the outcome of recent \emph{other} branches helps predict this one (e.g.\ if the two preceding branches were both not taken, branch bb3 will be taken).
+\begin{itemize}
+\item \textbf{$(m,n)$ predictor:} the last $m$ branch outcomes (global history) select one of $2^m$ BHTs, each with $n$-bit counters. $(0,2)$ is the ordinary 2-bit predictor. $(2,2)$: four 2-bit BHTs selected by 2-bit history.
+\item Index $=$ low-order PC bits concatenated with the $m$-bit history. Example: a $(2,2)$ predictor with 64 total entries uses a 6-bit index $=$ 2 history bits + 4 PC bits; each BHT has 16 entries.
+\item A small $(2,2)$ predictor beats a plain 2-bit predictor of the same storage and often beats an unlimited-size 2-bit predictor.
+\item \textbf{Two-level adaptive:} first level $=$ branch history register (BHR, a $k$-bit shift register of recent outcomes); second level $=$ pattern history table (PHT) of 2-bit counters indexed by the BHR.
+\item \textbf{GAs:} PHT indexed by PC bits \emph{and} global history (local + global). \textbf{gshare:} PHT indexed by \textbf{XOR} of low PC bits with the BHR (local XOR global), which uses the table better than concatenation\bs.
+\end{itemize}
+
+\subsubsection{Branch target buffer (BTB) and fetch-unit support}
+\begin{itemize}
+\item BTB is a \emph{cache} accessed in IF with the PC of the instruction being fetched. Entry: \textbf{tag + predicted target (PC-relative) + optional prediction bits}. Only \textbf{taken} branches need an entry. The tag \emph{must} match (a wrong target cannot be used, unlike BHT aliasing).
+\item If BTB hit and predicted taken: fetch from the predicted PC immediately. On misprediction: kill fetched instruction, restart at the other target, update/delete the entry. Correct prediction: no stalls.
+\item \textbf{Target instruction buffers} store the target \emph{instruction}(s): faster, allow a larger BTB, and permit \textbf{branch folding} (0-cycle unconditional branches).
+\item \textbf{Integrated instruction-fetch unit:} autonomous unit doing branch prediction, prefetch and instruction buffering to feed a wide back end.
+\item \textbf{Return-address predictor:} small stack of recent return addresses, for indirect jumps/returns whose destination varies at run time.
+\end{itemize}
+
+\subsubsection{Which dynamic predictor for which scenario}
+\small
+\begin{longtable}{L{3.7cm}L{4.4cm}L{7.3cm}}
+\toprule
+\tblhead{\textbf{Scenario} & \textbf{Choose} & \textbf{Reason}}\\
+\midrule
+\endhead
+Small/cheap core, loop code & 2-bit BHT & Fixes the loop double-miss at tiny cost (2 bits/entry, no tags). \\
+Control-heavy integer code (compilers, interpreters), correlated if-chains & Correlating $(2,2)$ or two-level (GAs/gshare) & Uses other branches' outcomes; small table beats a much larger 2-bit table. \\
+Same storage budget, want best accuracy & gshare & XOR indexing spreads history and PC across the table. \\
+Wide-issue or deep pipeline & Two-level predictor + BTB + return-address stack, feeding \emph{speculation} & Cost of a miss is large; wide issue may need a branch every cycle. \\
+Many function calls/returns & Return-address stack & Returns are indirect with run-time targets. \\
+Fixed embedded workload, no predictor area & Static: profile-driven or BTFNT (+delay slot) & No hardware; behaviour known offline. \\
+Branch target needed in IF for 0--1 bubble taken branches & BTB (+ target buffer for folding) & Predicts the \emph{address}, not just direction. \\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\begin{trap}[Branch-prediction traps]
+\begin{itemize}
+\item 1-bit loop example: accuracy is 80\% for a 10-iteration loop (8 correct, 2 wrong), not 90\%.
+\item ``Predict taken'' is useless unless the target address is available before the outcome (needs a BTB or early BTA).
+\item A BHT has no tags (hint only); a BTB \emph{does} (an incorrect address cannot be used).
+\item Prediction alone is not enough for wide-issue machines: it must be combined with \textbf{speculation} (Section~\ref{ch:ilp}).
+\end{itemize}
+\end{trap}
+\src{ca04 ``Dynamic Branch Prediction Techniques'' through ``Branch Target Buffer'', ``High Performance Instruction Delivery''}
+
