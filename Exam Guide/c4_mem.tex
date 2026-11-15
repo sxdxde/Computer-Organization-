@@ -1,0 +1,124 @@
+\section{Concepts M: Memory Hierarchy}\label{grp:mem}
+$\AMAT=t_{hit}+m\times P$;\quad $\CPI=\CPI_{base}+\text{refs/instr}\times m\times P$ (slide: $2+1.2\times0.03\times64=4.3$). Levers: cut \textbf{penalty} (M1, M8, M9, M5), \textbf{miss rate} (M2--M7, M13, M14), \textbf{both via parallelism} (M10--M12), \textbf{hit time} (M15, M16). Hit time matters most: it sets the clock for \emph{every} instruction. \textbf{First diagnose the miss type:}
+
+\small
+\begin{tabularx}{\textwidth}{L{2.4cm}L{5.4cm}L{4.4cm}X}
+\toprule
+\tblhead{\textbf{Miss type} & \textbf{Meaning / test} & \textbf{Fixed by} & \textbf{NOT fixed by}}\\
+\midrule
+Compulsory & First touch; happens even in an infinite cache & Larger blocks, prefetch & Bigger cache, associativity \\
+Capacity & Working set $>$ cache; happens even fully associative & Bigger cache, blocking, fusion & Associativity \\
+Conflict & Too many blocks map to one set; vanishes with full associativity & Associativity, victim cache, padding, pseudo-assoc. & Compulsory/capacity fixes \\
+Coherence & Line invalidated by another PE's write (true or false sharing) & Privatise, pad/align, smaller blocks & Bigger caches \\
+\bottomrule
+\end{tabularx}
+\normalsize
+{\small\renewcommand{\arraystretch}{1.3}\rowcolors{1}{white}{white}
+\begin{longtable}{L{2.3cm}L{4.7cm}L{2.9cm}L{3.0cm}L{2.8cm}}
+\toprule
+\rowcolor{hdrc}\textbf{Concept} & \textbf{What it fixes $\cdot$ how it works} & \textbf{Best scenario (use when)} & \textbf{Why it beats the alternatives} & \textbf{Weakness $\cdot$ avoid when}\\
+\midrule
+\endfirsthead
+\toprule
+\rowcolor{hdrc}\textbf{Concept} & \textbf{What it fixes $\cdot$ how it works} & \textbf{Best scenario (use when)} & \textbf{Why it beats the alternatives} & \textbf{Weakness $\cdot$ avoid when}\\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\textbf{\textcolor{cardc}{M1}}\label{card:M1}\newline\textbf{Multilevel caches (L2/L3)}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Large miss penalty to DRAM (``best penalty reduction''). \newline \textbf{How:} L2 catches L1 capacity/conflict misses. $\AMAT=t_{L1}+m_{L1}(t_{L2}+m^{loc}_{L2}P)$. Judge L2 by \emph{global} miss rate $m_{L1}\times m^{loc}_{L2}$; L2 size matters most. & Fast core, far memory (desktop/server: L1+L2+L3; PMD: L1 64\,KB + L2 256\,KB, no L3). & Bigger L1: keeps L1 fast (clock) while catching misses. & --- \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Numbers:} 1000 refs, 40 L1 and 20 L2 misses: $m_{L1}=4\%$, local L2 50\%, global 2\%; $\AMAT=1+0.04(10+0.5\times100)=3.4$; stalls/instr $=(3.4-1)\times1.5=3.6$. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{L1 misses cost [100] cycles; an L2 of [size] with [x\%] local miss rate cuts AMAT from [a] to [b] without slowing the L1 hit.}}\\
+\midrule
+\textbf{\textcolor{cardc}{M2}}\label{card:M2}\newline\textbf{Larger block size}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Compulsory misses (spatial locality). & Sequential/streaming data, large L2/L3 (64--128\,B). & --- & Raises miss penalty; in small caches raises conflict/capacity misses; more false sharing. \newline \textbf{Avoid:} Small L1 with 128--256\,B blocks; random access; heavy sharing. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Numbers:} AMAT-optimal block: 4\,KB cache 32\,B; 16--256\,KB caches 64\,B (model: 80\,cc + 2\,cc per 16\,B). 256\,B only wins at 256\,KB. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{The access is [sequential], so moving from [32] to 64\,B blocks halves compulsory misses; going to 256\,B would raise the penalty and conflicts in a [16\,KB] L1 (AMAT 3.32 at 64\,B vs.\ 4.69 at 256\,B).}}\\
+\midrule
+\textbf{\textcolor{cardc}{M3}}\label{card:M3}\newline\textbf{Larger cache}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Capacity misses. & Working set slightly above current size, mainly at L2/L3. & Associativity for capacity misses (associativity does not fix capacity). & Longer hit time, area, power; useless for streaming (no reuse). \newline \textbf{Avoid:} Working set far larger (use blocking \cp{M14}) or streaming. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{\textcolor{pickc}{Write:}} \textit{The working set [x\,MB] just exceeds the [y\,MB] L2, so these are capacity misses; enlarging the off-critical-path L2 removes them without slowing the L1.}}\\
+\midrule
+\textbf{\textcolor{cardc}{M4}}\label{card:M4}\newline\textbf{Higher associativity}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Conflict misses. \newline \textbf{How:} $n$ ways per set. 8-way $\approx$ fully associative. 2:1 rule: 2-way of size $N/2\approx$ DM of size $N$ ($<$128\,KB). & \textbf{At L2/L3} (extra hit time $\ll$ penalty); tiny L1 (4--8\,KB); many threads sharing a cache. & --- & Hit time $\Rightarrow$ clock $\times1.10$ (2-way), $\times1.12$ (4), $\times1.14$ (8). \newline \textbf{Avoid:} Clock-critical L1 $\ge$16\,KB: DM has lowest AMAT once the clock stretch is charged. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Numbers:} L2: DM $10+0.25\times100=35$ vs.\ 2-way $10+0.20\times100=30$. Lab 3: L1 associativity fixed a conflict storm but L2/L3 miss \emph{rates} rose while AMAT improved: judge by AMAT. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{Addresses [a] and [b] map to the same set (power-of-2 stride), so these are conflict misses; making the L2 8-way removes them at a negligible hit-time cost, whereas a more associative L1 would stretch the clock by 10--14\%.}}\\
+\midrule
+\textbf{\textcolor{cardc}{M5}}\label{card:M5}\newline\textbf{Victim cache}\newline{\footnotesize\textit{Dynamic}} & \textbf{Fixes:} Conflict misses of a fast direct-mapped L1. \newline \textbf{How:} Small fully-associative buffer of just-evicted blocks, probed with the miss; swap on hit. & --- & Raising L1 associativity: keeps the DM hit time (clock) and recovers much of 2-way's miss rate. & \textbf{Avoid:} Capacity misses or streaming (victims are never reused). \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Numbers:} Removes 20--95\% of misses of a 4\,KB DM cache with 1--5 entries; Athlon 8 entries. Lab 4: 61.6\% fewer cycles on a conflict pattern, nothing on the full pipeline; cutoff at ($N-$ways) entries. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{The DM L1 ping-pongs between [arrays a and b]; a 4-entry victim cache catches the just-evicted block, keeping the 1-cycle DM hit, which 2-way associativity (clock $\times1.10$) would not.}}\\
+\midrule
+\textbf{\textcolor{cardc}{M6}}\label{card:M6}\newline\textbf{Way prediction}\newline{\footnotesize\textit{Dynamic}} & \textbf{Fixes:} Hit time and energy of set-associative caches. \newline \textbf{How:} Predict the way; set the mux early; compare one tag first; mispredict $\Rightarrow$ extra cycle. & PMDs, I-caches (sequential, $>$85\% accurate on Alpha 21264 2-way). & Full parallel compare: one way active $\Rightarrow$ less energy, near-DM hit time. & Predictor bits; an extra cycle on a wrong way. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{\textcolor{pickc}{Write:}} \textit{In a battery-limited core, way prediction compares one tag instead of [n], keeping 2-way miss rate at near-DM hit time and energy.}}\\
+\midrule
+\textbf{\textcolor{cardc}{M7}}\label{card:M7}\newline\textbf{Pseudo-associative (column-associative)}\newline{\footnotesize\textit{Dynamic}} & \textbf{Fixes:} Conflict misses at DM speed. \newline \textbf{How:} DM probe; on miss probe a second slot (flip top index bit) sequentially; swap frequent block to fast slot. & --- & 2-way at L2: DM-speed primary hit with near 2-way miss rate. & Variable 1-or-2-cycle hit: bad for L1 pipeline $\Rightarrow$ use at \textbf{L2} (MIPS R10000). \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Numbers:} AMAT 2\,KB: DM 5.90, 2-way 4.90, pseudo 4.95; 128\,KB: 1.50 / 1.45 / 1.371.}\\
+\midrule
+\textbf{\textcolor{cardc}{M8}}\label{card:M8}\newline\textbf{Critical word first / early restart}\newline{\footnotesize\textit{Dynamic}} & \textbf{Fixes:} Waiting for a whole large block. \newline \textbf{How:} Send the requested word first (or restart as soon as it arrives). & Large blocks; weak if the next access is the next word anyway. & --- & Little gain with small blocks or when the next access is the next word. \\*
+\midrule
+\textbf{\textcolor{cardc}{M9}}\label{card:M9}\newline\textbf{Read priority over writes; merging write buffer}\newline{\footnotesize\textit{Dynamic}} & \textbf{Fixes:} Read misses waiting behind buffered writes; buffer-full stalls. \newline \textbf{How:} On a read miss check the write buffer for the address and go ahead if no match; write-back: buffer the dirty victim, read first. Merge writes to the same block into one entry. & Write-through or write-heavy code. & Waiting for the write buffer to drain before every read miss. & --- \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Numbers:} Waiting for a 4-word buffer to drain: $\approx$50\% worse read-miss penalty (MIPS 1000). \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{Write-through traffic [given] fills the buffer; letting reads bypass non-matching writes and merging same-block writes removes the read-miss delay and buffer-full stalls.}}\\
+\midrule
+\textbf{\textcolor{cardc}{M10}}\label{card:M10}\newline\textbf{Non-blocking cache (hit-under-miss, MSHRs)}\newline{\footnotesize\textit{Dynamic}} & \textbf{Fixes:} CPU idle while one miss is served. \newline \textbf{How:} Keep serving hits during a miss; with several MSHRs, overlap several misses (memory-level parallelism). & OoO cores, independent misses (several streams, many threads). & Associativity for cutting stall time: no hit-time increase. & \textbf{Avoid:} Dependent misses (pointer chase): MLP $=1$. Lab 4: no gain on a chase, 8$\times$ on 8 independent streams, plateau at MSHR $=8$. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Needs:} \textbf{OoO CPU} (an in-order blocking CPU stalls anyway) and \textbf{banked memory} \cp{M18}. \enspace$\cdot$\enspace \textbf{Numbers:} OoO hides L1-miss/L2-hit, not most L2 misses. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{The OoO core has [k] independent loads missing together; with [8] MSHRs their misses overlap, so the effective penalty falls by up to [k]$\times$ without changing hit time.}}\\
+\midrule
+\textbf{\textcolor{cardc}{M11}}\label{card:M11}\newline\textbf{Hardware prefetch (stream buffers, stride)}\newline{\footnotesize\textit{Dynamic}} & \textbf{Fixes:} Compulsory/capacity misses of regular access. \newline \textbf{How:} Detect sequential/strided pattern; fetch ahead into a buffer. & Streaming, sequential, constant stride; spare bandwidth. & Compiler prefetch: no instruction overhead, adapts to the run-time pattern. & Useless/harmful when untimely, polluting, or bandwidth-starved (Lab 4: misses 57.4\%$\rightarrow$23.2\% yet slower). \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Needs:} Spare memory bandwidth; non-blocking cache; throttling. \enspace$\cdot$\enspace \textbf{Numbers:} I-stream buffer 1/4/16 blocks catch 15--25/50/72\% of I-misses; 1 data stream $-25\%$, 4 streams $-43\%$; prefetch AMAT $2+0.011\times0.25\times1+0.011\times0.75\times50=2.415$. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{The [stream] is sequential and bandwidth is [x\% used], so a stream prefetcher fetches ahead and hides the [n]-cycle latency; I would disable it if bandwidth were saturated.}}\\
+\midrule
+\textbf{\textcolor{cardc}{M12}}\label{card:M12}\newline\textbf{Compiler-controlled prefetch}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Misses in loops whose stride/distance is known. \newline \textbf{How:} Non-faulting prefetch instructions ahead of use (\texttt{prefetch(b[j+7])}). & --- & HW prefetch when the pattern is known at compile time or irregular-but-computable. & Instruction overhead; wrong distance $\Rightarrow$ too early (evicted) or too late. \newline \textbf{Avoid:} Irregular patterns; bandwidth saturated. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Needs:} Non-blocking cache; spare issue slots (benefit must exceed issue cost).}\\
+\midrule
+\textbf{\textcolor{cardc}{M13}}\label{card:M13}\newline\textbf{Compiler layout: interchange, fusion, merging, padding, SoA}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Poor locality and conflicts, at zero hardware cost. \newline \textbf{How:} \emph{Interchange}: inner loop walks memory sequentially. \emph{Fusion}: reuse data while cached. \emph{Merging arrays} (AoS) for fields used together; \emph{struct-of-arrays} for SIMD/GPU. \emph{Padding}: break power-of-2 aliasing and false sharing. Procedure reordering for I-cache. & Array/loop code (scientific, image), embedded designs where no hardware can be added. & Any hardware fix: zero area and power. & \textbf{Avoid:} Pointer structures; transformations illegal due to dependences. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Numbers:} Interchange $3{,}145{,}728\rightarrow196{,}608$ misses ($-93.75\%$); fusion $262{,}144\rightarrow196{,}608$ ($-25\%$); McFarling code reordering $-50$/$-75\%$ (2/8\,KB I-cache). \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{The inner loop walks a column of a row-major array [given], one useful word per 64\,B line; interchanging the loops makes it sequential (slide: $-93.75\%$ misses) at no hardware cost.}}\\
+\midrule
+\textbf{\textcolor{cardc}{M14}}\label{card:M14}\newline\textbf{Blocking (tiling)}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Capacity misses when rows \emph{and} columns are reused (matrix multiply). \newline \textbf{How:} Work on $B\times B$ tiles; three tiles must fit in cache. & Matrix multiply, stencils, any reuse along two dimensions. & Interchange (cannot help both access directions); bigger cache (free). & Tile-size tuning, more complex code. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Numbers:} Misses $2N^3+N^2\rightarrow2N^3/B+N^2$; $N=1024$, 32\,KB, $B=32$: $\approx1.07$\,billion $\rightarrow\approx2.1$\,million (simplified model). \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{The $[N]\times[N]$ matrices exceed the cache, so every column pass misses; tiles of $B=[32]$ (three tiles $=[12]$\,KB fit the [32]\,KB L1) cut misses from $2N^3$ to $2N^3/B$.}}\\
+\midrule
+\textbf{\textcolor{cardc}{M15}}\label{card:M15}\newline\textbf{Small, simple L1; pipelined access; virtual indexing}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Hit time limiting the clock. \newline \textbf{How:} Small DM/low-way L1; pipeline write tag check with previous data write; index the cache in parallel with TLB translation (index within page offset; or PIDs + anti-aliasing/page colouring for virtual caches). & Every high-clock design. & Bigger associative L1: from 16\,KB up, DM has the lowest AMAT once the clock is charged. & More misses (offset by L2). \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Numbers:} PIDs in tags save 0.6--4.3\% miss rate vs.\ flushing on a switch. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{The L1 hit sets the [x\,GHz] clock, so I keep it small and low-associativity and move capacity to L2.}}\\
+\midrule
+\textbf{\textcolor{cardc}{M16}}\label{card:M16}\newline\textbf{Trace cache}\newline{\footnotesize\textit{Dynamic}} & \textbf{Fixes:} Fetch bandwidth lost at taken branches (one every 5--10 instructions). \newline \textbf{How:} Store dynamic instruction traces across branches (Pentium 4). & Wide-issue front ends on branchy code with frequent taken branches. & --- & Complex mapping, duplicated instructions, area/energy. \newline \textbf{Avoid:} Energy-constrained designs. \\*
+\midrule
+\textbf{\textcolor{cardc}{M17}}\label{card:M17}\newline\textbf{Wider main memory / bus}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Block transfer bandwidth. \newline \textbf{How:} $N$-word-wide memory and bus. & The bus can be widened (pins, cost acceptable); small blocks. & Interleaving at 2-word blocks (3.54 vs.\ 3.63 CPI). & Cost; mux on critical path (place between L1 and L2); ECC needs read-modify-write; expansion in big increments. \\*
+\midrule
+\textbf{\textcolor{cardc}{M18}}\label{card:M18}\newline\textbf{Interleaved banks / independent banks / more channels}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Bandwidth for sequential blocks, multiple misses, many cores/lanes. \newline \textbf{How:} Bank $=$ address mod banks; accesses overlap on a shared bus; independent banks/channels serve independent requests. & Streaming, vector/SIMD/GPU, non-blocking caches, multicore. & Wide memory when the bus cannot be widened (pins/cost); best with larger blocks. & Many chips, harder expansion; controller complexity for independent banks. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Numbers:} Need banks $\ge$ access time in cycles. Slide CPI: 1-word 4.30; 2-word simple 5.07 / interleaved 3.63 / wide 3.54; 4-word 5.69 / \textbf{3.09} / 3.84. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{[k] cores/lanes stream [x\,GB/s] but one channel gives [y]; adding channels/banks lets their misses proceed in parallel, which a larger cache cannot do for data used once.}}\\
+\midrule
+\textbf{\textcolor{cardc}{M19}}\label{card:M19}\newline\textbf{Virtual memory and TLB}\newline{\footnotesize\textit{Dynamic}} & \textbf{Fixes:} Protection, many processes, memory larger than DRAM. \newline \textbf{How:} Pages (4--8\,KB, no external fragmentation) mapped by a page table; TLB caches translations (128--256 entries, fully associative on high-end). & --- & Segmentation: fixed pages avoid external fragmentation and need one-word addresses. & TLB misses when the working set exceeds TLB reach (larger pages\bs). \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Numbers:} 32-bit VA $=$ 20-bit VPN + 12-bit offset.}\\
+\midrule
+\textbf{\textcolor{cardc}{M20}}\label{card:M20}\newline\textbf{Write policy: write-back vs.\ write-through}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Write traffic to the next level. \newline \textbf{How:} \emph{Write-through}: every write also goes to the next level (via a write buffer); cache always clean. \emph{Write-back}: write only the cache, mark the block dirty, write it out on eviction. & Write-back: write-heavy code, multicore (less bus traffic), L2/L3. Write-through: simple L1 backed by an L2; easy recovery and coherence. & Write-back cuts traffic when a block is written many times; write-through keeps the lower level current. & Write-back: dirty evictions lengthen misses (buffer them, \cp{M9}). Write-through: bandwidth on every write; needs a write buffer. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Needs:} Write-through: merging write buffer + read priority \cp{M9}. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{The loop rewrites the same [block] [k] times; write-back sends it to memory once on eviction instead of [k] times, freeing bus bandwidth for the other cores.}}\\
+\end{longtable}}
+
+\small
+\begin{tabularx}{\textwidth}{L{1.4cm}L{1.3cm}L{1.3cm}L{1.3cm}L{1.3cm}X|L{1.2cm}L{1.1cm}L{1.1cm}L{1.1cm}L{1.1cm}}
+\toprule
+\tblhead{\textbf{AMAT} & \textbf{1-way} & \textbf{2-way} & \textbf{4-way} & \textbf{8-way} & & \textbf{Block} & \textbf{4K} & \textbf{16K} & \textbf{64K} & \textbf{256K}}\\
+\midrule
+4\,KB & 3.44 & 3.25 & \textbf{3.22} & 3.28 & & 16\,B & 8.03 & 4.23 & 2.67 & 1.89 \\
+8\,KB & 2.69 & 2.58 & \textbf{2.55} & 2.62 & & 32\,B & \textbf{7.08} & 3.41 & 2.13 & 1.59 \\
+16\,KB & \textbf{2.23} & 2.40 & 2.46 & 2.53 & & 64\,B & 7.16 & \textbf{3.32} & \textbf{1.93} & \textbf{1.45} \\
+64\,KB & \textbf{1.92} & 2.14 & 2.18 & 2.25 & & 128\,B & 8.47 & 3.66 & 1.98 & 1.47 \\
+256\,KB & \textbf{1.32} & 1.66 & 1.74 & 1.82 & & 256\,B & 11.65 & 4.69 & 2.29 & 1.55 \\
+\bottomrule
+\end{tabularx}
+\normalsize
+Left: AMAT by size and associativity \emph{with clock stretch charged} (DM wins from 16\,KB). Right: AMAT by block size and cache size. Hierarchy by class: \textbf{PMD} L1 64\,KB, L2 256\,KB, 1--2\,GB DRAM, flash; \textbf{desktop} + L3 8--32\,MB, 4--64\,GB; \textbf{server} L3 16--64\,MB, 32--256\,GB DRAM, flash and disk.
+
+
+\small
+\begin{tabularx}{\textwidth}{L{4.4cm}C{1.3cm}C{1.3cm}C{1.3cm}C{1.3cm}X}
+\toprule
+\tblhead{\textbf{Technique (card)} & \textbf{Penalty} & \textbf{Miss rate} & \textbf{Hit time} & \textbf{HW cost} & \textbf{Used in / comment}}\\
+\midrule
+Multilevel caches \cp{M1} & $+$ & & & 2 & Costly, universal \\
+Critical word first \cp{M8} & $+$ & & & 2 & Widely used \\
+Read priority / merging buffer \cp{M9} & $+$ & & & 1 & Write-through \\
+Victim cache \cp{M5} & $+$ & $+$ & & 2 & AMD Athlon (8 entries) \\
+Larger block \cp{M2} & $-$ & $+$ & & 0 & Pentium 4 L2 128\,B \\
+Larger cache \cp{M3} & & $+$ & $-$ & 1 & Esp.\ L2 \\
+Higher associativity \cp{M4} & & $+$ & $-$ & 1 & Widely used \\
+Way prediction \cp{M6} & & & $+$ & 2 & UltraSPARC III I-cache \\
+Pseudo-associative \cp{M7} & & $+$ & & 2 & MIPS R10000 L2 \\
+Compiler layout/blocking \cp{M13} \cp{M14} & & $+$ & & 0 & Software effort \\
+Non-blocking \cp{M10} & $+$ & & & 3 & All OoO CPUs \\
+HW / compiler prefetch \cp{M11} \cp{M12} & $+$ & $+$ & & 2--3 & Needs bandwidth / non-blocking \\
+Small simple L1, pipelined, no translation \cp{M15} & & ($-$) & $+$ & 0--2 & Alpha 21164 \\
+Trace cache \cp{M16} & & & $+$ & 3 & Pentium 4 \\
+\bottomrule
+\end{tabularx}
+\normalsize
+($+$ improves, $-$ hurts; HW 0 none, 3 highest.) Conflicts of interest: larger blocks hurt penalty; size/associativity hurt hit time; small/simple hurts miss rate.

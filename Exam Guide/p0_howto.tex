@@ -1,0 +1,63 @@
+\begin{center}
+{\LARGE\bfseries Processor Design Exam Playbook}\\[1pt]
+{\normalsize Diagnose a non-ideal architecture, redesign it, and justify every choice}
+\end{center}
+\vspace{-2pt}
+\section{How to Use This Handbook (read this page first)}\label{sec:howto}
+
+\begin{prof}[The exam (from the professor)]
+Two design questions (30 marks, scaled to 15). Each gives a \textbf{processor architecture}, a \textbf{workload}, and a \textbf{situation where it is not working ideally}. You must understand the problem \emph{from the question itself} (the clues give $\sim$80\% of the answer), state \textbf{assumptions}, explain \textbf{why} the problem occurs, redesign \textbf{the whole architecture}, and justify \textbf{why your design beats the alternatives} for \emph{this} scenario.
+\end{prof}
+
+\subsection*{The 6-move routine: do this for every question, in this order}
+\begin{enumerate}[label=\textbf{\arabic*.}]
+\item \textbf{Split the question into parts.} Every separate workload, scenario or symptom is one part (P1, P2, \ldots). On your rough sheet draw the \textbf{breakdown grid} (example on \pg{sec:breakdown}): \emph{Part $|$ Givens $|$ Clue words $|$ Cards $|$ Static/Dynamic}.
+\item \textbf{Underline clue words} (``shared counter'', ``if inside the loop'', ``streaming'', ``unequal tasks'', ``battery''\ldots). Look each one up in the \textbf{Clue Index} (\pg{sec:clueidx}). It gives the meaning and the concept IDs with page numbers.
+\item \textbf{For the ``not working ideally'' part,} look the symptom up in the \textbf{Symptom Index} (\pg{sec:symidx}). It gives the root cause, how to prove it with a number, and the concepts that fix it.
+\item \textbf{Find each concept's row in its table.} Every concept table has the same columns (legend below). Check that \emph{Best scenario} matches your clues; copy \emph{Why it beats the alternatives} as your ``why better'' argument; add the \emph{Needs} line (what else must change); fill the \emph{Write} sentence with numbers from the question.
+\item \textbf{Check the cross-cutting pages}: static vs.\ dynamic (\pg{sec:staticdyn}), will the memory hierarchy work (\pg{sec:memworks}), benefits/demerits of parallelism (\pg{sec:paraproscons}), knock-on effects (\pg{sec:knockon}).
+\item \textbf{Write the answer in the 6-heading layout} (\pg{sec:layout}), copying the shape of the model answers (\pg{sec:modelA}). Finish with the checklist (\pg{sec:checklist}).
+\end{enumerate}
+
+\subsection*{How to read a concept table (every concept has the same row layout)}
+{\small\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\textwidth}{L{4.2cm}X}
+\toprule
+\tblhead{\textbf{Column} & \textbf{What it gives you in the answer}}\\
+\midrule
+\textbf{Concept} & ID (e.g.\ \textbf{M5}; superscript numbers elsewhere are its page), name, and \textbf{Static} (decided at compile/design time) or \textbf{Dynamic} (decided at run time). \\
+\textbf{What it fixes $\cdot$ how it works} & \emph{Fixes}: the root cause it attacks (your ``why the problem occurs''). \emph{How}: the mechanism; writing it is what makes an answer non-generic. \\
+\textbf{Best scenario (use when)} & The clues that make it the right choice. Quote the matching clue from the question. \\
+\textbf{Why it beats the alternatives} & Why it is better than named rivals \emph{in that scenario}: your ``why my solution is better''. \\
+\textbf{Weakness $\cdot$ avoid when} & Its demerits (area, power, clock, complexity), and when it is the wrong choice (use it to reject alternatives). \\
+\textbf{Grey line under each row} & \emph{Needs} (what else must change: the whole-architecture part) $\cdot$ \emph{Numbers} (evidence to quote) $\cdot$ \emph{Write} (a ready sentence: fill the brackets with this question's numbers). \\
+\bottomrule
+\end{tabularx}}
+
+\subsection*{Page map}
+\small
+\begin{tabularx}{\textwidth}{L{6.6cm}L{1.0cm}L{6.6cm}X}
+\toprule
+\tblhead{\textbf{Before writing} & \textbf{Page} & \textbf{Concept tables and reference} & \textbf{Page}}\\
+\midrule
+Method, assumptions, specific-not-generic rules & \pg{sec:method} & Power, energy, cost, reliability (E) & \pg{grp:power} \\
+Breakdown grid: worked multi-part question & \pg{sec:breakdown} & Pipeline and branches (P) & \pg{grp:pipe} \\
+Layers of a processor (what you can change) & \pg{sec:layers} & ILP: scheduling, OoO, VLIW (I) & \pg{grp:ilp} \\
+\textbf{Clue Index} (clue $\rightarrow$ concepts) & \pg{sec:clueidx} & Memory hierarchy (M) & \pg{grp:mem} \\
+\textbf{Symptom Index} (problem $\rightarrow$ cause $\rightarrow$ concepts) & \pg{sec:symidx} & Multithreading, multicore (T) & \pg{grp:tlp} \\
+Static vs.\ dynamic decisions & \pg{sec:staticdyn} & DLP: vector, SIMD, GPU/SIMT (D) & \pg{grp:dlp} \\
+Will the memory hierarchy work? Roofline & \pg{sec:memworks} & Work distribution, timing (W) & \pg{grp:work} \\
+Parallelism: benefits, demerits, when it fails & \pg{sec:paraproscons} & Coherence, synchronisation (C) & \pg{grp:coh} \\
+Knock-on effects; concept chains; lab evidence & \pg{sec:knockon} & Reference designs by machine class & \pg{sec:classes} \\
+Answer layout, phrase bank, checklist & \pg{sec:layout}, \pg{sec:checklist} & Model answers A--G (exam format) & \pg{sec:modelA} \\
+\textbf{Primer}: how the machine works & \pg{sec:primer} & Formulas, numbers, typical values & \pg{sec:formulas} \\
+Mistakes that lose marks & \pg{sec:mistakes} & \textbf{Calculation recipes}; timeline template & \pg{sec:recipes} \\
+Model G: multi-part question answered & \pg{sec:modelG} & Glossary of abbreviations & \pg{sec:glossary} \\
+\bottomrule
+\end{tabularx}
+\normalsize
+
+\begin{key}[Three rules that decide the marks]
+\textbf{(1) Diagnose before you fix}: name the mechanism and prove it with one number. \textbf{(2) Every claim points at this question}: quote its clue or its number, never a bare textbook sentence. \textbf{(3) Every choice is compared}: ``X, not Y, because in this scenario Y fails at\ldots''. A red dagger\bs{} marks material not stated in the slides (textbook/general knowledge).
+\end{key}
+\newpage

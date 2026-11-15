@@ -1,0 +1,87 @@
+\section{Cards D: Data-Level Parallelism (Vector, SIMD, GPU/SIMT)}\label{grp:dlp}
+\textit{Textbook (H\&P Ch.~4); not in the slides but named by the professor.} \textbf{Why DLP is efficient:} one instruction controls $N$ operations, so fetch/decode/dependence checks are paid once per $N$; elements are independent by definition; the access pattern is known. \textbf{Spot it:} iteration $i$ touches only element $i$ (no order between elements). A loop-carried dependence blocks it, except \emph{reductions} (tree, $\log_2N$ steps) and scans. Write: ``DLP present because\ldots; the only ordering is the final reduction.''
+\begin{multicols}{2}
+\card{D1}{Vector architecture}{Static (code) + hardware}
+\fx{Long regular vectors needing high predictable throughput.}
+\fh{Vector registers (VMIPS 8$\times$64$\times$64-bit); VL register for $n<$MVL; \emph{strip-mining} for $n>$MVL; \emph{lanes} (element $i\rightarrow$ lane $i \bmod L$); \emph{chaining} (vector forwarding); \emph{mask registers} for \texttt{if}; strided loads; gather/scatter for sparse.}
+\fu{Scientific/supercomputer kernels with long vectors.}
+\fb{SIMD extensions: variable length, compact code, hardware strides/gather. Multicore: far less control per operation.}
+\fw{Needs many memory banks; poor on short vectors; gather/scatter slow.}
+\fq{Time $\approx$ convoys $\times\ n/L$ + start-up. Banks $\ge$ bank busy time; stride $s$ conflicts if banks$/\gcd(s,\text{banks})<$ busy time.}
+\fj{Each vector instruction does [VL] operations across [L] lanes with chaining, so [n] elements take about [convoys]$\times n/L$ cycles with one instruction fetch per vector.}
+
+\card{D2}{SIMD extensions on the CPU (SSE/AVX/NEON)}{Static}
+\fx{DLP in short vectors without leaving the CPU.}
+\fh{128/256/512-bit registers of packed elements (8 floats in 256 bits); compiler or intrinsics vectorise loops.}
+\fu{Media, crypto, small/medium kernels, data already in CPU caches, no transfer wanted.}
+\fb{GPU for small problems: no PCIe transfer or launch overhead.}
+\fw{Width fixed in the ISA; alignment; weak gather/masks (better in AVX-512); speedup $\le$ elements per register; compilers vectorise only simple loops.}
+\fn{Memory bandwidth to feed it \cp{M18}; unit-stride/SoA layout \cp{M13}.}
+\fj{The loop applies one operation to [n] contiguous floats; 256-bit SIMD processes 8 per instruction in the existing core, with no PCIe transfer.}
+
+\card{D3}{GPU / SIMT}{Dynamic (warp scheduling)}
+\fx{Massive DLP; throughput over latency.}
+\fh{Programmer writes one scalar thread; grid of thread blocks; each block on one SM; 32 threads form a \textbf{warp} executing one instruction across 32 lanes. Memory latency hidden by switching to another ready warp each cycle (fine-grained MT, all warps' registers resident), not by big caches/OoO.}
+\fu{$10^5$+ independent elements, regular arithmetic, data resident on the device.}
+\fb{Multicore CPU: thousands of lanes vs.\ tens; more ops per watt; huge memory bandwidth.}
+\fa{Branchy per-element code, pointer structures, small problems, data that must cross PCIe for little work.}
+\fw{Small caches per thread; needs parallel slack; transfer and programming cost.}
+\fn{Occupancy \cp{D8}, coalescing \cp{D4}, low divergence \cp{D5}, transfer plan \cp{D7}.}
+\fj{[$10^6$] independent pixels give enough warps to hide [400]-cycle memory latency by warp switching, so a GPU's thousands of lanes stay busy where an 8-core CPU has only tens.}
+
+\card{D4}{Coalesced access / data layout (SoA)}{Static}
+\fx{Uncoalesced memory: up to 32 transactions per warp instead of one.}
+\fh{Thread $i$ accesses element $i$ (consecutive addresses); struct-of-arrays; stage awkward patterns (transpose) through shared memory.}
+\fb{More bandwidth/bigger GPU: waste scales with them.}
+\fq{Row-per-thread on a 3840-wide RGBA image: neighbours in a warp are 15\,KB apart $\Rightarrow$ 32 transactions.}
+\fj{Mapping thread $i$ to element $i$ makes a warp read 32 consecutive words in one transaction instead of 32 separate ones.}
+
+\card{D5}{Divergence handling (compaction, sorting, predication)}{Dynamic / Static}
+\fx{Warps executing both sides of a data-dependent \texttt{if}.}
+\fh{Hardware masks lanes and runs each side in turn, then reconverges. Fix: \emph{compaction} (pass 1 lists elements needing the slow path; pass 2 runs them in full warps: dynamic); \emph{sort/bin} data so a warp branches alike; \emph{predicate} short branches (static).}
+\fb{Predication alone (pays both sides); bigger GPU (same waste).}
+\fw{Extra pass and list memory; atomics on the list counter (aggregate per warp).}
+\fq{Efficiency $=$ active lanes/32. 30\% random slow pixels (50 vs.\ 5 instr.): $P(\text{no slow in warp})=0.7^{32}\approx0$ $\Rightarrow$ 55 executed vs.\ 18.5 useful $\Rightarrow$ 34\%.}
+\fj{Because [30\%] of elements, randomly placed, take the slow path, nearly every warp diverges (efficiency [34\%]); compacting them into a separate list gives full, uniform warps.}
+
+\card{D6}{Shared memory (scratchpad) tiling}{Static}
+\fx{Neighbourhood reuse re-reading global memory.}
+\fh{A block loads its tile (+ halo) once into on-chip shared memory, then all threads reuse it; barrier inside the block after the load.}
+\fu{Stencils, filters, matrix multiply; predictable timing (real-time).}
+\fb{Hardware cache: software decides what stays $\Rightarrow$ no conflict/eviction surprises; raises arithmetic intensity.}
+\fw{Programmer effort; limits occupancy if too large.}
+\fj{Each output reads a [$3\times3$] neighbourhood; loading the tile once into shared memory serves 9 reads from on-chip storage.}
+
+\card{D7}{Host--device transfer: residency, batching, overlap}{Static}
+\fx{PCIe copies dominating kernel time.}
+\fh{Keep data on the GPU across kernels; batch small jobs; double-buffer (copy frame $k{+}1$ while computing $k$).}
+\fa{If compute per byte is tiny: keep it on CPU SIMD \cp{D2}.}
+\fq{33\,MB frame over 16\,GB/s $\approx$2\,ms each way.}
+\fj{Copies take [4] of every [10]\,ms; keeping data resident and double-buffering overlaps them with compute.}
+
+\card{D8}{Occupancy tuning}{Static}
+\fx{Too few resident warps to hide memory latency.}
+\fh{Occupancy $=$ resident warps / max per SM; raise it with more threads (one per element), fewer registers per thread, moderate shared memory, block size 128--256\bs.}
+\fw{More registers or shared memory per thread lowers the number of resident warps.}
+\fq{2160 threads on 40 SMs $=68$ warps ($<$2 per SM): latency exposed.}
+\fj{Only [68] warps for [40] SMs cannot hide latency; one thread per element gives [thousands] of warps.}
+
+\end{multicols}
+
+\small
+\begin{tabularx}{\textwidth}{L{2.4cm}L{3.2cm}L{3.2cm}L{3.6cm}X}
+\toprule
+\tblhead{\textbf{} & \textbf{Vector} & \textbf{SIMD extension} & \textbf{GPU (SIMT)} & \textbf{Multicore CPU (MIMD)}}\\
+\midrule
+Control & 1 instr, VL elements & 1 instr, fixed width & 1 instr per 32-thread warp & 1 PC per core \\
+Hides latency by & Deep pipelines, banks & Caches, OoO & Switching warps & Caches, OoO, SMT \\
+Branches & Masks & Masks/blend & Masks + reconvergence (divergence) & Free \\
+Irregular memory & Gather/scatter & Weak & Uncoalesced = slow & Caches tolerate it \\
+Best for & Long regular vectors & Short vectors, no transfer & Huge regular throughput & Irregular, branchy, task-parallel \\
+Weak at & Short vectors & ISA width churn & Transfer, divergence, small jobs & Ops per watt on regular data \\
+\bottomrule
+\end{tabularx}
+\normalsize
+\begin{trap}[DLP traps]
+A GPU often wins by \emph{memory bandwidth}, not FLOPs: SAXPY AI $=2/12$ FLOP/B is memory-bound everywhere (roofline \pg{sec:roofline}). More lanes do not fix divergence or uncoalesced access. Loop-carried dependences cannot be vectorised (except reductions/scans). GPUs need parallel slack: too little work runs badly.
+\end{trap}

@@ -1,0 +1,163 @@
+\section{Read This First: The Exam and How to Attack It}\label{ch:method}
+
+\subsection{What the exam looks like (from the professor)}\label{sec:examformat}
+\begin{prof}
+\begin{itemize}[leftmargin=*]
+\item \textbf{Two design activities}, 30 marks for both, scaled down to 15. Subjective paper: no single right answer; marks go to \emph{reasoning}.
+\item Each question gives you \textbf{(1) a processor architecture, (2) a workload, (3) a situation where the architecture is not working ideally}. Enough information is given; where it is not, \textbf{write your assumptions} and continue.
+\item You must \textbf{understand the problem from the question itself} (the clues in the text give you $\sim$80\% of the answer), explain \textbf{why the problem is occurring}, and propose a solution.
+\item Your solution must \textbf{adjust the whole architecture, not just one aspect}, and you must say \textbf{why your solution is better}, in detail, by connecting the concepts of the whole course.
+\item Named topics: \textbf{SIMT / DLP} and how the processor exploits them; \textbf{multiple processing elements} and how the workload is distributed (in terms of timing); \textbf{benefits and demerits} of parallelism; \textbf{order of execution} identified from the workload; whether parallelism is present at all; \textbf{data, memory and communication} issues (parallelism may not benefit; will the memory hierarchy work?); \textbf{synchronisation}; \textbf{static vs.\ dynamic} decisions; \textbf{lab experience} (why performance was better or worse).
+\end{itemize}
+\end{prof}
+
+\subsection{Professor's pointer $\rightarrow$ what you must write}\label{sec:pointers}
+Every row is a mark you can collect. Tick them off on the question paper as you write.
+\small
+\begin{longtable}{L{3.6cm}L{7.4cm}L{4.6cm}}
+\toprule
+\tblhead{\textbf{He said\ldots} & \textbf{So in your answer, write\ldots} & \textbf{Where in this book}}\\
+\midrule
+\endhead
+``Given: arch, workload, situation where it is not working ideally'' & It is a \emph{diagnosis} question. Start with ``Observed problem'' and ``Root cause''. Never jump straight to the fix. & \S\ref{ch:diag} (symptom $\rightarrow$ cause) \\
+``Info will be given, mention assumptions'' & A numbered list: ``A1: L1 is private, 32\,KB, 64\,B lines (not stated).'' Use typical values; keep assumptions few and plausible. & Typical values: App.~\ref{sec:typical} \\
+``Why is the problem occurring'' & Name the \emph{mechanism} (e.g.\ ``every increment invalidates the line in 7 other caches''), backed by a number or a clue quoted from the question. & \S\ref{sec:symptoms} \\
+``Static / dynamic decision of the solution'' & For each choice: decided at compile/design time (static) or at run time by hardware/runtime (dynamic), and why that suits this workload. & \S\ref{sec:staticdyn} \\
+``SIMT, DLP, how the processor exploits it'' & Is the same operation applied to many data? Then: lanes/warps, masking for branches, coalesced memory, latency hidden by switching warps. & \S\ref{ch:dlp} \\
+``Multiple PEs, how the workload is distributed, timings'' & How you split the work (data/task/pipeline), static or dynamic assignment, a small timeline, $T_{par}=\max(\text{PE time})+T_{comm}+T_{sync}$. & \S\ref{ch:pe} \\
+``Benefits and demerits of parallelism'' & Always both: speedup/throughput \emph{and} overheads (communication, sync, imbalance, coherence, power, contention). & \S\ref{sec:paraproscons} \\
+``Order of execution, identify from workload'' & Draw the dependence graph; mark critical path, independent parts, loop-carried dependences, reductions, serial phases. & \S\ref{sec:order} \\
+``Parallel present or not'' & Say explicitly which part is parallel (fraction $f$) and which is serial; apply Amdahl. & \S\ref{sec:order} \\
+``Data, memory, communication; parallelism may not benefit'' & Check whether the workload is memory-, communication- or sync-bound \emph{before} adding PEs. & \S\ref{sec:paraproscons}, \S\ref{sec:roofline} \\
+``If memory hierarchy will work or not'' & Compare working set to cache size, reuse vs.\ streaming, stride vs.\ block, sharing. Say yes/no and why. & \S\ref{sec:memworks} \\
+``Why is your solution better'' & Compare with at least two alternatives: mechanism, a number, and the cost you accept. & Decision maps in every section \\
+``Synchronisation'' & Which sync is needed (lock, barrier, atomic), its cost, how you reduce it (privatise, tree reduction, finer locks). & \S\ref{sec:sync} \\
+``Answers generic but related to the question; connect every concept'' & Use course vocabulary, but every sentence must point to something in \emph{this} question. & \S\ref{sec:connect} \\
+``Lab aspects, why performance is better'' & Quote one lab finding as evidence (``as observed in the coherence lab\ldots''). & \S\ref{sec:labs} \\
+``Adjust the whole architecture, not just one aspect'' & Walk all layers: distribution $\rightarrow$ core $\rightarrow$ caches $\rightarrow$ memory $\rightarrow$ interconnect/coherence/sync $\rightarrow$ power, and show knock-on effects. & \S\ref{sec:layers}, \S\ref{sec:knockon} \\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\subsection{The 8-step method (use it for both questions)}\label{sec:8step}
+\begin{enumerate}[leftmargin=*]
+\item \textbf{Extract the givens} into three short lists: \emph{Architecture} (PEs/cores, issue width, in-order/OoO, threads, caches, memory, interconnect); \emph{Workload} (operations, data size, access pattern, dependences, branches, threads); \emph{Symptom} (what is not ideal, with its number).
+\item \textbf{State assumptions} for anything missing (numbered A1, A2, \ldots).
+\item \textbf{Characterise the workload}: kind and amount of parallelism (ILP/DLP/TLP), order of execution (dependence graph, critical path, serial fraction), memory behaviour (working set, reuse, stride), sharing/communication, branches. Write ``parallelism present: yes/no, where''.
+\item \textbf{Diagnose}: match the symptom to a root cause (\S\ref{ch:diag}). Confirm with one number (AMAT, CPI, Amdahl, bandwidth, timeline) and rule out one competing explanation.
+\item \textbf{Solution across the whole architecture}: go layer by layer (\S\ref{sec:layers}); one fix per bottleneck; then check what each fix needs elsewhere (\S\ref{sec:knockon}).
+\item \textbf{Static or dynamic?} For each choice, say which and why (\S\ref{sec:staticdyn}).
+\item \textbf{Justify}: why better (mechanism + number), its cost/demerit, rejected alternative with reason.
+\item \textbf{Expected outcome}: what improves, roughly how much, and where the bottleneck moves next (it always moves).
+\end{enumerate}
+
+\begin{key}[One-sentence justification pattern]
+``Because the workload is \underline{X} (evidence: \underline{clue/number}), the bottleneck is \underline{Y}; therefore I choose \underline{feature}, which reduces \underline{CPI term / AMAT term / $T_{comm}$ / $T_{sync}$ / power} by \underline{mechanism}, at the cost of \underline{cost}; it is decided \underline{statically/dynamically} because \underline{reason}; I rejected \underline{alternative} because \underline{constraint}.''
+\end{key}
+
+\textbf{Answer layout (headings to copy):} \textbf{1.} Given \& assumptions $\cdot$ \textbf{2.} Workload analysis (parallelism, order of execution, memory, communication) $\cdot$ \textbf{3.} Why the architecture is not ideal (root cause + evidence) $\cdot$ \textbf{4.} Proposed architecture (table: layer $|$ change $|$ static/dynamic $|$ why) $\cdot$ \textbf{5.} Why this is better (vs.\ alternatives, numbers) $\cdot$ \textbf{6.} Demerits/costs and where the bottleneck moves. A small diagram (PEs + caches + interconnect, or a timeline) earns marks cheaply.
+\textbf{Time per question:} $\approx$10\% reading and underlining clues, 15\% analysis and diagnosis, 45\% solution, 20\% justification, 10\% checklist (\S\ref{sec:checklist}).
+
+\subsection{The layers you can adjust (``the whole architecture'')}\label{sec:layers}
+If you have never designed a processor, this is the menu. A processor design \emph{is} these layers; a complete answer says something about every layer the question touches.
+\small
+\begin{longtable}{L{2.6cm}L{4.6cm}L{8.4cm}}
+\toprule
+\tblhead{\textbf{Layer} & \textbf{What it does} & \textbf{Knobs you can turn (section)}}\\
+\midrule
+\endhead
+Software / work distribution & Splits the program and maps it onto hardware & Partitioning (data/task/pipeline), static vs.\ dynamic scheduling, granularity, data layout, privatisation, loop transformations (\S\ref{ch:pe}, \S\ref{ch:ilp}, \S\ref{ch:mem}) \\
+Front end & Fetches/decodes instructions & Branch predictor, BTB, return stack, fetch/decode width (\S\ref{ch:pipe}) \\
+Core back end & Executes instructions & Pipeline depth, issue width, in-order/OoO (scoreboard/Tomasulo/ROB), number and type of FUs, registers, VLIW vs.\ superscalar (\S\ref{ch:ilp}) \\
+Threads per core & Hides stalls using other threads & Coarse/fine-grained MT, SMT (\S\ref{ch:tlp}) \\
+Data-parallel units & Same op on many data & SIMD width, vector lanes, GPU/SIMT warps, masks (\S\ref{ch:dlp}) \\
+Number/type of PEs & More workers & Cores, heterogeneous (big+small, CPU+GPU) (\S\ref{ch:tlp}, \S\ref{ch:pe}) \\
+Caches & Keep data close & Size, associativity, block, levels, private/shared, victim cache, prefetch, non-blocking/MSHRs (\S\ref{ch:mem}) \\
+Main memory & Bandwidth and latency & Banks/interleaving, width, channels, NUMA placement (\S\ref{ch:mem}) \\
+Interconnect \& coherence & Lets PEs share data & Bus vs.\ network, snooping vs.\ directory, MSI/MESI (\S\ref{sec:coh}) \\
+Synchronisation & Enforces ordering & Locks, barriers, atomics, reductions (\S\ref{sec:sync}) \\
+Power & Energy budget & DVFS, power gating, core count vs.\ width (\S\ref{ch:fund}) \\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\subsection{Master lookup: clue in the question $\rightarrow$ what it implies}
+Underline these keywords in the question first. The columns give the default direction; later sections refine it.
+
+\small
+\begin{longtable}{L{3.6cm}L{6.5cm}L{5.8cm}}
+\toprule
+\tblhead{\textbf{If the scenario says\ldots} & \textbf{Lean towards\ldots} & \textbf{Lean away from\ldots}}\\
+\midrule
+\endfirsthead
+\toprule
+\tblhead{\textbf{If the scenario says\ldots} & \textbf{Lean towards\ldots} & \textbf{Lean away from\ldots}}\\
+\midrule
+\endhead
+Battery / energy / thermal limit / PMD &
+Simple or modest core, small caches, few levels, way prediction, DVFS, power gating, many small cores instead of one huge core &
+Very wide issue, deep speculation, trace cache, aggressive prefetch (ILP techniques are \emph{energy-inefficient}) \\
+Low cost / embedded &
+Simple pipeline, static prediction / delay slot, small direct-mapped cache, VLIW if code is fixed &
+Tomasulo+ROB, SMT, large L2/L3, large BTB \\
+Server, many independent requests, database, web &
+Multicore + multithreading (fine-grained/SMT), large shared LLC, banked memory, non-blocking caches, ECC &
+Spending area on single-thread ILP \\
+Single-thread latency, one big program &
+Wide OoO speculative superscalar (Tomasulo+ROB), strong predictor + BTB + RAS, small fast L1 + big L2, prefetch &
+Coarse-grained MT, VLIW (irregular code), more cores \\
+Same operation on every element (image, matrix, ML, signal) &
+DLP: SIMD/vector/GPU (SIMT); unit-stride/coalesced layout; banked/wide memory (\S\ref{ch:dlp}) &
+More big OoO cores (area spent on control, not arithmetic) \\
+\texttt{if} inside the data-parallel loop &
+Masking/predication, group data so neighbours branch alike, keep divergent part small (\S\ref{sec:divergence}) &
+Assuming full SIMT efficiency \\
+Shared counters, histogram, global sum, ``all threads update'' &
+Privatise per PE + tree reduction; pad to separate cache lines; atomics only at the end (\S\ref{sec:sync}) &
+One global lock or one shared array updated by all \\
+Locks, critical sections, barrier every iteration &
+Finer-grained locks, test-and-test-and-set, fewer barriers (bigger chunks), lock-free reduction &
+Coarse global lock; barrier per tiny step \\
+Tasks of unequal or unknown size &
+Dynamic scheduling (work queue / work stealing), smaller chunks (\S\ref{sec:distrib}) &
+Static equal split (load imbalance) \\
+Producer $\rightarrow$ consumer stages &
+Pipeline parallelism across PEs, balance stage times, queues between stages &
+Ignoring the slowest stage (it sets throughput) \\
+Binary compatibility / legacy software &
+Dynamically scheduled superscalar &
+VLIW \\
+Unpredictable latencies (cache misses) &
+Dynamic scheduling, non-blocking cache, multithreading &
+Static schedules with fixed latencies; VLIW lock-step \\
+Deep pipeline / very high clock &
+Strong branch prediction, BTB, small simple L1, pipelined cache &
+Delayed branch, large associative L1 \\
+High branch frequency &
+2-bit $\rightarrow$ correlating/two-level/gshare, BTB, return stack &
+Predict-not-taken alone, 1-bit predictor \\
+Large working set, poor locality, pointer chasing &
+Multithreading (fine/SMT) to hide latency, large LLC, victim cache &
+Blocking/stream prefetch (need regular patterns) \\
+Streaming data, used once, bandwidth-limited &
+Wide/interleaved memory, more channels, stream prefetch, larger blocks; caches will \emph{not} help (no reuse) &
+Bigger caches; more cores (they share the same bandwidth) \\
+Many cores, data in far memory (NUMA) &
+Place data near the PE that uses it, partition by owner, directory coherence &
+Snooping bus beyond a few cores \\
+Limited die area &
+Multicore of smaller cores, SMT as cheap TLP (Power5: +24\% area) &
+Wide issue \\
+Real-time / predictability &
+Static techniques, scratchpad or small caches\bs &
+Heavy speculation, variable timing\bs \\
+High availability (24/7) &
+Redundancy, ECC; availability $=$ MTTF/(MTTF+MTTR) &
+--- \\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\begin{trap}[Common failure mode]
+Choosing ``the most advanced thing'' for every box, or fixing only one layer. The exam rewards \emph{fit} and \emph{completeness}: a core fix that leaves the memory or synchronisation bottleneck in place gains little, and the professor said explicitly to adjust the whole architecture.
+\end{trap}

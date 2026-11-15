@@ -295,12 +295,9 @@ Streaming/sequential large arrays & Stream-buffer prefetch, moderate block (64\,
 Large matrix multiply & Blocking (tiling) with 3 tiles $\le$ cache & Capacity misses; interchange cannot help both row/column accesses. \\
 OoO core with many outstanding loads & Non-blocking cache + banked memory & Overlap misses; otherwise OoO core is wasted. \\
 L1 hit time limits clock & Small, simple (DM) L1, pipelined writes, VA/translation overlap & Hit time is multiplied across every instruction. \\
-PMD / battery & Two cache levels, way prediction, moderate sizes, no trace cache, selective prefetch & Energy and area; way prediction cuts tag-compare energy. \\
-Server with large working set & L3 (16--64\,MB), high-associativity L2, interleaved/banked memory & Global miss rate matters; capacity misses dominate. \\
 Write-through L1 & Merging write buffer + read priority over writes & Prevent buffer-full stalls and RAW delays. \\
 Large blocks and long block fill & Critical word first \& early restart & CPU resumes when the needed word arrives. \\
 Instruction-fetch bound, taken branches every 5--10 instr. & Trace cache or I-stream buffer; BTB & Fetch bandwidth across taken branches. \\
-Multicore sharing data & Watch coherence (true/false sharing) misses; separate independently-written data into different lines\bs & Coherence misses are a distinct fourth C. \\
 Cache must be tiny but fast & Direct-mapped, small block & Table: DM wins AMAT $\ge$16\,KB; for 4--8\,KB use 2--4 way. \\
 \bottomrule
 \end{longtable}

@@ -1,0 +1,215 @@
+\section{Putting It Together: Scenarios, Dependencies, Checklist}\label{ch:scen}
+
+\subsection{Knock-on effects: what else must change (adjust the whole architecture)}\label{sec:knockon}
+Exam answers lose marks for choosing a feature whose prerequisite is missing, or for fixing one layer and creating a bottleneck in the next. For every change you propose, read its row and add the ``also need'' items to your answer.
+
+\small
+\begin{longtable}{L{4.6cm}L{5.4cm}L{5.4cm}}
+\toprule
+\tblhead{\textbf{If you choose\ldots} & \textbf{You also need\ldots} & \textbf{Otherwise\ldots}}\\
+\midrule
+\endhead
+Non-blocking cache (hit-under-miss) & Out-of-order CPU (scoreboard/Tomasulo), multiple memory banks & Blocking CPU stalls anyway; cannot support multiple outstanding misses \\
+Hardware speculation & Dynamic branch prediction, reorder buffer (commit in order), recovery/flush & No way to undo wrong-path work; imprecise exceptions \\
+Wide issue (superscalar) & Accurate predictor + BTB, more register-file/memory ports, renaming, enough independent instructions & Issue slots idle; clock rate and power suffer \\
+SMT & Out-of-order superscalar core, renaming, larger physical register file, per-thread PC/rename/ROB, cache associativity/size increase & Needless on narrow in-order core; shared-resource conflicts \\
+Predict-taken static scheme & Branch target known early (BTB/early BTA) & No benefit \\
+VLIW & Strong compiler (alias analysis, unrolling, scheduling), no need for binary compatibility & Poor code size/utilisation, lock-step stalls \\
+Hardware prefetch & Spare memory bandwidth & Prefetches compete with demand misses \\
+Compiler prefetch & Non-blocking cache; issue slots & Wasted instructions; stalls \\
+Way prediction / pseudo-associative & Set/column structure; tolerance for variable hit latency (better for L2 than L1 for pseudo) & Pipeline problems when hit time varies \\
+Virtual-address cache & PID tags, anti-aliasing (page colouring), protection bits & Flushes on context switch; synonyms \\
+More cores / PEs & More memory bandwidth (channels/banks), larger shared LLC, scalable coherence (directory beyond a few cores), less sharing in software & Cores starve on the shared bus; coherence and lock traffic grow with $p$ \\
+Wider SIMD / more vector lanes & Proportionally more memory bandwidth, aligned/unit-stride layout, masks for branches & Lanes idle waiting for data or masked off \\
+GPU offload & Data resident on GPU or overlapped transfers, coalesced layout (SoA), enough threads for occupancy, little divergence & PCIe transfer dominates; SMs idle \\
+Larger OoO window (ROB) & Larger PRF, LQ/SQ, issue queue, more branch checkpoints, accurate predictor, non-blocking cache & Stall just moves to the next full structure (Lab 7) \\
+More functional units & Wider issue/wakeup and bypass network, independent instructions of \emph{that} class & No gain unless that class was saturated (Lab 8) \\
+Dynamic task scheduling & Cheap concurrent queue, chunk size tuned, locality awareness & Queue contention; lost cache locality \\
+Privatised per-PE data & Final reduction step, memory per PE, padding to line size & Wrong result without reduction; false sharing if packed \\
+Multithreading for latency hiding & Enough cache capacity/associativity for all threads, more registers & Threads thrash each other's cache \\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\subsection{Connect every concept: the chains examiners look for}\label{sec:connect}
+The professor asks you to ``interconnect'' the concepts. Each chain below is one paragraph in an answer: start at the change, follow the arrows, and say what you do at each arrow.
+\begin{itemize}
+\item \textbf{More PEs} $\rightarrow$ more simultaneous misses $\rightarrow$ shared bandwidth and LLC contention $\rightarrow$ coherence traffic on shared data $\rightarrow$ synchronisation cost $\rightarrow$ Amdahl limit. (Banks/channels, larger LLC, directory, privatise, reduce serial part.)
+\item \textbf{Wider issue} $\rightarrow$ needs independent instructions (ILP) $\rightarrow$ limited by dependences and branches $\rightarrow$ better predictor + larger window (ROB/PRF/LQ/SQ) $\rightarrow$ more outstanding misses $\rightarrow$ non-blocking cache/MSHRs $\rightarrow$ power and clock cost.
+\item \textbf{DLP hardware} $\rightarrow$ many lanes need many operands per cycle $\rightarrow$ memory bandwidth, unit-stride/coalesced layout $\rightarrow$ branches become masks (divergence) $\rightarrow$ latency hidden by warps (occupancy, registers).
+\item \textbf{Deeper pipeline} $\rightarrow$ higher clock $\rightarrow$ larger branch and load penalties $\rightarrow$ dynamic prediction, forwarding $\rightarrow$ more power ($P\propto CV^2f$).
+\item \textbf{Multithreading} $\rightarrow$ hides memory latency $\rightarrow$ threads share caches/TLB $\rightarrow$ more capacity/associativity needed $\rightarrow$ single-thread may slow (priority).
+\item \textbf{Bigger/more associative caches} $\rightarrow$ fewer misses $\rightarrow$ longer hit time (clock) and more power $\rightarrow$ keep L1 small, grow L2/L3 $\rightarrow$ judge by AMAT, not hit rate (Lab 3).
+\item \textbf{Static decisions} $\rightarrow$ need predictable workload $\rightarrow$ cheap hardware, low power; \textbf{dynamic decisions} $\rightarrow$ adapt to data $\rightarrow$ hardware/runtime overhead.
+\end{itemize}
+
+\subsection{Lab evidence you can cite}\label{sec:labs}
+\small
+\begin{longtable}{L{2.4cm}L{7.6cm}L{5.6cm}}
+\toprule
+\tblhead{\textbf{Lab} & \textbf{What we observed} & \textbf{Use it to argue}}\\
+\midrule
+\endhead
+Lab 1: direct-mapped cache simulator & Sequential access governed by block size; repeated access by whether the working set fits; aliasing addresses gave 100\% miss rate with a tiny working set & Conflict misses need associativity/padding, not a bigger cache \\
+Lab 3: three-level hierarchy & Raising L1 associativity fixed a conflict-miss storm, but L2/L3 miss \emph{rates} rose while AMAT and DRAM traffic improved; effects were phase-dependent & Misses move between levels; judge by AMAT/time, not hit rate \\
+Lab 4: victim cache, prefetchers, MSHRs & Stride prefetcher cut L1 miss rate 57.4\%$\rightarrow$23.2\% but was slower (0\% timeliness, pollution); victim cache helped only on a conflict pattern (61.6\% fewer cycles, cutoff at $N-$ways entries); MSHRs: no gain for dependent pointer chase, 8$\times$ for 8 independent streams, plateau at 8 & Fewer misses $\ne$ faster; MLP needs \emph{independent} misses; match the optimisation to the access pattern \\
+Lab 5: cache coherence & True sharing on a 256\,B counter table: CAS retries rose with threads, IPC collapsed, instructions per event flat; bandwidth, capacity, locks ruled out; per-thread local tables fixed it & Shared writable data destroys scaling; privatise + reduce; rule out alternatives explicitly \\
+Lab 6: x86 decoder & 6-instruction/cycle decode ceiling limited compact code, not 32\,B/cycle; microcode-ROM instructions dropped decode to 1 lane; fusion depended on alignment & The front end can be the bottleneck of a wide core \\
+Lab 7: OoO allocation & Stalls came from ROB/PRF/IQ/LQ/SQ/checkpoints; enlarging one moved the stall to the next (PRF $\rightarrow$ retire width); window limited by branch accuracy and true dependences & Size structures in balance; bigger windows need independent work \\
+Lab 8: OoO scheduler & Ready $\ne$ issued; time set by the longest dependence chain unless a unit class saturates; 48/96-entry scheduler, 8-wide issue, 4 ALUs: same 123 cycles; fixing loads moved the limit to the multiplier & Add resources only of the saturated class; the bottleneck moves \\
+Lab 10: producer--consumer bypass & One recurrence: 0.27 IPC vs.\ $\approx$3 for independent work (11$\times$); about 11 interleaved chains needed to fill the ports & Break dependence chains (multiple accumulators, threads); FUs cannot fix a recurrence \\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\subsection{Worked scenarios (model answers)}
+
+\subsubsection*{Scenarios 1--5 --- Reference designs by machine class (use when the question names the class)}
+{\footnotesize
+\begin{longtable}{L{1.45cm}L{2.8cm}L{2.8cm}L{2.8cm}L{2.8cm}L{2.8cm}}
+\toprule
+\tblhead{ & \textbf{1. Phone / PMD} & \textbf{2. Web/DB server} & \textbf{3. Desktop, 1 thread} & \textbf{4. Scientific FP} & \textbf{5. Embedded}}\\
+\midrule
+\endhead
+Goal & Energy per task, real-time & Throughput, availability, cost/request & Single-thread latency, price-performance & FP throughput, huge arrays & Price \\
+Core & 2-way in-order or modest OoO, 5--8 stages & Moderate 4-issue OoO, or simpler fine-grained MT cores & 4-wide Tomasulo + ROB speculative & Pipelined FP add/mult; pipelined or duplicated divider; unrolling + software pipelining (VLIW OK) or Tomasulo if latencies vary & 5-stage in-order, forwarding, branch resolved in ID \\
+Branch & Small 2-bit BHT + small BTB + RAS & Good dynamic predictor & Two-level/gshare + BTB + RAS & BTFNT or 2-bit (loops) & Static (not-taken/BTFNT) + 1 delay slot \\
+L1 & 32--64\,KB, 2-way + way prediction & Private & 32--64\,KB, low associativity, 64\,B & Blocking, interchange, fusion; stream prefetch; non-blocking & Small direct-mapped I/D \\
+L2 / L3 & 256\,KB L2, no L3 & Large shared L3 (16--64\,MB) & 256\,KB L2 + 8--32\,MB L3 & 64\,B blocks, prefetch & None or small \\
+Memory & Interleaved low-power DRAM & 32--256\,GB, banked, non-blocking, ECC & Non-blocking + HW prefetch & Wide / heavily interleaved & Simple \\
+Threads, cores & Several small cores, no SMT & Many cores + 2--4 SMT/FGMT threads & 2--4 cores, optional SMT with priority & Multicore + SIMD/vector/GPU & One core \\
+Power / other & DVFS, power gating & Coherence-aware software & --- & Roofline check first & VLIW only for fixed numeric firmware \\
+Rejected & Wide speculative core, trace cache, big L3, VLIW & Very wide single core, coarse MT only, deep speculation & VLIW, coarse MT, very wide issue & Big predictor, heavy speculation, SMT (FP gains least) & Tomasulo+ROB, BTB, trace/victim cache \\
+\bottomrule
+\end{longtable}}
+\textbf{Key reasons to quote:} ILP techniques are energy-inefficient (PMD); DB/web are the best multicore beneficiaries and ILP of one thread leaves most units idle (server); 3--6 issue is the practical ILP sweet spot, a deep pipe needs a strong predictor (desktop); unrolling took the FP loop from 9 to 3.5 cycles/iteration, interchange cut misses by 93.75\% (scientific); static techniques need no predictor memory and software cache optimisations cost no hardware (embedded).
+\subsubsection*{Exam-style model answers: a given architecture that is not working ideally}
+Scenarios 6--8 follow the exact format the professor described (architecture + workload + non-ideal behaviour) and the answer layout of \S\ref{sec:8step}. Numbers are constructed for practice.
+
+\subsubsection*{Scenario 6 --- Multicore analytics that gets slower with more cores}
+\textbf{Given.} 8-core shared-memory chip, private 32\,KB L1 per core, shared 8\,MB L2, MESI snooping bus, 64\,B lines. Workload: 80\,M independent events streamed from memory (16\,B each); for each event a core parses it and atomically increments one of 16 shared 8-byte counters. \textbf{Symptom:} 1 core 10\,s; 4 cores 6\,s; 8 cores 7.7\,s (slower than 4).
+
+\textbf{1. Assumptions.} A1: events cost the same. A2: input read once from DRAM. A3: counters are one contiguous 128\,B array (2 cache lines).
+
+\textbf{2. Workload analysis.} Per-event work is independent (TLP/DLP, parallel fraction $\approx1$). The counter update is a \emph{reduction} (associative, commutative), so the order of increments does not matter: it can be done privately and combined later. Memory: 1.28\,GB streamed once (spatial locality only); counters 128\,B (tiny, fit anywhere).
+
+\textbf{3. Why not ideal.} Every increment needs the counter line in M state. With 8 writers on 2 lines, almost every increment is a coherence miss: invalidate other copies, transfer the line over the bus, retry the atomic. Updates to one line are serialised, so the effective serial fraction \emph{grows with} the core count (true sharing, plus false sharing among the 8 counters in one line). Ruled out: capacity (128\,B), bandwidth (1.28\,GB in 7.7\,s $\approx$0.17\,GB/s, far below DRAM bandwidth), locks (none used). Same signature as Lab 5 (CAS retries up, IPC down, instructions per event flat).
+
+\textbf{4. Proposed architecture.}
+{\small
+\begin{longtable}{L{2.6cm}L{6.0cm}L{1.3cm}L{5.6cm}}
+\toprule
+\tblhead{\textbf{Layer} & \textbf{Change} & \textbf{S/D} & \textbf{Why}}\\
+\midrule
+\endhead
+Distribution & Block partition: core $k$ takes events $[k\cdot10\text{M},(k{+}1)\cdot10\text{M})$ & Static & Equal costs, contiguous data (prefetch-friendly), zero scheduling overhead \\
+Aggregation & Private 16-counter array per core, aligned and padded to its own lines & Static & Updates hit in own L1 in M/E state: no coherence traffic in the hot loop \\
+Synchronisation & One barrier, then tree reduction (3 steps for 8 cores) & Static & 80\,M atomics $\rightarrow$ 1 barrier + 7 merges \\
+Caches/coherence & Unchanged MESI; E state makes first write silent & --- & Sharing removed, so the protocol cost disappears \\
+Memory & Hardware stream prefetch for the input & Dynamic & Regular sequential pattern; keeps the bus busy \\
+Core & Unchanged (no wider core, no SMT) & --- & Not ILP-bound; problem was sharing \\
+\bottomrule
+\end{longtable}}
+\textbf{5. Why better.} Coherence transfers drop from $O(\text{events})$ to $O(p)$. Rejected: a lock (serialises everything, worse); padding alone (fixes false sharing, but all cores still write the \emph{same} counters: true sharing remains); faster interconnect or directory (each transfer cheaper, but still 80\,M of them); more cores (more contention).
+\textbf{6. Demerits / next bottleneck.} $8\times128$\,B extra memory, a merge step, code change. Expect near 8$\times$ ($\approx$1.3\,s) until input bandwidth binds ($1.28\,\text{GB}/1.3\,\text{s}\approx1$\,GB/s, still fine).
+
+\subsubsection*{Scenario 7 --- GPU image filter at 8\% of peak}
+\textbf{Given.} GPU with 40 SMs, 32-thread warps, PCIe 16\,GB/s to the host. Workload: per-frame filter on a 3840$\times$2160 RGBA image (4\,B/pixel, $\approx$33\,MB, row-major). Kernel: thread $i$ processes row $i$, walking across its columns. 30\% of pixels (randomly located ``edge'' pixels) need a 50-instruction path; others need 5. Each frame is copied in, processed, copied out. \textbf{Symptom:} 8\% of peak; kernel 6\,ms, copies $\approx$2\,ms each way.
+
+\textbf{1. Assumptions.} A1: up to 48 resident warps per SM. A2: the filter reads a $3\times3$ neighbourhood.
+
+\textbf{2. Workload analysis.} Pure DLP: each output pixel is independent (no order between pixels); neighbourhoods overlap (reuse); the branch is data-dependent.
+
+\textbf{3. Why not ideal (four causes).} (a) \emph{Occupancy}: 2160 threads $=68$ warps for 40 SMs ($<2$ per SM, vs.\ 48 possible), so memory latency cannot be hidden by switching warps. (b) \emph{Uncoalesced access}: at each step the 32 threads of a warp read 32 different rows, 15\,KB apart: up to 32 transactions instead of one. (c) \emph{Divergence}: $P(\text{no edge pixel in a warp})=0.7^{32}\approx0$, so every warp runs both paths: 55 instructions vs.\ 18.5 useful (34\% SIMD efficiency, \S\ref{sec:divergence}). (d) \emph{Transfer}: 4\,ms of copies per 6\,ms kernel.
+
+\textbf{4. Proposed architecture.}
+{\small
+\begin{longtable}{L{2.6cm}L{6.0cm}L{1.3cm}L{5.6cm}}
+\toprule
+\tblhead{\textbf{Layer} & \textbf{Change} & \textbf{S/D} & \textbf{Why}}\\
+\midrule
+\endhead
+Work mapping & One thread per pixel, \texttt{threadIdx.x} along the row, $16\times16$ blocks & Static & 8.3\,M threads $\Rightarrow$ full occupancy; neighbours in a warp read neighbouring addresses (coalesced) \\
+On-chip memory & Each block loads its tile + 1-pixel halo into shared memory once & Static & $3\times3$ neighbourhood reused 9$\times$ from scratchpad: higher arithmetic intensity \\
+Divergence & Pass 1 classifies pixels and writes a compacted list of edge pixels (prefix sum); pass 2 runs the 50-instruction path on full warps & Dynamic & Decision depends on data, known only at run time; warps become uniform \\
+Latency hiding & Hardware warp scheduler with many warps & Dynamic & Fine-grained MT covers DRAM latency \\
+Host link & Double buffering: copy frame $k{+}1$ while computing frame $k$; keep intermediate data on GPU & Static & Copies overlap compute instead of adding to it \\
+Sync & Barrier only inside a block (after tile load); atomics only for the list counter, aggregated per warp & Static & No cross-block barrier needed \\
+\bottomrule
+\end{longtable}}
+\textbf{5. Why better.} Rejected: a bigger GPU (more SMs, same waste per warp); predication alone (still pays both paths); an 8-core CPU with 8-wide SIMD (64 lanes vs.\ thousands; but it avoids PCIe, so it is the right choice only for small images).
+\textbf{6. Demerits / next bottleneck.} Extra classification pass and list memory; one frame of added latency from double buffering; the kernel becomes memory-bandwidth bound (check with the roofline, \S\ref{sec:roofline}).
+
+\subsubsection*{Scenario 8 --- Wide core, low IPC: the bottleneck moves}
+\textbf{Given.} 4-wide OoO core at 3\,GHz, 2 pipelined FMA units (latency 4), 32\,KB L1, 1\,MB L2, DRAM 20\,GB/s. Workload: \texttt{for i: sum += a[i]*b[i]} over two 64\,M-element double arrays (512\,MB each). \textbf{Symptom:} IPC $\approx$1.25 instead of $\approx$4. The vendor proposes an 8-wide core.
+
+\textbf{Analysis and diagnosis.} 5 instructions per iteration (2 loads, FMA, increment, branch). Each FMA needs the previous \texttt{sum}: a loop-carried chain of 4 cycles per iteration, so $5/4=1.25$ IPC whatever the width (Lab 8, Lab 10). The 8-wide core changes nothing.
+
+\textbf{Fix and where the bottleneck moves.}
+(1) \emph{Static, compiler}: unroll and use $4\times2=8$ independent partial sums (latency $\times$ units), combined at the end (FP reassociation slightly changes rounding: state it). Now 2 FMA/cycle $\Rightarrow$ 6\,G iterations/s possible.
+(2) \emph{Memory check}: each iteration moves 16\,B; 20\,GB/s allows only 1.25\,G iterations/s. Before: 0.75\,G/s. So the gain is $1.25/0.75\approx1.7\times$, not 8$\times$: the workload is now \textbf{bandwidth-bound} (AI $=2/16=0.125$ FLOP/B). SIMD would add nothing.
+(3) \emph{Whole architecture}: more memory channels/banks, hardware stream prefetch (dynamic, regular pattern) to reach peak bandwidth; split across cores/sockets with their own memory, each with a private partial sum and a final reduction; caches do not help (no reuse: 1\,GB read once), unless the program can be fused with other passes over the same data to raise AI.
+\textbf{Why better:} targets the actual binding terms in order (recurrence, then bandwidth). Rejected: 8-wide core (neither term), bigger cache (no reuse), SMT alone (second thread breaks the chain but shares the same bandwidth).
+
+\subsubsection*{Scenario 9 --- Numeric cache comparison (practice, constructed numbers)}
+\textbf{Problem.} L1 miss penalty 40\,cc, hit time 1\,cc. Option A: 16\,KB direct-mapped, miss rate 3.0\%. Option B: 16\,KB 2-way, miss rate 2.6\%, clock stretched by 10\% (slide: 2-way $\times1.10$). Option C: option A plus a 4-entry victim cache removing 40\% of misses (slide range 20--95\%). Which is best?
+
+\begin{ex}[Solution (AMAT in direct-mapped cycles)]
+A: $1+0.030\times40=2.20$. B: $1.10+0.026\times40=2.14$ --- only 2.7\% better \emph{in AMAT}, but the 10\% longer clock also slows \emph{every non-memory instruction}, so B is a net loss. C: $1+0.030\times0.6\times40=1.72$ (assuming the victim probe hides inside the normal miss path, per the slide). \textbf{Choose C}: keeps the direct-mapped hit time (clock) and removes conflict misses cheaply. Quote the slide table: at 16\,KB, 1-way has the lowest AMAT.
+\end{ex}
+
+\subsubsection*{Scenario 10 --- Numeric branch-handling comparison (practice, constructed numbers)}
+\textbf{Problem.} Deep pipeline (R4000-like): branch penalty 3 cycles, 20\% of instructions are branches, 60\% of branches are taken, base CPI 1.0. Compare (a) stall always, (b) predict-not-taken, (c) 2-bit BHT+BTB 90\% accurate, (d) correlating/two-level predictor 95\% accurate.
+
+\begin{ex}[Solution]
+\begin{center}
+\small
+\begin{tabular}{L{6cm}C{4.2cm}C{2.4cm}}
+\toprule
+\tblhead{\textbf{Scheme} & \textbf{Extra CPI} & \textbf{CPI}}\\
+\midrule
+(a) Stall always & $0.20\times3=0.60$ & 1.60 \\
+(b) Predict not taken (wrong when taken) & $0.20\times0.60\times3=0.36$ & 1.36 \\
+(c) 2-bit BHT + BTB, 90\% & $0.20\times0.10\times3=0.06$ & 1.06 \\
+(d) Two-level, 95\% & $0.20\times0.05\times3=0.03$ & 1.03 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Speedup of (c) over (a): $1.60/1.06\approx1.5$; (d) over (c): $\approx1.03$. \textbf{Conclusion:} in a deep pipe the dynamic predictor is mandatory; the extra complexity of (d) is justified only if area allows (diminishing returns), or if branch frequency is higher or the pipeline deeper.
+\end{ex}
+
+\subsection{Conflict resolution: when two constraints disagree}
+\begin{center}
+\small
+\begin{tabular}{L{5.2cm}L{10.2cm}}
+\toprule
+\tblhead{\textbf{Conflict} & \textbf{Resolution}}\\
+\midrule
+High clock vs.\ low CPI & Deeper pipeline raises clock but adds load/branch delay; compensate with prediction and forwarding. Decide by the \emph{product} IC$\times$CPI$\times T_{clk}$. \\
+Low miss rate vs.\ fast hit & Large/associative cache cuts misses but stretches the clock; use small DM L1 + big associative L2; victim cache/way prediction as compromises. \\
+Throughput vs.\ single-thread latency & Fine-grained MT/SMT raise throughput but slow a thread; add priority or fewer threads; or heterogeneous cores. \\
+Performance vs.\ power & ILP/speculation/prefetch cost energy; prefer TLP/multicore and DVFS; energy per task is the right metric. \\
+Compiler simplicity vs.\ hardware simplicity & Dynamic scheduling = simple compiler, complex hardware; VLIW = opposite. Choose by compatibility and cost. \\
+Bandwidth vs.\ latency & Buy bandwidth (wide/interleaved memory, banks); hide latency (OoO, non-blocking, MT, prefetch). \\
+Compatibility vs.\ simplicity & Compatibility $\Rightarrow$ superscalar; fixed product $\Rightarrow$ VLIW. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Final ten-minute exam checklist}\label{sec:checklist}
+\begin{enumerate}[leftmargin=*]
+\item Did I write numbered \textbf{assumptions} for everything the question did not give?
+\item Did I explain \textbf{why the problem occurs} (mechanism + a number + one alternative ruled out), before proposing anything?
+\item Did I state whether \textbf{parallelism is present}, which kind, the \textbf{order of execution} (dependences, serial part, reductions), and whether \textbf{the memory hierarchy will work}?
+\item Did I say how the work is \textbf{distributed over the PEs}, with timing, and what \textbf{communication and synchronisation} it needs?
+\item Did I mark each choice \textbf{static or dynamic} and say why?
+\item Did I touch \textbf{every layer} the question involves and check knock-on effects (\S\ref{sec:knockon})?
+\item Did I give \textbf{benefits and demerits} and say \textbf{why my solution beats at least two alternatives}? Did I cite a \textbf{lab} finding?
+\item Did I state the machine class and its priority (energy / cost / throughput / availability / single-thread)?
+\item For \emph{every} block (core, predictor, L1, L2/L3, memory, threads) did I give a choice \emph{and} a reason tied to a constraint?
+\item Did I give at least one number (AMAT, CPI, stalls/instr, speedup)?
+\item Did I check feature dependencies (Section above)? (OoO $\Rightarrow$ non-blocking; speculation $\Rightarrow$ ROB+predictor; SMT $\Rightarrow$ OoO.)
+\item Did I state costs (area, power, clock, complexity) of each choice?
+\item Did I list rejected alternatives and why?
+\item If the scenario hints at compatibility, did I avoid VLIW (or justify)?
+\end{enumerate}

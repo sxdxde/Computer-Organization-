@@ -1,0 +1,56 @@
+\section{Cards E: Power, Energy, Area, Reliability}\label{grp:power}
+\begin{multicols}{2}
+\card{E1}{DVFS (dynamic voltage-frequency scaling)}{Dynamic}
+\fx{Energy/power too high for battery or thermal budget.}
+\fh{Lower $V$ and $f$ when full speed is not needed. Dynamic power $=\tfrac12CV^2f$; energy per switch $=\tfrac12CV^2$.}
+\fu{Battery, thermal cap, bursty load, cores throttling.}
+\fb{Lowering clock alone: it cuts power but \emph{not} energy per task (slide); lowering $V$ cuts energy via $V^2$.}
+\fa{Constant full load or hard real-time (use fixed V/f: static, predictable).}
+\fw{Slower at low settings; transition latency.}
+\fn{Per-core voltage/clock domains; OS/firmware governor.}
+\fq{If $V$ scales with $f$, power $\propto f^3$: $0.8\times$ clock $\Rightarrow\approx0.51\times$ power\bs.}
+\fj{Because [load is bursty / battery-limited], DVFS lowers $V$ in idle phases, cutting energy per task by the $V^2$ term, which clock gating alone cannot.}
+
+\card{E2}{Power gating, turning off idle units/cores}{Dynamic}
+\fx{Static (leakage) power $=I_{static}\times V$, which grows with transistor count.}
+\fh{Cut supply to idle blocks/cores; low-power DRAM states.}
+\fu{Many cores often idle, PMD, large caches mostly unused.}
+\fb{DVFS for idle blocks: a block at low V still leaks; gating removes it.}
+\fw{Wake-up latency; state must be saved.}
+\fn{Wake-up policy; save/restore of state.}
+\fj{Idle [cores/units] still leak; gating them removes static power, which DVFS does not.}
+
+\card{E3}{Many small cores (or big + small) instead of one huge core}{Static}
+\fx{Power wall, area cost, ILP saturation.}
+\fh{Spend transistors on several simpler cores; optionally a few big cores for serial parts and many small ones for parallel parts\bs.}
+\fu{Threaded/parallel software, area or power limit, throughput goal.}
+\fb{One wide core: ILP saturates at 3--6 issue and ILP hardware is energy-inefficient; big dies cost disproportionately more (yield). Two slower cores can beat one fast core on throughput per watt.}
+\fa{Software is serial (Amdahl): then keep one strong core.}
+\fw{Serial phases run slower on small cores; coherence, sync and shared-bandwidth costs grow with core count.}
+\fn{Threads/tasks to run; memory bandwidth and coherence for all cores.}
+\fq{Yield $\propto(1+\text{defects}\times\text{area})^{-N}$, $N=11.5$--15.5: bigger die $\Rightarrow$ much costlier.}
+\fj{Because the workload has [N independent tasks] and the budget is [power/area], I use [k] small cores rather than one wide core whose extra issue slots would stay idle.}
+
+\card{E4}{Dependability: redundancy, ECC}{Static}
+\fx{Downtime and memory errors (servers, 24/7).}
+\fh{Error-correcting codes on memory/caches; redundant components; fast repair.}
+\fu{Servers, 24/7 services, large DRAM capacity.}
+\fw{Extra bits, area; ECC harder with wide memory (partial writes need read-modify-write).}
+\fq{Availability $=\text{MTTF}/(\text{MTTF}+\text{MTTR})$.}
+\fj{For 24/7 service, availability $=$ MTTF/(MTTF+MTTR); ECC and redundancy raise MTTF and cut MTTR.}
+
+\columnbreak
+\begin{key}[Technology-trend arguments (quote to justify direction)]
+\begin{itemize}
+\item \textbf{Memory wall:} processor bandwidth improved 10{,}000--25{,}000$\times$ but memory only 300--1200$\times$; latency 30--80$\times$ vs.\ 6--8$\times$. Bandwidth is easy to buy, latency is not $\Rightarrow$ caches, banks, latency hiding.
+\item \textbf{Wires do not scale} like transistors $\Rightarrow$ huge centralised structures (wide issue, big CDB, many ports) hurt the clock $\Rightarrow$ smaller replicated cores.
+\item \textbf{Single-thread growth ended} ($\sim$2003); ILP cannot be pushed further $\Rightarrow$ explicit DLP/TLP/RLP.
+\item \textbf{Energy per task} is the right metric, not power.
+\item \textbf{Focus on the common case} (Amdahl): speed up what dominates time.
+\end{itemize}
+\end{key}
+
+\begin{key}[Machine classes: what each optimises]
+\textbf{PMD}: energy, real-time. \textbf{Desktop}: price-performance, single thread. \textbf{Server}: availability, scalability, throughput. \textbf{Cluster/WSC}: request-level parallelism, cost and energy per request. \textbf{Supercomputer}: FP and fast network. \textbf{Embedded}: price. Full reference designs: \pg{sec:classes}.
+\end{key}
+\end{multicols}

@@ -1,0 +1,114 @@
+\documentclass[9pt,a4paper]{extarticle}
+\usepackage[margin=1.0cm,top=1.3cm,bottom=1.2cm,headsep=0.25cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage[dvipsnames,table]{xcolor}
+\usepackage{booktabs,longtable,array,tabularx}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage[colorlinks=true,linkcolor=NavyBlue,urlcolor=NavyBlue,citecolor=NavyBlue]{hyperref}
+
+\setlist{itemsep=1pt,topsep=3pt,parsep=0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+\renewcommand{\arraystretch}{1.05}
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{2}
+\emergencystretch=2em
+
+% ---------- column helpers ----------
+% widths are scaled by 1.12 to fill the 19 cm text width
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{\dimexpr#1*112/100\relax}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{\dimexpr#1*112/100\relax}}
+\setlength{\tabcolsep}{4pt}
+% light zebra striping on every table so rows are easy to follow
+\rowcolors{2}{black!4}{white}
+
+% ---------- colours ----------
+\definecolor{pickc}{HTML}{1B7F3B}
+\definecolor{avoidc}{HTML}{B3261E}
+\definecolor{trapc}{HTML}{C26A00}
+\definecolor{exc}{HTML}{1F5FA8}
+\definecolor{keyc}{HTML}{555555}
+\definecolor{decc}{HTML}{6A2C91}
+\definecolor{hdrc}{HTML}{E8EEF7}
+
+% ---------- boxes (no external packages: lrbox + fcolorbox) ----------
+\newsavebox{\cboxbin}
+\setlength{\fboxsep}{3pt}
+\setlength{\fboxrule}{0.8pt}
+\newenvironment{cbox}[3]{%
+  \par\vspace{2pt}\noindent
+  \def\cboxfc{#1}\def\cboxbg{#2}%
+  \begin{lrbox}{\cboxbin}\begin{minipage}{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}
+  \setlength{\parskip}{3pt}\textbf{\textcolor{#1}{#3}}\ \ignorespaces
+}{%
+  \end{minipage}\end{lrbox}\fcolorbox{\cboxfc}{\cboxbg}{\usebox{\cboxbin}}\par\vspace{2pt}}
+
+\newenvironment{pick}[1][Choose it when]{\begin{cbox}{pickc}{pickc!6}{#1:}}{\end{cbox}}
+\newenvironment{avoid}[1][Do NOT choose it when]{\begin{cbox}{avoidc}{avoidc!5}{#1:}}{\end{cbox}}
+\newenvironment{trap}[1][Exam trap]{\begin{cbox}{trapc}{trapc!7}{#1:}}{\end{cbox}}
+\newenvironment{ex}[1][Worked example]{\begin{cbox}{exc}{exc!5}{#1.}}{\end{cbox}}
+\newenvironment{key}[1][Key facts]{\begin{cbox}{keyc}{black!4}{#1.}}{\end{cbox}}
+\newenvironment{dec}[1][Decision rule]{\begin{cbox}{decc}{decc!5}{#1:}}{\end{cbox}}
+\definecolor{profc}{HTML}{00695C}
+\newenvironment{prof}[1][From the professor]{\begin{cbox}{profc}{profc!6}{#1:}}{\end{cbox}}
+
+% ---------- small helpers ----------
+% source tag: which deck(s) to open in the exam
+% slide-source tags are hidden in the exam print (slides are not allowed in the exam);
+% restore the line below to show them again
+% \newcommand{\src}[1]{\par\vspace{-2pt}\hfill{\footnotesize\itshape\textcolor{gray}{Slides: #1}}\par}
+\newcommand{\src}[1]{\ignorespaces}
+% material NOT stated in the slides (general knowledge / my derivation) -- verify before relying
+\newcommand{\bs}{\textsuperscript{\textcolor{avoidc}{$\dagger$}}}
+\newcommand{\cc}{\,cc}
+\newcommand{\AMAT}{\mathrm{AMAT}}
+\newcommand{\CPI}{\mathrm{CPI}}
+
+\newcommand{\tblhead}[1]{\rowcolor{hdrc}#1}
+
+% ---------- header/footer ----------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\itshape Processor Design Exam Playbook}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+
+\title{\LARGE\bfseries Processor Design Exam Playbook\\[2pt]
+\normalsize Which architectural feature to choose, for which scenario, and why}
+\author{}
+\date{}
+\usepackage{etoolbox}
+\makeatletter\patchcmd{\@maketitle}{\vskip 2em}{\vskip 0pt}{}{}\makeatother
+
+\begin{document}
+\maketitle
+
+\begin{center}\begin{minipage}{0.95\textwidth}\small
+\noindent This is an open-book \emph{decision manual}. The exam gives a processor architecture, a workload, and a situation where the architecture is not working ideally; you diagnose why and redesign the whole architecture with justification. \textbf{How to use it in the exam:} (1) follow the 8-step method (\S\ref{sec:8step}) and the professor's pointer list (\S\ref{sec:pointers}); (2) underline clues and look them up in the master lookup (end of \S\ref{ch:method}); (3) find the symptom in \S\ref{sec:symptoms} to get the root cause and fix; (4) open the concept section it points to for detail and numbers; (5) check knock-on effects (\S\ref{sec:knockon}) and run the checklist (\S\ref{sec:checklist}). Scenarios 6--8 in \S\ref{ch:scen} are model answers in the exam format.
+Every concept section follows the same pattern: a \textbf{decision map} (situation $\rightarrow$ feature), each feature with \textbf{what it fixes / what it costs / when it wins / when it loses}, \textbf{numbers you can quote}, and \textbf{exam traps}.
+
+\medskip
+\noindent\textbf{Conventions.}
+A red dagger\bs{} marks something that is \emph{not} stated in the slides (general knowledge or arithmetic on slide numbers); prefer slide wording where both exist. Sections~\ref{ch:dlp} and~\ref{ch:pe} come from the textbook because the professor named those topics.
+\end{minipage}\end{center}
+
+
+\input{ch0_method}
+\input{ch0b_diagnose}
+\input{ch1_fundamentals}
+\input{ch2_pipeline_branch}
+\input{ch3_ilp}
+\input{ch4_memory}
+\input{ch5_tlp}
+\input{ch5b_dlp}
+\input{ch5c_pe}
+\input{ch6_scenarios}
+\input{appA_formulas}
+\input{appB_sources}
+
+\end{document}

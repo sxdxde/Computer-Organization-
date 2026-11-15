@@ -72,3 +72,46 @@ General SMT gain & up to 30\% \\
 \bottomrule
 \end{tabular}
 \end{center}
+
+\subsection{Parallel execution, DLP and communication}
+\begin{center}
+\small
+\begin{tabular}{L{5.0cm}L{10.4cm}}
+\toprule
+\tblhead{\textbf{Item} & \textbf{Formula}}\\
+\midrule
+Amdahl / Gustafson & $S=1/[(1-f)+f/p]$ (limit $1/(1-f)$); $S=(1-f)+fp$ \\
+Efficiency; imbalance & $E=S/p$; imbalance $=\max_i W_i/\text{avg}_i W_i$ \\
+Parallel time & $T_{par}=T_{serial}+\max_i(W_i/\text{speed}_i)+T_{comm}+T_{sync}$ \\
+Work--span & $T_p\ge\max(T_1/p,\,T_\infty)$; parallelism $=T_1/T_\infty$ \\
+Tree reduction & $\log_2 p$ combine steps \\
+Message time & latency $+$ size/bandwidth \\
+Grid boundary per PE ($N\times N$) & strips $\approx2N$; blocks $\approx4N/\sqrt{p}$ \\
+Roofline & $\min(\text{peak FLOP/s},\ \text{AI}\times\text{BW})$, AI $=$ FLOPs/DRAM bytes \\
+Vector time & convoys $\times\ n/L$ + start-up; strip-mine when $n>$ MVL \\
+Bank conflicts & unit stride needs banks $\ge$ busy time; stride $s$ conflicts if banks$/\gcd(s,\text{banks})<$ busy time \\
+SIMT efficiency & active lanes / 32; divergent warp time $\approx T_{if}+T_{else}$ \\
+Occupancy & resident warps / max warps per SM (limited by registers, shared memory, block size) \\
+Independent accumulators to hide latency & latency $\times$ number of pipelined units (e.g.\ $4\times2=8$) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Typical values for writing assumptions}\label{sec:typical}
+Use these only when the question does not give a value, and label them as assumptions.\bs
+\begin{center}
+\small
+\begin{tabular}{L{5.0cm}L{10.4cm}}
+\toprule
+\tblhead{\textbf{Item} & \textbf{Typical value}}\\
+\midrule
+Cache line & 64\,B \\
+L1 / L2 / L3 & 32--64\,KB, 4--8-way, 1--4 cycles / 256\,KB--2\,MB, 8--16-way, $\approx$10--15 cycles / 8--64\,MB shared, $\approx$30--50 cycles \\
+DRAM latency; bandwidth & 60--100\,ns ($\approx$200--300 cycles at 3\,GHz); 20--50\,GB/s per socket (CPU), several hundred GB/s to TB/s (GPU) \\
+Branch misprediction penalty & 10--20 cycles on a deep OoO core; 1--3 on a short in-order pipe \\
+Core-to-core line transfer & tens of cycles on-chip; $\sim$100+ cycles across sockets \\
+GPU & warp 32 threads; tens of resident warps per SM; PCIe 16--32\,GB/s \\
+Issue width & 2 (embedded), 4--6 (desktop/server OoO) \\
+\bottomrule
+\end{tabular}
+\end{center}

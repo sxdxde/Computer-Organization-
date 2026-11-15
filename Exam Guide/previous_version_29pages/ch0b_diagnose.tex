@@ -1,0 +1,120 @@
+\section{Diagnose: Why Is the Architecture Not Working Ideally?}\label{ch:diag}
+
+\subsection{The bottleneck principle}
+Performance is set by the \emph{tightest} of these limits; the ``non-ideal situation'' in the question is always one of them binding:
+\[
+T \;\ge\; \max\Big(\underbrace{\tfrac{\text{ops}}{\text{peak ops/s}}}_{\text{compute}},\;
+\underbrace{\tfrac{\text{bytes}}{\text{bandwidth}}}_{\text{memory}},\;
+\underbrace{\text{critical path}}_{\text{dependences}},\;
+\underbrace{\text{serial part}}_{\text{Amdahl}}\Big) \;+\; T_{comm}+T_{sync}+T_{imbalance}
+\]
+Your diagnosis names the binding term and proves it with a number. Your solution shrinks that term, then you check which term binds next (\emph{the bottleneck moves}: Lab 8, \S\ref{sec:labs}).
+
+\subsection{Symptom $\rightarrow$ root cause $\rightarrow$ fix $\rightarrow$ why it is better}\label{sec:symptoms}
+\small
+\begin{longtable}{L{3.0cm}L{4.1cm}L{4.4cm}L{4.0cm}}
+\toprule
+\tblhead{\textbf{Symptom / clue} & \textbf{Why it happens (root cause)} & \textbf{Fix (concepts to address)} & \textbf{Why better than alternatives}}\\
+\midrule
+\endfirsthead
+\toprule
+\tblhead{\textbf{Symptom / clue} & \textbf{Why it happens} & \textbf{Fix} & \textbf{Why better}}\\
+\midrule
+\endhead
+Speedup flattens as PEs are added (e.g.\ 8 cores $\rightarrow$ 2.5$\times$) & (a) serial fraction (Amdahl); (b) shared memory bandwidth saturated; (c) sync/communication overhead grows with $p$. Tell apart: some PEs idle $\Rightarrow$ (a)/imbalance; all busy but stalled on memory $\Rightarrow$ (b); time in locks/barriers $\Rightarrow$ (c) & (a) parallelise or overlap the serial phase; (b) raise arithmetic intensity (blocking, fusion), more channels/banks, larger shared LLC; (c) privatise + reduce, fewer barriers, coarser tasks (\S\ref{ch:pe}) & Adding PEs attacks none of these; each fix targets the term that actually binds (Amdahl: $f=0.9 \Rightarrow$ max 10$\times$ however many PEs) \\
+Gets \emph{slower} with more threads & Coherence ping-pong: true sharing (all write one counter) or false sharing (different variables, same line); lock contention; shared-cache thrashing & Privatise per thread, pad to line size, reduce at end; finer locks; partition or enlarge shared cache (\S\ref{sec:coh}, \S\ref{sec:sync}) & Removes invalidations per update instead of buying faster interconnect. Lab 5: IPC collapsed while instruction count stayed flat \\
+Some PEs idle while others work & Load imbalance: static equal split of unequal tasks; or PEs wait on dependences & Dynamic scheduling (work queue / stealing), smaller chunks, cyclic distribution (\S\ref{sec:distrib}) & $T_{par}=\max$ PE time; balancing lowers the max. Dynamic adapts to unknown task sizes \\
+Low IPC on a wide OoO core, few cache misses & Long dependence chain (loop-carried recurrence): only one op in flight; or one FU class saturated & Break the chain: multiple accumulators, unroll, reassociate; add units only of the saturated class; SMT to bring independent work (\S\ref{ch:ilp}) & Wider issue/larger window does nothing (Lab 8: 48/96-entry scheduler, 8-wide issue: same 123 cycles; Lab 10: recurrence gives 0.27 IPC vs.\ $\sim$3) \\
+Front end cannot feed a wide back end & Decode width/complex instructions, taken branches, I-cache misses & Better predictor + BTB, uop cache/trace cache, decode-friendly code (\S\ref{ch:pipe}) & Lab 6: 6-instruction decode ceiling, not 32\,B/cycle, was the limit \\
+Many mispredictions, deep pipeline & Data-dependent branches; penalty $\propto$ depth & Two-level/gshare predictor, predication (branch-free code), shallower pipe (\S\ref{ch:pipe}) & CPI$_{branch}=f_{br}\times$miss rate$\times$penalty; shrink the largest factor \\
+High miss rate, working set $>$ cache & Capacity misses & Blocking/tiling, loop interchange, larger LLC, prefetch (\S\ref{ch:mem}) & Blocking fixes it in software at zero hardware cost \\
+High miss rate, small working set, power-of-2 strides & Conflict misses (addresses alias to one set) & Associativity, victim cache, array padding (\S\ref{ch:mem}) & Lab 1: 100\% miss with a tiny working set; Lab 4: victim cache removed 61.6\% of cycles on a conflict pattern \\
+Streaming, data used once, low FLOPs per byte & Memory-bandwidth bound; caches give only spatial locality & More channels/banks, wider memory, stream prefetch, fuse passes, smaller data types (\S\ref{sec:roofline}) & Bigger caches and more cores do nothing: the bytes still cross the memory bus \\
+Pointer chasing / linked structures, latency bound & Each load depends on the previous: memory-level parallelism (MLP) $=1$ & Multithreading (fine/SMT/GPU warps), array-based layout, larger LLC, jump-pointer prefetch\bs & Lab 4: more MSHRs gave nothing for a dependent chase but 8$\times$ for 8 independent streams \\
+Prefetcher reduces misses but run is slower & Prefetches late (untimely), evict useful data (pollution), steal bandwidth & Tune distance, throttle, use only for regular streams & Lab 4: stride prefetch cut misses 57.4\%$\rightarrow$23.2\% yet ran slower. Judge by time, not miss rate \\
+Higher associativity: hit rate up but no gain / L2 miss rate rises & Hit time / clock stretched; misses move between levels & Keep L1 small and fast, associativity in L2; judge by AMAT & Lab 3: L2/L3 miss \emph{rate} rose while AMAT and DRAM traffic improved \\
+SMT gives speedup $<1$ & Threads thrash shared caches/TLB & Disable SMT for such mixes, raise associativity, partition cache (\S\ref{ch:tlp}) & Power5: FP pairs had most conflicts and least gain \\
+Fast on small input, collapses on large & Working set crosses a cache level or TLB reach & Blocking, larger LLC, larger pages\bs & Identify the size at which the cliff occurs and match tile size to it \\
+SIMD/GPU far below peak & Divergence, uncoalesced/strided access, low occupancy, host-device transfer, tiny kernels & Data layout (SoA), coalescing, compaction/sorting, tile in shared memory, overlap transfers (\S\ref{ch:dlp}) & Bigger GPU does not help: waste scales with it \\
+Barrier every iteration, PEs spend time waiting & Sync overhead plus imbalance paid at every barrier & Fewer barriers (larger chunks), point-to-point sync, asynchronous phases (\S\ref{sec:sync}) & One wait per phase instead of per step \\
+Poor scaling beyond one socket (NUMA) & Remote memory accesses; data allocated on one node & Owner-computes partition, local allocation, directory coherence (\S\ref{sec:comm}) & Local access is several times faster than remote\bs \\
+Throttling when all cores active & Power/thermal cap ($P\propto CV^2f$) & DVFS, fewer/smaller cores, power-gate idle units (\S\ref{ch:fund}) & Energy per task is the right metric \\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\subsection{Will the memory hierarchy work for this workload?}\label{sec:memworks}
+Rule: \textbf{caches work when data is reused before it is evicted} (reuse distance $<$ cache capacity) or when neighbouring words are used together (spatial locality). Check the access pattern:
+\small
+\begin{longtable}{L{4.1cm}L{2.8cm}L{8.7cm}}
+\toprule
+\tblhead{\textbf{Access pattern in the workload} & \textbf{Hierarchy works?} & \textbf{Reason and what to do}}\\
+\midrule
+\endhead
+Working set fits in cache, reused (loops over small arrays) & Yes & Temporal locality. Keep the cache; nothing to add. \\
+Sequential single pass (streaming) & Partly & Only spatial locality: miss rate $\approx 1/(\text{words per block})$. Bandwidth decides: prefetch, wide/interleaved memory; bigger cache useless. \\
+Large matrices with reuse (matrix multiply) & No as written; yes after blocking & Capacity misses; blocking makes three $B\times B$ tiles fit, misses $2N^3\rightarrow 2N^3/B$. \\
+Stride $\ge$ block size (column walk in row-major array) & No & One useful word per block. Interchange loops, change layout (array-of-structs $\leftrightarrow$ struct-of-arrays). \\
+Power-of-2 strides, few arrays & No (conflicts) & Same set again and again: associativity, victim cache, pad arrays. \\
+Random / pointer chasing & Poor & Little locality; hide latency with threads, or restructure data. \\
+Read-shared by many PEs & Yes & Copies live in Shared state; a shared LLC holds one copy for all. \\
+Written by many PEs (shared counters, flags) & Works \emph{against} you & Coherence misses (invalidations). Privatise, pad, reduce at end. \\
+GPU, neighbouring threads use neighbouring data & Yes if coalesced & One wide transaction per warp; else up to 32 transactions. \\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\subsubsection*{Roofline test: is it compute-bound or memory-bound?\bs}\label{sec:roofline}
+\[
+\text{Attainable FLOP/s}=\min\big(\text{peak FLOP/s},\; \text{AI}\times\text{peak memory bandwidth}\big),\qquad
+\text{AI}=\frac{\text{FLOPs}}{\text{DRAM bytes}}
+\]
+\begin{ex}[Use it in one line]
+$c[i]=a[i]+b[i]$ in doubles: 1 FLOP per 24 bytes, AI $=0.042$. With 100\,GB/s memory: at most $4.2$\,GFLOP/s, \emph{no matter how many cores, lanes or GPUs}. Conclusion to write: ``parallel compute will not benefit; the bandwidth term binds; raise AI (fuse loops, block for reuse) or buy bandwidth.'' Blocked matrix multiply has AI growing with tile size $B$, so it can become compute-bound.
+\end{ex}
+
+\subsection{Is parallelism present, and will it help? Benefits and demerits}\label{sec:paraproscons}
+\small
+\begin{longtable}{L{2.2cm}L{3.1cm}L{3.6cm}L{3.4cm}L{3.2cm}}
+\toprule
+\tblhead{\textbf{Kind} & \textbf{Exploits} & \textbf{Benefit} & \textbf{Demerits / overheads} & \textbf{Does NOT help when}}\\
+\midrule
+\endhead
+Pipelining & Overlap of stages of successive instructions & Throughput up to 1 instr/cycle; higher clock & Hazards, branch/load penalties grow with depth; latch overhead & Dependences and branches dominate \\
+ILP (superscalar, OoO) & Independent instructions in one thread & Speeds unmodified single-thread code; binary compatible & Area and power grow faster than width; saturates at 3--6 issue & Long dependence chains, unpredictable branches, memory-bound code \\
+DLP (SIMD, vector, GPU/SIMT) & Same operation on many elements & One instruction controls many ops $\Rightarrow$ high ops per watt and per area; regular memory access & Divergence, alignment/coalescing, needs regular data; data transfer to accelerator & Branchy, irregular, pointer-based, or small data \\
+TLP on one core (MT/SMT) & Independent threads sharing a core & Fills idle slots, hides memory latency cheaply & Threads compete for caches/FUs; single thread may slow & One thread only; cache-thrashing mixes \\
+Multicore / many PEs & Independent threads/tasks & Near-linear throughput when tasks are independent; energy-efficient (smaller cores) & Communication, coherence, sync, load imbalance, shared bandwidth & Large serial fraction, fine-grained sharing, bandwidth-bound \\
+Pipeline (task) parallelism & Producer$\rightarrow$consumer stages on different PEs & Throughput even when each item is sequential & Throughput $=$ slowest stage; buffers; fill/drain latency & Stages unbalanced \\
+\bottomrule
+\end{longtable}
+\normalsize
+\begin{dec}[Parallelism will NOT benefit when]
+(1) the serial fraction is large (Amdahl); (2) the workload is memory-bandwidth bound (roofline); (3) communication/computation ratio is high (tasks too fine); (4) PEs must synchronise or share writable data frequently; (5) tasks are unbalanced and statically assigned; (6) the problem is too small to amortise start-up/transfer; (7) power cap forces lower clock per core. Say which of these apply \emph{before} proposing more PEs.
+\end{dec}
+
+\subsection{Static vs.\ dynamic: the cross-cutting decision}\label{sec:staticdyn}
+\textbf{Static} = decided before run time (compiler, programmer, design time). \textbf{Dynamic} = decided at run time (hardware or runtime system).
+\small
+\begin{longtable}{L{2.6cm}L{3.0cm}L{3.2cm}L{3.3cm}L{3.3cm}}
+\toprule
+\tblhead{\textbf{Decision} & \textbf{Static form} & \textbf{Dynamic form} & \textbf{Static wins when} & \textbf{Dynamic wins when}}\\
+\midrule
+\endhead
+Instruction scheduling & Compiler scheduling, unrolling, software pipelining, VLIW & Scoreboard, Tomasulo + ROB (OoO) & Latencies fixed and known, regular loops, power/area tight & Cache misses, aliasing, binary compatibility needed \\
+Branch handling & Predict-not-taken, BTFNT, profile, delay slot & 2-bit BHT, correlating/gshare, BTB & Shallow pipe, loop-dominated, cost-sensitive & Deep pipe, data-dependent branches \\
+Register naming & Compiler allocation & Hardware renaming & Enough architectural registers & WAR/WAW from few registers, OoO \\
+Multiple issue & VLIW (compiler packs) & Superscalar (hardware picks) & Fixed product, strong compiler & Varying code, compatibility \\
+Work to PEs & Block/cyclic partition fixed in code & Work queue, work stealing, guided chunks & Equal, predictable task costs; locality matters; zero overhead & Unequal or unknown costs, heterogeneous PEs \\
+Prefetching & Compiler prefetch instructions & Hardware stride/stream prefetcher & Access pattern known at compile time & Pattern visible only at run time \\
+On-chip data placement & Scratchpad / GPU shared memory (software managed) & Hardware cache & Access pattern known (tiles); predictable timing & Irregular access; ease of programming \\
+Thread $\rightarrow$ core mapping & Pinning, owner-computes & OS/runtime migration & NUMA locality, cache affinity & Load varies over time \\
+Power & Fixed V/f & DVFS, power gating & Constant load, real-time & Bursty load, battery \\
+Cache sharing & Partitioned ways per core & Fully shared LLC & Isolation/QoS needed & Unequal demand between cores \\
+GPU branch handling & Compiler predication (short branches) & Hardware masks/reconvergence & Short \texttt{if} bodies & Long divergent paths \\
+\bottomrule
+\end{longtable}
+\normalsize
+\begin{key}[Rule to write in every answer]
+\textbf{Predictable and known before run time $\rightarrow$ static} (cheaper, lower power, deterministic, no run-time overhead). \textbf{Data-dependent, input-dependent, or must survive hardware changes $\rightarrow$ dynamic} (adapts, but costs hardware, energy and run-time overhead). The best answer is often \textbf{hybrid}: static coarse partition for locality + dynamic stealing for balance; compiler scheduling + OoO core.
+\end{key}

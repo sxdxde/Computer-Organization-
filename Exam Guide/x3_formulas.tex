@@ -1,0 +1,194 @@
+\section{Formulas, Numbers, Typical Values}\label{sec:formulas}
+Numbers worth quoting that are not repeated in the sections above. $\dagger$ = standard formula not spelled out in the slide text.
+
+\subsection{Calculation recipes: given $\rightarrow$ compute $\rightarrow$ conclude}\label{sec:recipes}
+{\small\renewcommand{\arraystretch}{1.3}
+\begin{longtable}{L{3.4cm}L{5.4cm}L{6.8cm}}
+\toprule
+\tblhead{\textbf{The question gives\ldots} & \textbf{Compute} & \textbf{Example $\rightarrow$ what to write}}\\
+\midrule
+\endhead
+Hit time, miss rate, penalty & $\AMAT=t+m\times P$; stalls/instr $=$ refs/instr $\times\,m\times P$ & $1+0.03\times40=2.2$ cycles $\rightarrow$ ``memory stalls add 1.2 cycles per access'' \\
+Branch \%, misprediction \%, penalty & Branch CPI $=f_{br}\times m\times P$ & $0.25\times0.30\times18=1.35$ $\rightarrow$ ``branches cause most of the CPI'' \\
+Measured speedup $S$ on $p$ PEs & Parallel fraction $f=\dfrac{1-1/S}{1-1/p}$; limit $1/(1-f)$ & $S=2.5$, $p=8$: $f=0.69$, limit 3.2$\times$ $\rightarrow$ ``more cores cannot exceed 3.2$\times$; reduce the serial part'' \\
+FLOPs and bytes per element, bandwidth & AI $=$ FLOPs/byte; ceiling $=$ AI $\times$ BW & 2\,FLOP/16\,B at 20\,GB/s $=2.5$\,GFLOP/s $\rightarrow$ ``memory-bound; SIMD will not help'' \\
+Cores, threads, miss rate, line size & Demand $=$ misses/s $\times$ line size; compare with channel BW & $16\times10^{7}$ misses/s $\times64$\,B $=10.2$\,GB/s vs.\ 12.8 $\rightarrow$ ``80\% of one channel: add a channel'' \\
+Latency and desired miss rate & Outstanding misses needed $=$ rate $\times$ latency (Little's law\bs) & 1 miss per 20 cycles, 200-cycle latency $\Rightarrow$ 10 in flight $\rightarrow$ ``need 10 MSHRs or threads, if misses are independent'' \\
+FU latency, number of units & Independent chains $=$ latency $\times$ units & $4\times2=8$ accumulators $\rightarrow$ ``8 partial sums fill both FMA units'' \\
+Recurrence latency, instr.\ per iteration & IPC $\le$ instr/iter $\div$ chain cycles/iter & $5/4=1.25$ $\rightarrow$ ``width is irrelevant; the chain limits IPC'' \\
+Task times per PE & $T_{par}=\max_i W_i$; efficiency $=\text{avg}/\max$ & 28/12/10/6\,ms: $T=28$ vs.\ ideal 14 $\rightarrow$ ``50\% efficiency: imbalance'' \\
+Lock hold time per operation & Throughput $\le 1/t_{hold}$, whatever the cores & 200\,ns hold $\Rightarrow\le$5\,M ops/s $\rightarrow$ ``the lock is a serial fraction'' \\
+Fraction of divergent elements & SIMT efficiency $=$ useful $\div$ executed instructions & 18.5/55 $=34\%$ $\rightarrow$ ``divergence wastes two thirds of the lanes'' \\
+Threads, warps, SMs & Warps per SM $=$ threads$/32/$SMs; vs.\ maximum & $2160/32/40\approx1.7$ of 48 $\rightarrow$ ``latency cannot be hidden'' \\
+Run length between misses $R$, miss latency $L$ & Threads to keep a core busy $\approx1+L/R$\bs & $R=50$, $L=200$ $\Rightarrow$ 5 threads \\
+Voltage/frequency change & $P\propto CV^2f$; energy $\propto CV^2$ & $0.8\times$ $V$ and $f$ $\Rightarrow$ $0.51\times$ power \\
+Pipeline depth vs.\ clock & Time $\propto$ IC $\times$ CPI $/f$ & 1.36/4\,GHz $=0.34$ vs.\ 1.24/3.3\,GHz $=0.376$ $\rightarrow$ ``keep the deeper pipe'' \\
+\bottomrule
+\end{longtable}}
+
+\textbf{Timeline template (draw it for any work-distribution question).} One row per PE, time to the right; shade busy time, leave idle time blank; mark barriers with a vertical line. The longest row is $T_{par}$; blank space is lost efficiency.
+\begin{center}\small\rowcolors{1}{white}{white}\setlength{\tabcolsep}{0pt}\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{r*{16}{p{0.6cm}}l}
+\multicolumn{18}{l}{\textbf{Static block split}: 4 consecutive tasks per PE (tasks 0--3 cost 4 units, 4--15 cost 1) $\Rightarrow T=16$}\\ \hline
+PE0: tasks 0--3\enspace & \cellcolor{exc!45} & \cellcolor{exc!45} & \cellcolor{exc!45} & \cellcolor{exc!45} & \cellcolor{exc!45} & \cellcolor{exc!45} & \cellcolor{exc!45} & \cellcolor{exc!45} & \cellcolor{exc!45} & \cellcolor{exc!45} & \cellcolor{exc!45} & \cellcolor{exc!45} & \cellcolor{exc!45} & \cellcolor{exc!45} & \cellcolor{exc!45} & \cellcolor{exc!45} & \enspace 16 \\[1pt]
+PE1: tasks 4--7\enspace & \cellcolor{exc!45} & \cellcolor{exc!45} & \cellcolor{exc!45} & \cellcolor{exc!45} &  &  &  &  &  &  &  &  &  &  &  &  & \enspace 4 \\[1pt]
+PE2: tasks 8--11\enspace & \cellcolor{exc!45} & \cellcolor{exc!45} & \cellcolor{exc!45} & \cellcolor{exc!45} &  &  &  &  &  &  &  &  &  &  &  &  & \enspace 4 \\[1pt]
+PE3: tasks 12--15\enspace & \cellcolor{exc!45} & \cellcolor{exc!45} & \cellcolor{exc!45} & \cellcolor{exc!45} &  &  &  &  &  &  &  &  &  &  &  &  & \enspace 4 \\[1pt]
+\multicolumn{18}{l}{\rule{0pt}{14pt}\textbf{Dynamic queue}: idle PE takes the next task (0.1 overhead per fetch) $\Rightarrow T\approx7.4$}\\ \hline
+PE0: task 0 + 3 small\enspace & \cellcolor{pickc!45} & \cellcolor{pickc!45} & \cellcolor{pickc!45} & \cellcolor{pickc!45} & \cellcolor{pickc!22} & \cellcolor{pickc!22} & \cellcolor{pickc!22} &  &  &  &  &  &  &  &  &  & \enspace 7.4 \\[1pt]
+PE1: task 1 + 3 small\enspace & \cellcolor{pickc!45} & \cellcolor{pickc!45} & \cellcolor{pickc!45} & \cellcolor{pickc!45} & \cellcolor{pickc!22} & \cellcolor{pickc!22} & \cellcolor{pickc!22} &  &  &  &  &  &  &  &  &  & \enspace 7.4 \\[1pt]
+PE2: task 2 + 3 small\enspace & \cellcolor{pickc!45} & \cellcolor{pickc!45} & \cellcolor{pickc!45} & \cellcolor{pickc!45} & \cellcolor{pickc!22} & \cellcolor{pickc!22} & \cellcolor{pickc!22} &  &  &  &  &  &  &  &  &  & \enspace 7.4 \\[1pt]
+PE3: task 3 + 3 small\enspace & \cellcolor{pickc!45} & \cellcolor{pickc!45} & \cellcolor{pickc!45} & \cellcolor{pickc!45} & \cellcolor{pickc!22} & \cellcolor{pickc!22} & \cellcolor{pickc!22} &  &  &  &  &  &  &  &  &  & \enspace 7.4 \\[1pt]
+\multicolumn{1}{r}{time $\rightarrow$\enspace} & \multicolumn{4}{l}{0} & \multicolumn{4}{l}{4} & \multicolumn{4}{l}{8} & \multicolumn{4}{l}{12} & \multicolumn{1}{l}{16}\\
+\end{tabular}
+\end{center}
+
+\subsection{Performance, power, cost, dependability}
+\begin{center}
+\small
+\begin{tabular}{L{5.4cm}L{10cm}}
+\toprule
+\tblhead{\textbf{Item} & \textbf{Formula}}\\
+\midrule
+CPU time & $\text{IC}\times\CPI\times T_{clk}$ \\
+Average CPI & $\sum_i(\text{IC}_i\times\CPI_i)/\text{IC}$ \\
+Speedup & $\text{Time}_{old}/\text{Time}_{new}$ \\
+Amdahl$^\dagger$ & $1/[(1-f)+f/s]$ \\
+Dynamic energy & $\tfrac12 C V^2$ \\
+Dynamic power & $\tfrac12 C V^2 f$ \\
+Static power & $I_{static}\times V$ (reduce by power gating) \\
+Die yield$^\dagger$ & $\text{wafer yield}\times(1+\text{defects/area}\times\text{die area})^{-N}$, $N=11.5$--$15.5$ \\
+MTBF; availability & $\text{MTBF}=\text{MTTF}+\text{MTTR}$; $\text{Availability}=\text{MTTF}/\text{MTBF}$ \\
+Price vs.\ volume & $-10\%$ per doubling of volume \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Memory}
+\begin{center}
+\small
+\begin{tabular}{L{6.2cm}L{9.2cm}}
+\toprule
+\tblhead{\textbf{Item} & \textbf{Formula / value}}\\
+\midrule
+AMAT & $t_{hit}+m\times P$ \\
+Two-level AMAT & $t_{L1}+m_{L1}(t_{L2}+m^{loc}_{L2}P_{L2})$; global $m_{L2}=m_{L1}m^{loc}_{L2}$ \\
+Stalls/instruction (two-level) & $\text{misses}_{L1}/\text{instr}\times t_{L2}+\text{misses}_{L2}/\text{instr}\times P_{L2}$ \\
+Slide example & $1+0.04(10+0.5\times100)=3.4$; stalls $(3.4-1)\times1.5=3.6$ \\
+L2 associativity example & DM $10+0.25\times100=35$; 2-way $10+0.20\times100=30$ \\
+CPI with memory & $\CPI_{base}+\text{refs/instr}\times m\times P$ (e.g.\ $2+1.2\times0.03\times64=4.3$) \\
+Block-size penalty model & 80 cc + 2 cc per 16 B: 82/84/88/96/112 for 16/32/64/128/256 B \\
+Best block per cache (AMAT) & 4K: 32 B; 16K, 64K, 256K: 64 B \\
+Associativity clock factors & $\times1.10$ (2-way), $\times1.12$ (4-way), $\times1.14$ (8-way) \\
+2:1 rule & 2-way of size $N/2\approx$ DM of size $N$ (caches $<128$\,KB) \\
+Victim cache & 20--95\% miss reduction, 4\,KB DM, 1--5 entries \\
+Way prediction accuracy & $>85\%$ (Alpha 21264, 2-way I-cache) \\
+Prefetch AMAT & $t+m\,p\,t_p+m(1-p)P$; example $2.41525$ \\
+Stream buffers & ISB 1/4/16 blocks catch 15--25\%/50\%/72\% of I-misses \\
+Loop interchange & $1{,}048{,}576\to65{,}536$ (per array); $-93.75\%$ \\
+Loop fusion & $262{,}144\to196{,}608$ ($-25\%$) \\
+Blocking & $2N^3+N^2\to2N^3/B+N^2$; 3 tiles of $B^2$ words must fit \\
+Interleaving & bank = addr mod $\#$banks; banks $\ge$ cycles to access a word \\
+Memory-width CPI example & 1-word 4.30; 2-word: simple 5.07 / interleaved 3.63 / wide 3.54; 4-word: 5.69 / 3.09 / 3.84 \\
+TLB & 128--256 entries typical; fully associative on high-end \\
+Page size / VA split & 4--8\,KB; 32-bit VA = 20-bit VPN + 12-bit offset \\
+DRAM refresh & $\sim$8\,ms, $\sim$1\% of time \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Threads and multicore}
+\begin{center}
+\small
+\begin{tabular}{L{6.2cm}L{9.2cm}}
+\toprule
+\tblhead{\textbf{Item} & \textbf{Value}}\\
+\midrule
+Pentium 4 SMT & 1.01 (int rate), 1.07 (FP rate); pairs 0.90--1.58, avg 1.20 \\
+Power5 SMT & 1.23 (int rate), 1.16 (FP rate); 0.89--1.41 for two copies \\
+Power5 core size & $+24\%$ vs.\ Power4; physical regs 152$\to$240; L2 1.44$\to$1.92\,MB \\
+SMT threads per core & 2, 4, or sometimes 8 (Power5: 2) \\
+Hardware thread switch & vs.\ 100s--1000s of clocks for a process switch \\
+General SMT gain & up to 30\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Parallel execution, DLP and communication}
+\begin{center}
+\small
+\begin{tabular}{L{5.0cm}L{10.4cm}}
+\toprule
+\tblhead{\textbf{Item} & \textbf{Formula}}\\
+\midrule
+Amdahl / Gustafson & $S=1/[(1-f)+f/p]$ (limit $1/(1-f)$); $S=(1-f)+fp$ \\
+Efficiency; imbalance & $E=S/p$; imbalance $=\max_i W_i/\text{avg}_i W_i$ \\
+Parallel time & $T_{par}=T_{serial}+\max_i(W_i/\text{speed}_i)+T_{comm}+T_{sync}$ \\
+Work--span & $T_p\ge\max(T_1/p,\,T_\infty)$; parallelism $=T_1/T_\infty$ \\
+Tree reduction & $\log_2 p$ combine steps \\
+Message time & latency $+$ size/bandwidth \\
+Grid boundary per PE ($N\times N$) & strips $\approx2N$; blocks $\approx4N/\sqrt{p}$ \\
+Roofline & $\min(\text{peak FLOP/s},\ \text{AI}\times\text{BW})$, AI $=$ FLOPs/DRAM bytes \\
+Vector time & convoys $\times\ n/L$ + start-up; strip-mine when $n>$ MVL \\
+Bank conflicts & unit stride needs banks $\ge$ busy time; stride $s$ conflicts if banks$/\gcd(s,\text{banks})<$ busy time \\
+SIMT efficiency & active lanes / 32; divergent warp time $\approx T_{if}+T_{else}$ \\
+Occupancy & resident warps / max warps per SM (limited by registers, shared memory, block size) \\
+Independent accumulators to hide latency & latency $\times$ number of pipelined units (e.g.\ $4\times2=8$) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Typical values for writing assumptions}\label{sec:typical}
+Use these only when the question does not give a value, and label them as assumptions.\bs
+\begin{center}
+\small
+\begin{tabular}{L{5.0cm}L{10.4cm}}
+\toprule
+\tblhead{\textbf{Item} & \textbf{Typical value}}\\
+\midrule
+Cache line & 64\,B \\
+L1 / L2 / L3 & 32--64\,KB, 4--8-way, 1--4 cycles / 256\,KB--2\,MB, 8--16-way, $\approx$10--15 cycles / 8--64\,MB shared, $\approx$30--50 cycles \\
+DRAM latency; bandwidth & 60--100\,ns ($\approx$200--300 cycles at 3\,GHz); 20--50\,GB/s per socket (CPU), several hundred GB/s to TB/s (GPU) \\
+Branch misprediction penalty & 10--20 cycles on a deep OoO core; 1--3 on a short in-order pipe \\
+Core-to-core line transfer & tens of cycles on-chip; $\sim$100+ cycles across sockets \\
+GPU & warp 32 threads; tens of resident warps per SM; PCIe 16--32\,GB/s \\
+Issue width & 2 (embedded), 4--6 (desktop/server OoO) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Known inconsistencies in the slides}
+\textbf{R4000 load delay:} one slide title says ``x1'', the table shows \emph{two} stall cycles and the older deck says ``TWO cycle load latency'': use \textbf{2}.
+\textbf{Memory-width CPI example:} buses are labelled ``64-bit''/``128-bit'' but the arithmetic treats them as 1-word/2-word; quote the CPI values (4.30, 5.07, 3.63, 3.54, 5.69, 3.09, 3.84), not the labels.
+\textbf{Blocking numbers} ($\approx1.07$ billion $\to\approx2.1$ million misses) come from a simplified model; present them as illustrative.
+
+\subsection{Glossary of abbreviations}\label{sec:glossary}
+{\small\renewcommand{\arraystretch}{1.2}
+\begin{longtable}{L{1.5cm}L{5.8cm}L{1.5cm}L{6.4cm}}
+\toprule
+\tblhead{\textbf{Term} & \textbf{Meaning} & \textbf{Term} & \textbf{Meaning}}\\
+\midrule
+\endhead
+AI & Arithmetic intensity: FLOPs per DRAM byte & LQ / SQ & Load / store queue of an OoO core \\
+AMAT & Average memory access time & MESI & Coherence states Modified, Exclusive, Shared, Invalid \\
+BHT & Branch history table (prediction counters) & MIMD & Multiple instruction, multiple data (multicore) \\
+BTB & Branch target buffer (predicted target address) & MLP & Memory-level parallelism (misses in flight) \\
+BTFNT & Backward taken, forward not taken & MSHR & Miss status holding register (one outstanding miss) \\
+CAS & Compare-and-swap (atomic) & MT / SMT & Multithreading / simultaneous multithreading \\
+CDB & Common data bus (Tomasulo result broadcast) & MVL / VL & Maximum / current vector length \\
+CMP & Chip multiprocessor (multicore) & NUMA & Non-uniform memory access (local vs.\ remote) \\
+CPI / IPC & Cycles per instruction / instructions per cycle & OoO & Out-of-order execution \\
+DLP / ILP / TLP & Data- / instruction- / thread-level parallelism & PE & Processing element (core, lane, accelerator) \\
+DM & Direct-mapped cache & PMD & Personal mobile device \\
+DRAM / SRAM & Main-memory / cache memory technology & PRF & Physical register file \\
+DVFS & Dynamic voltage-frequency scaling & RAS & Return-address stack \\
+ECC & Error-correcting code & RAW / WAR / WAW & True / anti / output dependence hazards \\
+FU & Functional unit (ALU, FMA, load unit\ldots) & ROB & Reorder buffer (in-order commit) \\
+II & Initiation interval & RS & Reservation station \\
+IQ & Issue queue / scheduler & SIMD / SIMT & Single instruction multiple data / threads \\
+LL/SC & Load-linked / store-conditional (atomic) & SM & GPU streaming multiprocessor \\
+LLC & Last-level cache (usually L3, shared) & SoA / AoS & Struct-of-arrays / array-of-structs layout \\
+TLB & Translation look-aside buffer & TTAS & Test-and-test-and-set lock \\
+VLIW & Very long instruction word (compiler-packed) & Warp & 32 GPU threads issued together \\
+\bottomrule
+\end{longtable}}

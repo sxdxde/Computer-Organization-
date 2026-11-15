@@ -1,0 +1,116 @@
+\section{Cards I: Instruction-Level Parallelism}\label{grp:ilp}
+\textbf{Dependences decide everything here.} True (RAW): real data flow, \emph{cannot} be removed. Anti (WAR) and output (WAW): name conflicts, removed by \emph{renaming}. Control: relaxed by prediction + speculation. Memory dependences are hard to see (does \texttt{100(R4)} equal \texttt{20(R6)}?). Loop-carried dependence (\texttt{A[i+1]=A[i]+C[i]}) stops iterations running in parallel.
+\begin{multicols}{2}
+\card{I1}{Loop unrolling + static (compiler) scheduling}{Static}
+\fx{Latency stalls and loop overhead in regular loops.}
+\fh{Replicate the body, rename registers (F0/F4, F6/F8\ldots), group loads, then adds, then stores, so independent work fills latency gaps; branch overhead amortised.}
+\fu{Independent iterations, known fixed latencies, many registers, in-order/VLIW/embedded cores, regular FP loops.}
+\fb{Dynamic scheduling here: same gain with no OoO hardware, power or area.}
+\fa{Unknown aliasing, pointer chasing, variable cache-miss latency, binary must run well on future hardware.}
+\fw{Register pressure, code growth; needs alias knowledge.}
+\fq{Slide loop: 9 cycles/iter $\rightarrow$ 6 (reordered) $\rightarrow$ 6.75 (unrolled $\times$4, unscheduled) $\rightarrow$ \textbf{3.5} (unrolled + scheduled).}
+\fj{The loop has independent iterations and fixed latencies [given], so unrolling $\times$4 with renaming fills the 1--3-cycle gaps: 9 $\rightarrow$ 3.5 cycles/iteration without OoO hardware.}
+
+\card{I2}{Software pipelining}{Static}
+\fx{Long FP latencies in loops.}
+\fh{Each new loop body holds one instruction from each of several iterations (load of $i{+}2$, add of $i{+}1$, store of $i$).}
+\fu{Long FP latencies, VLIW/in-order cores, where unrolling would blow up code size.}
+\fb{Unrolling: less code growth for the same overlap.}
+\fw{Prologue/epilogue code, register pressure.}
+
+\card{I3}{Scoreboard (CDC 6600)}{Dynamic}
+\fx{In-order stalls behind one slow instruction.}
+\fh{In-order issue, out-of-order execution. Issue (FU free, no WAW) $\rightarrow$ read operands (wait for RAW) $\rightarrow$ execute $\rightarrow$ write (wait for WAR). Central tables.}
+\fu{Some OoO tolerance with minimal logic, few units.}
+\fb{In-order pipeline: independent instructions pass a stalled one (\texttt{DIVD F0;\ ADDD F10,F0;\ SUBD F12}: SUBD need not wait).}
+\fw{No forwarding, window $\le$5, stalls on WAR/WAW and structural hazards.}
+\fq{Worked 6-instruction example: finishes cycle 62 (Tomasulo 57).}
+\fj{A scoreboard lets [independent instructions] proceed past the [long divide] with only central tables, accepting WAR/WAW stalls because the code has few name conflicts.}
+
+\card{I4}{Tomasulo (hardware register renaming)}{Dynamic}
+\fx{WAR/WAW stalls, few architectural registers, variable latencies.}
+\fh{Reservation stations at each unit hold operands or tags of their producers (renaming); results broadcast on the common data bus (CDB) to all waiting stations; loads/stores have buffers. Overlaps loop iterations (``dynamic unrolling'') and hides cache misses.}
+\fu{FP code with long/variable latencies, cache misses, only few registers (360/91 had 4 FP regs), code not tuned for this machine.}
+\fb{Scoreboard: renaming removes WAR/WAW stalls; window $\le$14 vs.\ $\le$5. Static scheduling: adapts to run-time latencies.}
+\fw{Complex; associative CDB is the limit (one result per CDB per cycle, high capacitance); imprecise interrupts.}
+\fn{ROB for precise exceptions/speculation \cp{I5}; non-blocking cache \cp{M10}.}
+\fq{IBM 360/91: 6 load, 3 store, 3 add, 2 mult/div buffers/stations; CDB $=$ 64 data + 4 tag bits.}
+\fj{Only [4] FP registers and variable miss latency [given] defeat static scheduling; Tomasulo renames through reservation stations so WAR/WAW vanish and iterations overlap; its limit is one result per CDB per cycle.}
+
+\card{I5}{Speculation: Tomasulo + reorder buffer (ROB)}{Dynamic}
+\fx{Control dependences limit the window; need precise exceptions.}
+\fh{Predict branches, execute past them, keep results in the ROB in program order; \textbf{execute out of order, commit in order}. Mispredicted branch at ROB head flushes younger entries. Stores write memory only at commit; a load waits if an earlier store has a matching address.}
+\fu{High-performance single-thread cores, wide issue, branchy code, precise exceptions required.}
+\fb{Non-speculative Tomasulo: schedules across basic blocks; early recovery; precise interrupts.}
+\fw{Most area/power; many ports; wasted work on mispredicts (Lab 7: 20 cycles of wrong-path work); speculation hurt by cache/TLB misses.}
+\fn{Accurate predictor \cp{P10} + BTB \cp{P11}; physical registers, LQ/SQ, checkpoints sized together (Lab 7).}
+\fq{Four steps: issue (free RS \emph{and} ROB entry) $\rightarrow$ execute $\rightarrow$ write result (CDB $\rightarrow$ ROB) $\rightarrow$ commit at ROB head.}
+\fj{Branchy single-thread code needs instructions from beyond [k] branches; speculation with a ROB keeps the units busy and still gives precise exceptions.}
+
+\card{I6}{Dynamically scheduled superscalar (multiple issue)}{Dynamic}
+\fx{CPI cannot go below 1 with single issue.}
+\fh{Fetch/decode/issue several instructions per cycle; hardware checks dependences among them; multiple CDBs/commit.}
+\fu{General-purpose products, legacy binaries, irregular code, unpredictable latencies; width $\approx$4.}
+\fb{VLIW: binary compatible across generations, tolerates variable latency, smaller code.}
+\fw{Issue logic is the bottleneck; ports and power grow faster than width.}
+\fn{Predictor + BTB, renaming, more register/memory ports, ROB, multiple CDBs/commit, decode width (Lab 6).}
+\fq{3--6 issue is the practical limit; Athlon (3-issue) led SPECint/transistor and /area.}
+\fj{The product must run [legacy binaries] whose latencies vary with cache misses, so a 4-wide dynamically scheduled core finds ILP at run time; VLIW would need recompilation for every generation.}
+
+\card{I7}{VLIW / EPIC}{Static}
+\fx{Issue-logic cost of finding parallelism in hardware.}
+\fh{Compiler packs $K$ independent operations per long instruction (e.g.\ 1 int/branch, 2 FP, 2 memory).}
+\fu{Embedded/DSP/fixed product, controlled compiler, regular loops with abundant ILP, no compatibility need.}
+\fb{Superscalar there: simpler decode/issue, no interlocks, lower power.}
+\fa{Binary compatibility needed (changing units/latencies breaks code), cache misses (lock-step: one stall stalls the bundle), irregular code.}
+\fw{Code size (NOPs), many register ports (example: 7R/3W int, 5R/3W FP).}
+\fq{Itanium 2: least efficient per transistor/area/watt except SPECfp/W.}
+\fj{The DSP runs fixed loops compiled once and needs no compatibility, so VLIW packs [K] operations per word with no issue logic; a superscalar's dependence-check hardware would cost power for nothing.}
+
+\card{I8}{Break dependence chains (multiple accumulators, reassociation, tree)}{Static}
+\fx{Low IPC from a loop-carried recurrence (\texttt{sum += \ldots}).}
+\fh{Use $k$ independent partial sums ($k=$ latency $\times$ pipelined units), combine at the end; tree reduction for many values.}
+\fu{Reductions, dot products, accumulations; wide core with idle units.}
+\fb{Wider issue/bigger window: they cannot overlap a true dependence (Lab 8: 8-wide, 96-entry scheduler gave the same 123 cycles; Lab 10: recurrence 0.27 IPC vs.\ $\approx$3 independent).}
+\fw{FP reassociation changes rounding slightly; more registers.}
+\fj{The FMA latency is [4] and there are [2] units, so 8 accumulators keep both busy; the chain, not the width, limited IPC to [1.25].}
+
+\card{I9}{Wider issue / bigger OoO window (when it fails)}{---}
+\fx{Only when independent instructions exist and every other structure keeps up.}
+\fa{Dependence-bound, memory-bound, or branch-bound code; power limits. Go TLP/DLP instead \cp{E3}.}
+\fw{Needs $\approx$depth$\times$FUs independent instructions (15--20); 1 branch per 5 instructions; doubling to 6--12 issue needs 3--4 memory accesses, 2--3 branches, 20+ register accesses, 12--24 fetches per cycle $\Rightarrow$ clock suffers, energy inefficient (switching $\propto$ peak, performance $\propto$ sustained). Practical windows 32--126.}
+\fq{Lab 7: enlarging one structure moves the stall to the next; Lab 8: add units only of the saturated class.}
+\fj{Doubling issue would need 3--4 memory ports and 2--3 branch resolutions per cycle, slowing the clock; the [x] idle slots come from [dependences / misses], so I spend the area on [threads / cores] instead.}
+
+\end{multicols}
+
+\small
+\begin{tabularx}{\textwidth}{L{2.6cm}L{3.6cm}L{4.2cm}X}
+\toprule
+\tblhead{\textbf{} & \textbf{Scoreboard} & \textbf{Tomasulo} & \textbf{Tomasulo + ROB (speculative)}}\\
+\midrule
+WAR / WAW & Stall write / stall issue & Removed by renaming & Removed by renaming \\
+Results & Through registers, no forwarding & Broadcast on CDB & CDB $\rightarrow$ ROB $\rightarrow$ commit \\
+Window & $\le$5 & $\le$14 & ROB size (32--126 practical) \\
+Exceptions & Imprecise & Imprecise & \textbf{Precise} (at commit) \\
+Branches & Stop at branch & Wait for branch & Speculate past branches \\
+Pick for & Minimal OoO, few units & FP, few registers, variable latency & High-performance core, wide issue \\
+\bottomrule
+\end{tabularx}
+\normalsize
+
+\small
+\begin{tabularx}{\textwidth}{L{2.8cm}L{6.2cm}X}
+\toprule
+\tblhead{\textbf{} & \textbf{Superscalar (dynamic) \cp{I6}} & \textbf{VLIW (static) \cp{I7}}}\\
+\midrule
+Finds parallelism & Hardware at run time (forwarding, renaming) & Compiler: bundles of $K$ independent ops \\
+Binary compatibility & Yes, across generations & Weak: new units/latencies break schedules (emulation is slow) \\
+Variable latency (misses) & Independent instructions continue & Lock-step: one stall stalls the bundle \\
+Hardware / power & Complex issue, dependence checks, renaming & Simple decode/issue, no interlocks \\
+Code size & Small & Large (NOPs, unrolling) \\
+Examples & Pentium 4, Athlon 64, Power5 & Itanium 2 (IA-64/EPIC) \\
+\bottomrule
+\end{tabularx}
+\normalsize
+\textbf{ILP efficiency ranks (1 = best; Itanium 2 / Pentium 4 / Athlon 64 / Power5):} SPECint per transistor and per area 4/2/1/3; SPECint/W 4/3/1/2; SPECfp/W 2/4/3/1. No single leader; VLIW ``not a significant breakthrough in scaling ILP''.

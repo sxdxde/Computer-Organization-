@@ -2,153 +2,360 @@
 \providecommand\hyper@newdestlabel[2]{}
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
+\@writefile{toc}{\contentsline {section}{\numberline {1}How to Use This Handbook (read this page first)}{1}{section.1}\protected@file@percent }
+\newlabel{sec:howto}{{1}{1}{How to Use This Handbook (read this page first)}{section.1}{}}
 \gdef \LT@i {\LT@entry 
-    {1}{114.43008pt}\LT@entry 
-    {1}{191.25244pt}\LT@entry 
-    {1}{194.09746pt}}
-\@writefile{toc}{\contentsline {section}{\numberline {1}How to Attack a Design Question}{1}{section.1}\protected@file@percent }
-\newlabel{ch:method}{{1}{1}{How to Attack a Design Question}{section.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}The six-step answer template}{1}{subsection.1.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Master lookup: constraint keyword $\rightarrow $ what it implies}{1}{subsection.1.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {2}Fundamentals, Constraints and Trade-offs}{2}{section.2}\protected@file@percent }
-\newlabel{ch:fund}{{2}{2}{Fundamentals, Constraints and Trade-offs}{section.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Classes of computers: what each one optimises}{2}{subsection.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Kinds of parallelism and which hardware exploits them}{2}{subsection.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}The quantitative toolbox}{3}{subsection.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Performance}{3}{section*.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Power and energy}{3}{section*.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Cost}{3}{section*.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Dependability}{3}{section*.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Technology trends that justify design choices}{4}{subsection.2.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3}Pipeline, Long-Latency Units and Branch Handling}{4}{section.3}\protected@file@percent }
-\newlabel{ch:pipe}{{3}{4}{Pipeline, Long-Latency Units and Branch Handling}{section.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Decision map}{4}{subsection.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Pipeline hazards: the three kinds and their standard cures}{4}{subsection.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Long-latency functional units (FP pipeline)}{4}{subsection.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Deeper pipelines: the MIPS R4000 case study}{5}{subsection.3.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}The control hazard problem in numbers}{5}{subsection.3.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Where the branch resolves determines the penalty (5-stage MIPS)}{5}{section*.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Static branch prediction (decided at compile time)}{5}{subsection.3.6}\protected@file@percent }
+    {1}{27.12044pt}\LT@entry 
+    {1}{90.8546pt}\LT@entry 
+    {1}{294.80377pt}\LT@entry 
+    {1}{116.34789pt}}
 \gdef \LT@ii {\LT@entry 
-    {1}{94.51282pt}\LT@entry 
-    {1}{137.19194pt}\LT@entry 
-    {1}{140.0374pt}\LT@entry 
-    {1}{122.96556pt}}
-\@writefile{toc}{\contentsline {subsubsection}{Choosing where the delay-slot instruction comes from}{6}{section*.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.7}Dynamic branch prediction (decided by hardware at run time)}{6}{subsection.3.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Branch history table (BHT) and counters}{6}{section*.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Correlating (two-level) predictors}{6}{section*.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Branch target buffer (BTB) and fetch-unit support}{6}{section*.9}\protected@file@percent }
+    {1}{141.84166pt}\LT@entry 
+    {1}{294.80377pt}\LT@entry 
+    {1}{84.4808pt}}
 \gdef \LT@iii {\LT@entry 
-    {1}{117.2751pt}\LT@entry 
-    {1}{137.19194pt}\LT@entry 
-    {1}{219.7052pt}}
-\@writefile{toc}{\contentsline {subsubsection}{Which dynamic predictor for which scenario}{7}{section*.10}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}Instruction-Level Parallelism: Scheduling, Speculation, Multiple Issue}{7}{section.4}\protected@file@percent }
-\newlabel{ch:ilp}{{4}{7}{Instruction-Level Parallelism: Scheduling, Speculation, Multiple Issue}{section.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Decision map}{7}{subsection.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Dependences: what limits ILP}{7}{subsection.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Static (compiler) scheduling}{8}{subsection.4.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Loop unrolling: the slides' worked example}{8}{section*.11}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Software pipelining and static renaming}{8}{section*.12}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Dynamic scheduling: why do it in hardware}{8}{subsection.4.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Scoreboard (CDC 6600, 1963)}{8}{section*.13}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Tomasulo's algorithm (IBM 360/91, 1966)}{9}{section*.14}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Hardware speculation: Tomasulo $+$ reorder buffer (ROB)}{9}{section*.15}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Multiple issue: superscalar vs.\ VLIW}{9}{subsection.4.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Limits of ILP (use these to argue \emph  {against} very wide issue)}{10}{subsection.4.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Practical limits}{10}{section*.16}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{The ideal-processor study}{10}{section*.17}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Head-to-head of four real ILP designs (Pentium 4 SMT, Athlon 64, Power5 SMT, Itanium 2 VLIW)}{10}{section*.18}\protected@file@percent }
+    {1}{27.12044pt}\LT@entry 
+    {1}{122.7217pt}\LT@entry 
+    {1}{371.28459pt}}
 \gdef \LT@iv {\LT@entry 
-    {1}{85.97733pt}\LT@entry 
-    {1}{137.19194pt}\LT@entry 
-    {1}{137.19194pt}\LT@entry 
-    {1}{125.81102pt}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Memory Hierarchy: Caches, Main Memory, Virtual Memory}{11}{section.5}\protected@file@percent }
-\newlabel{ch:mem}{{5}{11}{Memory Hierarchy: Caches, Main Memory, Virtual Memory}{section.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}The framework: AMAT and the four levers}{11}{subsection.5.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Step 1: diagnose the miss type (the ``3 C's'' + coherence)}{11}{subsection.5.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Reducing miss penalty}{11}{subsection.5.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Multilevel caches (``probably the best miss-penalty reduction'')}{11}{section*.19}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Critical word first and early restart}{12}{section*.20}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Read-miss priority over writes; merging write buffer}{12}{section*.21}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Victim cache}{12}{section*.22}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Reducing miss rate}{12}{subsection.5.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Larger block size}{12}{section*.23}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Larger caches and higher associativity}{12}{section*.24}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Way prediction}{13}{section*.25}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Pseudo-associative (column-associative) cache}{13}{section*.26}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Compiler optimisations (zero hardware cost)}{13}{section*.27}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Reducing penalty/rate through parallelism}{13}{subsection.5.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Non-blocking (lockup-free) cache}{13}{section*.28}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Hardware prefetching (stream buffers)}{13}{section*.29}\protected@file@percent }
+    {1}{141.84166pt}\LT@entry 
+    {1}{275.68333pt}\LT@entry 
+    {1}{103.60126pt}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Method: From Question to Full-Marks Answer}{2}{section.2}\protected@file@percent }
+\newlabel{sec:method}{{2}{2}{Method: From Question to Full-Marks Answer}{section.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}The 8 steps (inside each part of the question)}{2}{subsection.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Answer layout (copy these headings)}{2}{subsection.2.2}\protected@file@percent }
+\newlabel{sec:layout}{{2.2}{2}{Answer layout (copy these headings)}{subsection.2.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Make every answer specific, not generic}{2}{subsection.2.3}\protected@file@percent }
+\newlabel{sec:specific}{{2.3}{2}{Make every answer specific, not generic}{subsection.2.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}What the professor's pointers mean}{2}{subsection.2.4}\protected@file@percent }
 \gdef \LT@v {\LT@entry 
-    {1}{142.88284pt}\LT@entry 
-    {1}{46.14322pt}\LT@entry 
-    {1}{46.14322pt}\LT@entry 
-    {1}{46.14322pt}\LT@entry 
-    {1}{63.21504pt}\LT@entry 
-    {1}{159.95424pt}}
-\@writefile{toc}{\contentsline {subsubsection}{Compiler-controlled prefetching}{14}{section*.30}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.6}Reducing hit time}{14}{subsection.5.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.7}Cache optimisation summary table (from the slides)}{14}{subsection.5.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.8}Main memory}{15}{subsection.5.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{DRAM vs.\ SRAM and key metrics}{15}{section*.31}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Three ways to raise memory bandwidth}{15}{section*.32}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Memory hierarchy by device class (slide figures)}{15}{section*.33}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.9}Virtual memory}{15}{subsection.5.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.10}Scenario $\rightarrow $ memory design, quick reference}{15}{subsection.5.10}\protected@file@percent }
+    {1}{122.7217pt}\LT@entry 
+    {1}{390.40503pt}}
 \gdef \LT@vi {\LT@entry 
-    {1}{159.95424pt}\LT@entry 
-    {1}{128.65646pt}\LT@entry 
-    {1}{191.25244pt}}
-\@writefile{toc}{\contentsline {section}{\numberline {6}Thread-Level Parallelism: Multithreading, SMT, Multicore}{16}{section.6}\protected@file@percent }
-\newlabel{ch:tlp}{{6}{16}{Thread-Level Parallelism: Multithreading, SMT, Multicore}{section.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Decision map}{16}{subsection.6.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Why TLP at all}{16}{subsection.6.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Multithreading on one core}{16}{subsection.6.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Why SMT is cheap on an OoO core}{17}{section*.34}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{SMT design challenges and costs (IBM Power5 case study)}{17}{section*.35}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{SMT performance data to quote}{17}{section*.36}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Multicore (chip multiprocessor, CMP)}{17}{subsection.6.4}\protected@file@percent }
+    {1}{27.12044pt}\LT@entry 
+    {1}{122.7217pt}\LT@entry 
+    {1}{145.02855pt}\LT@entry 
+    {1}{116.34789pt}\LT@entry 
+    {1}{100.41435pt}}
 \gdef \LT@vii {\LT@entry 
-    {1}{142.88284pt}\LT@entry 
-    {1}{165.6447pt}\LT@entry 
-    {1}{165.6447pt}}
-\@writefile{toc}{\contentsline {subsubsection}{Multicore vs.\ SMT, and combining them}{18}{section*.37}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Memory hierarchy in threaded designs}{18}{section*.38}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7}Putting It Together: Scenarios, Dependencies, Checklist}{18}{section.7}\protected@file@percent }
-\newlabel{ch:scen}{{7}{18}{Putting It Together: Scenarios, Dependencies, Checklist}{section.7}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Which features only work together (check your design for consistency)}{18}{subsection.7.1}\protected@file@percent }
+    {1}{94.04102pt}\LT@entry 
+    {1}{154.58879pt}\LT@entry 
+    {1}{272.49692pt}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Phrase bank for justification}{3}{subsection.2.5}\protected@file@percent }
+\newlabel{sec:phrases}{{2.5}{3}{Phrase bank for justification}{subsection.2.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.6}Worked breakdown of a big multi-part question}{3}{subsection.2.6}\protected@file@percent }
+\newlabel{sec:breakdown}{{2.6}{3}{Worked breakdown of a big multi-part question}{subsection.2.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.7}The layers of a processor (what you are allowed to change)}{3}{subsection.2.7}\protected@file@percent }
+\newlabel{sec:layers}{{2.7}{3}{The layers of a processor (what you are allowed to change)}{subsection.2.7}{}}
 \gdef \LT@viii {\LT@entry 
-    {1}{103.04872pt}\LT@entry 
-    {1}{171.3356pt}\LT@entry 
-    {1}{199.78836pt}}
+    {1}{141.84166pt}\LT@entry 
+    {1}{183.26897pt}\LT@entry 
+    {1}{199.2025pt}}
 \gdef \LT@ix {\LT@entry 
-    {1}{103.04872pt}\LT@entry 
-    {1}{171.3356pt}\LT@entry 
-    {1}{199.78836pt}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Reusable full-answer skeleton}{19}{subsection.7.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}Worked scenarios (model answers)}{19}{subsection.7.3}\protected@file@percent }
+    {1}{116.34789pt}\LT@entry 
+    {1}{176.89565pt}\LT@entry 
+    {1}{119.53479pt}\LT@entry 
+    {1}{119.53479pt}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Clue Index: words in the question $\rightarrow $ concepts to open}{4}{section.3}\protected@file@percent }
+\newlabel{sec:clueidx}{{3}{4}{Clue Index: words in the question $\rightarrow $ concepts to open}{section.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Symptom Index: ``not working ideally'' $\rightarrow $ why $\rightarrow $ fix}{4}{section.4}\protected@file@percent }
+\newlabel{sec:symidx}{{4}{4}{Symptom Index: ``not working ideally'' $\rightarrow $ why $\rightarrow $ fix}{section.4}{}}
 \gdef \LT@x {\LT@entry 
-    {1}{103.04872pt}\LT@entry 
-    {1}{171.3356pt}\LT@entry 
-    {1}{199.78836pt}}
+    {1}{90.8546pt}\LT@entry 
+    {1}{313.92421pt}\LT@entry 
+    {1}{116.34789pt}}
 \gdef \LT@xi {\LT@entry 
-    {1}{103.04872pt}\LT@entry 
-    {1}{171.3356pt}\LT@entry 
-    {1}{199.78836pt}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.4}Conflict resolution: when two constraints disagree}{21}{subsection.7.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.5}Final ten-minute exam checklist}{21}{subsection.7.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {A}Formula and Number Sheet}{21}{appendix.A}\protected@file@percent }
-\newlabel{app:formulas}{{A}{21}{Formula and Number Sheet}{appendix.A}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.1}Performance, power, cost, dependability}{21}{subsection.A.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.2}Memory}{22}{subsection.A.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.3}Threads and multicore}{22}{subsection.A.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {B}Source Map, Gaps and Glossary}{22}{appendix.B}\protected@file@percent }
-\newlabel{app:src}{{B}{22}{Source Map, Gaps and Glossary}{appendix.B}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {B.1}Which deck covers what}{22}{subsection.B.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {B.2}Gaps: topics in the course outline but \emph  {not} in the provided slides}{22}{subsection.B.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {B.3}Known inconsistencies in the slides (avoid losing marks)}{22}{subsection.B.3}\protected@file@percent }
-\gdef \@abspage@last{22}
+    {1}{90.8546pt}\LT@entry 
+    {1}{313.92421pt}\LT@entry 
+    {1}{116.34789pt}}
+\gdef \LT@xii {\LT@entry 
+    {1}{90.8546pt}\LT@entry 
+    {1}{422.27211pt}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Primer: How the Machine Works (read once before the exam)}{5}{section.5}\protected@file@percent }
+\newlabel{sec:primer}{{5}{5}{Primer: How the Machine Works (read once before the exam)}{section.5}{}}
+\gdef \LT@xiii {\LT@entry 
+    {1}{90.8546pt}\LT@entry 
+    {1}{422.27211pt}}
+\gdef \LT@xiv {\LT@entry 
+    {1}{90.8546pt}\LT@entry 
+    {1}{422.27211pt}}
+\gdef \LT@xv {\LT@entry 
+    {1}{116.34789pt}\LT@entry 
+    {2}{424.2545pt}}
+\gdef \LT@xvi {\LT@entry 
+    {1}{116.34789pt}\LT@entry 
+    {1}{396.77837pt}}
+\gdef \LT@xvii {\LT@entry 
+    {1}{81.29439pt}\LT@entry 
+    {1}{157.7752pt}\LT@entry 
+    {1}{100.41435pt}\LT@entry 
+    {1}{103.60126pt}\LT@entry 
+    {4}{97.51718pt}}
+\gdef \LT@xviii {\LT@entry 
+    {1}{135.46834pt}\LT@entry 
+    {1}{211.94916pt}\LT@entry 
+    {1}{173.70874pt}}
+\gdef \LT@xix {\LT@entry 
+    {1}{135.46834pt}\LT@entry 
+    {1}{377.6584pt}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Concepts E: Power, Energy, Area, Reliability}{7}{section.6}\protected@file@percent }
+\newlabel{grp:power}{{6}{7}{Concepts E: Power, Energy, Area, Reliability}{section.6}{}}
+\newlabel{card:E1}{{17}{7}{Concepts E: Power, Energy, Area, Reliability}{table.17}{}}
+\newlabel{card:E2}{{17}{7}{Concepts E: Power, Energy, Area, Reliability}{table.17}{}}
+\newlabel{card:E3}{{17}{7}{Concepts E: Power, Energy, Area, Reliability}{table.17}{}}
+\newlabel{card:E4}{{17}{7}{Concepts E: Power, Energy, Area, Reliability}{table.17}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Concepts P: Pipeline and Branch Handling}{7}{section.7}\protected@file@percent }
+\newlabel{grp:pipe}{{7}{7}{Concepts P: Pipeline and Branch Handling}{section.7}{}}
+\gdef \LT@xx {\LT@entry 
+    {1}{81.29439pt}\LT@entry 
+    {1}{157.7752pt}\LT@entry 
+    {1}{100.41435pt}\LT@entry 
+    {1}{103.60126pt}\LT@entry 
+    {4}{97.51718pt}}
+\newlabel{card:P1}{{20}{8}{Concepts P: Pipeline and Branch Handling}{table.20}{}}
+\newlabel{card:P2}{{20}{8}{Concepts P: Pipeline and Branch Handling}{table.20}{}}
+\newlabel{card:P3}{{20}{8}{Concepts P: Pipeline and Branch Handling}{table.20}{}}
+\newlabel{card:P4}{{20}{8}{Concepts P: Pipeline and Branch Handling}{table.20}{}}
+\newlabel{card:P5}{{20}{8}{Concepts P: Pipeline and Branch Handling}{table.20}{}}
+\newlabel{card:P6}{{20}{8}{Concepts P: Pipeline and Branch Handling}{table.20}{}}
+\newlabel{card:P7}{{20}{8}{Concepts P: Pipeline and Branch Handling}{table.20}{}}
+\newlabel{card:P8}{{20}{9}{Concepts P: Pipeline and Branch Handling}{table.20}{}}
+\newlabel{card:P9}{{20}{9}{Concepts P: Pipeline and Branch Handling}{table.20}{}}
+\newlabel{card:P10}{{20}{9}{Concepts P: Pipeline and Branch Handling}{table.20}{}}
+\newlabel{card:P11}{{20}{9}{Concepts P: Pipeline and Branch Handling}{table.20}{}}
+\newlabel{card:P12}{{20}{9}{Concepts P: Pipeline and Branch Handling}{table.20}{}}
+\newlabel{card:P13}{{20}{9}{Concepts P: Pipeline and Branch Handling}{table.20}{}}
+\gdef \LT@xxi {\LT@entry 
+    {1}{81.29439pt}\LT@entry 
+    {1}{157.7752pt}\LT@entry 
+    {1}{100.41435pt}\LT@entry 
+    {1}{103.60126pt}\LT@entry 
+    {4}{97.51718pt}}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Concepts I: Instruction-Level Parallelism}{10}{section.8}\protected@file@percent }
+\newlabel{grp:ilp}{{8}{10}{Concepts I: Instruction-Level Parallelism}{section.8}{}}
+\newlabel{card:I1}{{21}{10}{Concepts I: Instruction-Level Parallelism}{table.21}{}}
+\newlabel{card:I2}{{21}{10}{Concepts I: Instruction-Level Parallelism}{table.21}{}}
+\newlabel{card:I3}{{21}{10}{Concepts I: Instruction-Level Parallelism}{table.21}{}}
+\newlabel{card:I4}{{21}{10}{Concepts I: Instruction-Level Parallelism}{table.21}{}}
+\newlabel{card:I5}{{21}{10}{Concepts I: Instruction-Level Parallelism}{table.21}{}}
+\newlabel{card:I6}{{21}{11}{Concepts I: Instruction-Level Parallelism}{table.21}{}}
+\newlabel{card:I7}{{21}{11}{Concepts I: Instruction-Level Parallelism}{table.21}{}}
+\newlabel{card:I8}{{21}{11}{Concepts I: Instruction-Level Parallelism}{table.21}{}}
+\newlabel{card:I9}{{21}{11}{Concepts I: Instruction-Level Parallelism}{table.21}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {9}Concepts M: Memory Hierarchy}{11}{section.9}\protected@file@percent }
+\newlabel{grp:mem}{{9}{11}{Concepts M: Memory Hierarchy}{section.9}{}}
+\gdef \LT@xxii {\LT@entry 
+    {1}{81.29439pt}\LT@entry 
+    {1}{157.7752pt}\LT@entry 
+    {1}{100.41435pt}\LT@entry 
+    {1}{103.60126pt}\LT@entry 
+    {4}{97.51718pt}}
+\newlabel{card:M1}{{22}{12}{Concepts M: Memory Hierarchy}{table.22}{}}
+\newlabel{card:M2}{{22}{12}{Concepts M: Memory Hierarchy}{table.22}{}}
+\newlabel{card:M3}{{22}{12}{Concepts M: Memory Hierarchy}{table.22}{}}
+\newlabel{card:M4}{{22}{12}{Concepts M: Memory Hierarchy}{table.22}{}}
+\newlabel{card:M5}{{22}{12}{Concepts M: Memory Hierarchy}{table.22}{}}
+\newlabel{card:M6}{{22}{12}{Concepts M: Memory Hierarchy}{table.22}{}}
+\newlabel{card:M7}{{22}{12}{Concepts M: Memory Hierarchy}{table.22}{}}
+\newlabel{card:M8}{{22}{13}{Concepts M: Memory Hierarchy}{table.22}{}}
+\newlabel{card:M9}{{22}{13}{Concepts M: Memory Hierarchy}{table.22}{}}
+\newlabel{card:M10}{{22}{13}{Concepts M: Memory Hierarchy}{table.22}{}}
+\newlabel{card:M11}{{22}{13}{Concepts M: Memory Hierarchy}{table.22}{}}
+\newlabel{card:M12}{{22}{13}{Concepts M: Memory Hierarchy}{table.22}{}}
+\newlabel{card:M13}{{22}{13}{Concepts M: Memory Hierarchy}{table.22}{}}
+\newlabel{card:M14}{{22}{13}{Concepts M: Memory Hierarchy}{table.22}{}}
+\newlabel{card:M15}{{22}{13}{Concepts M: Memory Hierarchy}{table.22}{}}
+\newlabel{card:M16}{{22}{13}{Concepts M: Memory Hierarchy}{table.22}{}}
+\newlabel{card:M17}{{22}{14}{Concepts M: Memory Hierarchy}{table.22}{}}
+\newlabel{card:M18}{{22}{14}{Concepts M: Memory Hierarchy}{table.22}{}}
+\newlabel{card:M19}{{22}{14}{Concepts M: Memory Hierarchy}{table.22}{}}
+\newlabel{card:M20}{{22}{14}{Concepts M: Memory Hierarchy}{table.22}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {10}Concepts T: Multithreading and Multicore}{14}{section.10}\protected@file@percent }
+\newlabel{grp:tlp}{{10}{14}{Concepts T: Multithreading and Multicore}{section.10}{}}
+\gdef \LT@xxiii {\LT@entry 
+    {1}{81.29439pt}\LT@entry 
+    {1}{157.7752pt}\LT@entry 
+    {1}{100.41435pt}\LT@entry 
+    {1}{103.60126pt}\LT@entry 
+    {4}{97.51718pt}}
+\newlabel{card:T1}{{23}{15}{Concepts T: Multithreading and Multicore}{table.23}{}}
+\newlabel{card:T2}{{23}{15}{Concepts T: Multithreading and Multicore}{table.23}{}}
+\newlabel{card:T3}{{23}{15}{Concepts T: Multithreading and Multicore}{table.23}{}}
+\newlabel{card:T4}{{23}{15}{Concepts T: Multithreading and Multicore}{table.23}{}}
+\newlabel{card:T5}{{23}{15}{Concepts T: Multithreading and Multicore}{table.23}{}}
+\newlabel{card:T6}{{23}{15}{Concepts T: Multithreading and Multicore}{table.23}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {11}Concepts D: Data-Level Parallelism (Vector, SIMD, GPU/SIMT)}{15}{section.11}\protected@file@percent }
+\newlabel{grp:dlp}{{11}{15}{Concepts D: Data-Level Parallelism (Vector, SIMD, GPU/SIMT)}{section.11}{}}
+\gdef \LT@xxiv {\LT@entry 
+    {1}{81.29439pt}\LT@entry 
+    {1}{157.7752pt}\LT@entry 
+    {1}{100.41435pt}\LT@entry 
+    {1}{103.60126pt}\LT@entry 
+    {4}{97.51718pt}}
+\newlabel{card:D1}{{24}{16}{Concepts D: Data-Level Parallelism (Vector, SIMD, GPU/SIMT)}{table.24}{}}
+\newlabel{card:D2}{{24}{16}{Concepts D: Data-Level Parallelism (Vector, SIMD, GPU/SIMT)}{table.24}{}}
+\newlabel{card:D3}{{24}{16}{Concepts D: Data-Level Parallelism (Vector, SIMD, GPU/SIMT)}{table.24}{}}
+\newlabel{card:D4}{{24}{16}{Concepts D: Data-Level Parallelism (Vector, SIMD, GPU/SIMT)}{table.24}{}}
+\newlabel{card:D5}{{24}{16}{Concepts D: Data-Level Parallelism (Vector, SIMD, GPU/SIMT)}{table.24}{}}
+\newlabel{card:D6}{{24}{16}{Concepts D: Data-Level Parallelism (Vector, SIMD, GPU/SIMT)}{table.24}{}}
+\newlabel{card:D7}{{24}{16}{Concepts D: Data-Level Parallelism (Vector, SIMD, GPU/SIMT)}{table.24}{}}
+\gdef \LT@xxv {\LT@entry 
+    {1}{81.29439pt}\LT@entry 
+    {1}{157.7752pt}\LT@entry 
+    {1}{100.41435pt}\LT@entry 
+    {1}{103.60126pt}\LT@entry 
+    {4}{97.51718pt}}
+\newlabel{card:D8}{{24}{17}{Concepts D: Data-Level Parallelism (Vector, SIMD, GPU/SIMT)}{table.24}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {12}Concepts W: Multiple PEs: Order of Execution, Work Distribution, Timing}{17}{section.12}\protected@file@percent }
+\newlabel{grp:work}{{12}{17}{Concepts W: Multiple PEs: Order of Execution, Work Distribution, Timing}{section.12}{}}
+\newlabel{card:W1}{{25}{17}{Concepts W: Multiple PEs: Order of Execution, Work Distribution, Timing}{table.25}{}}
+\newlabel{card:W2}{{25}{17}{Concepts W: Multiple PEs: Order of Execution, Work Distribution, Timing}{table.25}{}}
+\newlabel{card:W3}{{25}{17}{Concepts W: Multiple PEs: Order of Execution, Work Distribution, Timing}{table.25}{}}
+\newlabel{card:W4}{{25}{18}{Concepts W: Multiple PEs: Order of Execution, Work Distribution, Timing}{table.25}{}}
+\newlabel{card:W5}{{25}{18}{Concepts W: Multiple PEs: Order of Execution, Work Distribution, Timing}{table.25}{}}
+\newlabel{card:W6}{{25}{18}{Concepts W: Multiple PEs: Order of Execution, Work Distribution, Timing}{table.25}{}}
+\newlabel{card:W7}{{25}{18}{Concepts W: Multiple PEs: Order of Execution, Work Distribution, Timing}{table.25}{}}
+\newlabel{card:W8}{{25}{18}{Concepts W: Multiple PEs: Order of Execution, Work Distribution, Timing}{table.25}{}}
+\newlabel{card:W9}{{25}{18}{Concepts W: Multiple PEs: Order of Execution, Work Distribution, Timing}{table.25}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {13}Concepts C: Coherence, Synchronisation, Consistency}{18}{section.13}\protected@file@percent }
+\newlabel{grp:coh}{{13}{18}{Concepts C: Coherence, Synchronisation, Consistency}{section.13}{}}
+\gdef \LT@xxvi {\LT@entry 
+    {1}{81.29439pt}\LT@entry 
+    {1}{157.7752pt}\LT@entry 
+    {1}{100.41435pt}\LT@entry 
+    {1}{103.60126pt}\LT@entry 
+    {4}{97.51718pt}}
+\newlabel{card:C1}{{26}{19}{Concepts C: Coherence, Synchronisation, Consistency}{table.26}{}}
+\newlabel{card:C2}{{26}{19}{Concepts C: Coherence, Synchronisation, Consistency}{table.26}{}}
+\newlabel{card:C3}{{26}{19}{Concepts C: Coherence, Synchronisation, Consistency}{table.26}{}}
+\newlabel{card:C4}{{26}{19}{Concepts C: Coherence, Synchronisation, Consistency}{table.26}{}}
+\newlabel{card:C5}{{26}{19}{Concepts C: Coherence, Synchronisation, Consistency}{table.26}{}}
+\newlabel{card:C6}{{26}{19}{Concepts C: Coherence, Synchronisation, Consistency}{table.26}{}}
+\newlabel{card:C7}{{26}{19}{Concepts C: Coherence, Synchronisation, Consistency}{table.26}{}}
+\newlabel{card:C8}{{26}{19}{Concepts C: Coherence, Synchronisation, Consistency}{table.26}{}}
+\gdef \LT@xxvii {\LT@entry 
+    {1}{87.66771pt}\LT@entry 
+    {1}{113.16148pt}\LT@entry 
+    {1}{113.16148pt}\LT@entry 
+    {1}{113.16148pt}\LT@entry 
+    {1}{113.16148pt}}
+\newlabel{card:C9}{{26}{20}{Concepts C: Coherence, Synchronisation, Consistency}{table.26}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {14}Cross-Cutting Checks (use in every answer)}{20}{section.14}\protected@file@percent }
+\newlabel{sec:cross}{{14}{20}{Cross-Cutting Checks (use in every answer)}{section.14}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.1}Static vs.\ dynamic: decide and justify}{20}{subsection.14.1}\protected@file@percent }
+\newlabel{sec:staticdyn}{{14.1}{20}{Static vs.\ dynamic: decide and justify}{subsection.14.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.2}Will the memory hierarchy work?}{20}{subsection.14.2}\protected@file@percent }
+\newlabel{sec:memworks}{{14.2}{20}{Will the memory hierarchy work?}{subsection.14.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.3}Roofline: compute-bound or memory-bound?\textsuperscript  {\textcolor {avoidc}{$\dagger $}}}{20}{subsection.14.3}\protected@file@percent }
+\newlabel{sec:roofline}{{14.3}{20}{Roofline: compute-bound or memory-bound?\bs }{subsection.14.3}{}}
+\gdef \LT@xxviii {\LT@entry 
+    {1}{122.7217pt}\LT@entry 
+    {1}{211.94916pt}\LT@entry 
+    {1}{186.45587pt}}
+\gdef \LT@xxix {\LT@entry 
+    {1}{103.60126pt}\LT@entry 
+    {1}{275.68333pt}\LT@entry 
+    {1}{141.84166pt}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.4}Benefits and demerits of parallelism}{21}{subsection.14.4}\protected@file@percent }
+\newlabel{sec:paraproscons}{{14.4}{21}{Benefits and demerits of parallelism}{subsection.14.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.5}Knock-on effects: adjust the whole architecture}{21}{subsection.14.5}\protected@file@percent }
+\newlabel{sec:knockon}{{14.5}{21}{Knock-on effects: adjust the whole architecture}{subsection.14.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.6}Concept chains (connect every concept)}{21}{subsection.14.6}\protected@file@percent }
+\newlabel{sec:connect}{{14.6}{21}{Concept chains (connect every concept)}{subsection.14.6}{}}
+\gdef \LT@xxx {\LT@entry 
+    {1}{87.66771pt}\LT@entry 
+    {1}{262.93669pt}\LT@entry 
+    {1}{173.70874pt}}
+\gdef \LT@xxxi {\LT@entry 
+    {1}{54.20718pt}\LT@entry 
+    {1}{97.22794pt}\LT@entry 
+    {1}{97.22794pt}\LT@entry 
+    {1}{97.22794pt}\LT@entry 
+    {1}{97.22794pt}\LT@entry 
+    {1}{97.22794pt}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.7}Lab evidence you can cite}{22}{subsection.14.7}\protected@file@percent }
+\newlabel{sec:labs}{{14.7}{22}{Lab evidence you can cite}{subsection.14.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {15}Reference Designs and Model Answers}{22}{section.15}\protected@file@percent }
+\newlabel{sec:answers}{{15}{22}{Reference Designs and Model Answers}{section.15}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {15.1}Reference designs by machine class (when the question names the class)}{22}{subsection.15.1}\protected@file@percent }
+\newlabel{sec:classes}{{15.1}{22}{Reference designs by machine class (when the question names the class)}{subsection.15.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {15.2}Model answer A: multicore analytics that gets slower with more cores}{22}{subsection.15.2}\protected@file@percent }
+\newlabel{sec:modelA}{{15.2}{22}{Model answer A: multicore analytics that gets slower with more cores}{subsection.15.2}{}}
+\gdef \LT@xxxii {\LT@entry 
+    {1}{81.29439pt}\LT@entry 
+    {1}{211.94916pt}\LT@entry 
+    {1}{49.4273pt}\LT@entry 
+    {1}{186.45587pt}}
+\gdef \LT@xxxiii {\LT@entry 
+    {1}{81.29439pt}\LT@entry 
+    {1}{211.94916pt}\LT@entry 
+    {1}{49.4273pt}\LT@entry 
+    {1}{186.45587pt}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {15.3}Model answer B: GPU image filter at 8\% of peak}{23}{subsection.15.3}\protected@file@percent }
+\newlabel{sec:modelB}{{15.3}{23}{Model answer B: GPU image filter at 8\% of peak}{subsection.15.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {15.4}Model answer C: wide core, low IPC, the bottleneck moves}{23}{subsection.15.4}\protected@file@percent }
+\newlabel{sec:modelC}{{15.4}{23}{Model answer C: wide core, low IPC, the bottleneck moves}{subsection.15.4}{}}
+\gdef \LT@xxxiv {\LT@entry 
+    {1}{81.29439pt}\LT@entry 
+    {1}{211.94916pt}\LT@entry 
+    {1}{49.4273pt}\LT@entry 
+    {1}{186.45587pt}}
+\gdef \LT@xxxv {\LT@entry 
+    {1}{81.29439pt}\LT@entry 
+    {1}{211.94916pt}\LT@entry 
+    {1}{49.4273pt}\LT@entry 
+    {1}{186.45587pt}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {15.5}Model answer D: phone SoC with poor battery life}{24}{subsection.15.5}\protected@file@percent }
+\newlabel{sec:modelD}{{15.5}{24}{Model answer D: phone SoC with poor battery life}{subsection.15.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {15.6}Model answer E: key-value server that stops scaling at one socket}{24}{subsection.15.6}\protected@file@percent }
+\newlabel{sec:modelE}{{15.6}{24}{Model answer E: key-value server that stops scaling at one socket}{subsection.15.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {15.7}Model answer F: branchy interpreter on a deep pipeline}{24}{subsection.15.7}\protected@file@percent }
+\newlabel{sec:modelF}{{15.7}{24}{Model answer F: branchy interpreter on a deep pipeline}{subsection.15.7}{}}
+\gdef \LT@xxxvi {\LT@entry 
+    {1}{30.30685pt}\LT@entry 
+    {1}{167.33543pt}\LT@entry 
+    {1}{125.90811pt}\LT@entry 
+    {1}{43.05399pt}\LT@entry 
+    {1}{167.33543pt}}
+\gdef \LT@xxxvii {\LT@entry 
+    {1}{90.8546pt}\LT@entry 
+    {1}{199.2025pt}\LT@entry 
+    {1}{58.98753pt}\LT@entry 
+    {1}{180.08206pt}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {15.8}Model answer G: the multi-part practice question (p\pageref {sec:breakdown}), fully answered}{25}{subsection.15.8}\protected@file@percent }
+\newlabel{sec:modelG}{{15.8}{25}{Model answer G: the multi-part practice question (\pg {sec:breakdown}), fully answered}{subsection.15.8}{}}
+\gdef \LT@xxxviii {\LT@entry 
+    {1}{154.58879pt}\LT@entry 
+    {1}{180.08206pt}\LT@entry 
+    {1}{186.45587pt}}
+\gdef \LT@xxxix {\LT@entry 
+    {1}{27.12044pt}\LT@entry 
+    {1}{486.0063pt}}
+\gdef \LT@xl {\LT@entry 
+    {1}{116.34789pt}\LT@entry 
+    {1}{180.08206pt}\LT@entry 
+    {1}{224.69627pt}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {15.9}Mistakes that lose marks}{26}{subsection.15.9}\protected@file@percent }
+\newlabel{sec:mistakes}{{15.9}{26}{Mistakes that lose marks}{subsection.15.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {15.10}Final checklist (last minutes of each question)}{26}{subsection.15.10}\protected@file@percent }
+\newlabel{sec:checklist}{{15.10}{26}{Final checklist (last minutes of each question)}{subsection.15.10}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {16}Formulas, Numbers, Typical Values}{26}{section.16}\protected@file@percent }
+\newlabel{sec:formulas}{{16}{26}{Formulas, Numbers, Typical Values}{section.16}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {16.1}Calculation recipes: given $\rightarrow $ compute $\rightarrow $ conclude}{26}{subsection.16.1}\protected@file@percent }
+\newlabel{sec:recipes}{{16.1}{26}{Calculation recipes: given $\rightarrow $ compute $\rightarrow $ conclude}{subsection.16.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {16.2}Performance, power, cost, dependability}{27}{subsection.16.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {16.3}Memory}{28}{subsection.16.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {16.4}Threads and multicore}{28}{subsection.16.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {16.5}Parallel execution, DLP and communication}{28}{subsection.16.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {16.6}Typical values for writing assumptions}{28}{subsection.16.6}\protected@file@percent }
+\newlabel{sec:typical}{{16.6}{28}{Typical values for writing assumptions}{subsection.16.6}{}}
+\gdef \LT@xli {\LT@entry 
+    {1}{55.80061pt}\LT@entry 
+    {1}{192.8292pt}\LT@entry 
+    {1}{55.80061pt}\LT@entry 
+    {1}{211.94916pt}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {16.7}Known inconsistencies in the slides}{29}{subsection.16.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {16.8}Glossary of abbreviations}{29}{subsection.16.8}\protected@file@percent }
+\newlabel{sec:glossary}{{16.8}{29}{Glossary of abbreviations}{subsection.16.8}{}}
+\gdef \@abspage@last{29}

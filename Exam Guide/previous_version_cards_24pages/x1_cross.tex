@@ -1,0 +1,143 @@
+\section{Cross-Cutting Checks (use in every answer)}\label{sec:cross}
+
+\subsection{Static vs.\ dynamic: decide and justify}\label{sec:staticdyn}
+\textbf{Static} = before run time (compiler, programmer, design). \textbf{Dynamic} = at run time (hardware, runtime, OS). \textbf{Rule:} predictable and known in advance $\rightarrow$ static (cheaper, lower power, deterministic, no overhead); data-/input-dependent or must survive hardware changes $\rightarrow$ dynamic (adapts, costs hardware/energy/overhead). Often best: \textbf{hybrid} (static coarse split + dynamic stealing; compiler scheduling + OoO core).
+\small
+\begin{longtable}{L{2.5cm}L{3.3cm}L{3.3cm}L{3.3cm}L{3.3cm}}
+\toprule
+\tblhead{\textbf{Decision} & \textbf{Static form} & \textbf{Dynamic form} & \textbf{Static wins when} & \textbf{Dynamic wins when}}\\
+\midrule
+\endhead
+Instruction scheduling & Unrolling, SW pipelining, VLIW \cp{I1} \cp{I7} & Scoreboard, Tomasulo, ROB \cp{I3}--\cp{I5} & Fixed latencies, regular loops, power/area tight & Cache misses, aliasing, compatibility needed \\
+Branches & Not-taken, BTFNT, profile, delay slot \cp{P7} \cp{P8} & 2-bit, two-level, gshare, BTB \cp{P9}--\cp{P11} & Shallow pipe, loops, cost-sensitive & Deep pipe, data-dependent branches \\
+Register naming & Compiler allocation & Hardware renaming \cp{I4} & Enough registers & Few registers, OoO \\
+Multiple issue & VLIW \cp{I7} & Superscalar \cp{I6} & Fixed product, strong compiler & Varying code, legacy binaries \\
+Work to PEs & Block/cyclic \cp{W1} \cp{W2} & Queue, stealing \cp{W3} & Equal known costs, locality & Unequal/unknown costs, heterogeneous PEs \\
+Prefetch & Compiler \cp{M12} & Hardware \cp{M11} & Pattern known at compile time & Pattern visible only at run time \\
+On-chip data & Scratchpad/shared memory \cp{D6} & Cache & Known tiles, real-time & Irregular access \\
+Thread placement & Pinning, owner-computes \cp{W6} & OS migration & NUMA locality & Load varies over time \\
+Power & Fixed V/f & DVFS, gating \cp{E1} \cp{E2} & Constant load, real-time & Bursty load, battery \\
+Divergence & Predication \cp{P13} & Masks, compaction \cp{D5} & Short \texttt{if} bodies & Long data-dependent paths \\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\begin{multicols}{2}
+\subsection{Will the memory hierarchy work?}\label{sec:memworks}
+Caches work when data is \textbf{reused before eviction} (reuse distance $<$ capacity) or neighbours are used together.
+\small
+\begin{tabularx}{\linewidth}{L{2.8cm}L{1.3cm}X}
+\toprule
+\tblhead{\textbf{Access pattern} & \textbf{Works?} & \textbf{Why / do}}\\
+\midrule
+Fits, reused & Yes & Temporal locality \\
+Sequential single pass & Partly & Miss rate $\approx$1/words per block; bandwidth decides: \cp{M11} \cp{M18} \\
+Big matrices with reuse & After blocking & Capacity: \cp{M14} \\
+Stride $\ge$ block, column walk & No & \cp{M13} interchange/SoA \\
+Power-of-2 strides & No & Conflicts: \cp{M4} \cp{M5} pad \\
+Random / pointer & Poor & Hide latency: \cp{T1} \cp{T2} \\
+Read-shared by PEs & Yes & S state; shared LLC \cp{T6} \\
+Written by many PEs & Against you & Coherence: \cp{W5} \cp{C3} \\
+GPU neighbours & If coalesced & \cp{D4} \\
+\bottomrule
+\end{tabularx}
+\normalsize
+
+\subsection{Roofline: compute-bound or memory-bound?\bs}\label{sec:roofline}
+Attainable FLOP/s $=\min(\text{peak FLOP/s},\ \text{AI}\times\text{BW})$, AI $=$ FLOPs per DRAM byte.
+\textbf{Example:} $c[i]=a[i]+b[i]$ (doubles): 1 FLOP/24\,B, AI $=0.042$; at 100\,GB/s $\le$4.2\,GFLOP/s \emph{whatever the cores/lanes/GPU}. Write: ``the bandwidth term binds; raise AI (fusion, blocking) or buy bandwidth''. Blocked matrix multiply's AI grows with tile size, so it can become compute-bound.
+
+\columnbreak
+\subsection{Benefits and demerits of parallelism}\label{sec:paraproscons}
+\small
+\begin{tabularx}{\linewidth}{L{1.5cm}L{2.5cm}X}
+\toprule
+\tblhead{\textbf{Kind} & \textbf{Benefit} & \textbf{Demerit / fails when}}\\
+\midrule
+Pipelining & Throughput, clock & Hazards; penalties grow with depth \\
+ILP (OoO, superscalar) & Unmodified single thread, compatible & Area/power $>$ linear; saturates 3--6; chains, branches, memory \\
+DLP (SIMD, vector, GPU) & Ops per watt/area; regular memory & Divergence, layout, transfer; branchy or small data \\
+MT / SMT & Fills slots, hides latency cheaply & Cache contention; slows one thread \\
+Multicore / PEs & Near-linear throughput, energy-efficient & Comm., coherence, sync, imbalance, shared BW; serial code \\
+Pipeline stages & Throughput for sequential items & Slowest stage; fill/drain \\
+\bottomrule
+\end{tabularx}
+\normalsize
+\begin{dec}[Parallelism will NOT help when]
+(1) serial fraction large; (2) bandwidth-bound; (3) comm./computation high (tasks too fine); (4) frequent sharing of writable data or sync; (5) unbalanced static split; (6) problem too small for start-up/transfer; (7) power cap lowers per-core clock. State which apply \emph{before} adding PEs.
+\end{dec}
+\end{multicols}
+
+\subsection{Knock-on effects: adjust the whole architecture}\label{sec:knockon}
+\small
+\begin{longtable}{L{3.6cm}L{6.4cm}L{5.6cm}}
+\toprule
+\tblhead{\textbf{If you add\ldots} & \textbf{also add / change\ldots} & \textbf{or else\ldots}}\\
+\midrule
+\endhead
+More cores/PEs & Memory channels/banks, larger shared LLC, directory beyond a few cores, privatised data & Cores starve; coherence and locks grow with $p$ \\
+Wider SIMD / more lanes / GPU & Bandwidth, unit-stride/SoA layout, masks, enough threads (occupancy), data resident & Lanes idle or masked; PCIe dominates \\
+Wider issue / bigger ROB & Better predictor + BTB, PRF/LQ/SQ/issue queue/checkpoints in balance, decode width, non-blocking cache & Stall moves to next structure (Lab 7); front end starves (Lab 6) \\
+More functional units & Issue/wakeup width, bypass network, independent work of \emph{that} class & No gain unless that class saturated (Lab 8) \\
+Speculation & Dynamic prediction, ROB, recovery & No undo; imprecise exceptions \\
+Non-blocking cache & OoO core, multiple banks & Blocking CPU stalls anyway \\
+SMT / multithreading & OoO core (SMT), larger register file, more L1/TLB associativity, cache capacity & Threads thrash each other \\
+Prefetching & Spare bandwidth, timeliness tuning & Pollution, slower (Lab 4) \\
+Deeper pipeline & Strong predictor, BTB, small L1 & Penalties eat the clock gain \\
+VLIW & Strong compiler, no compatibility need & Lock-step stalls, NOP bloat \\
+Dynamic task queue & Cheap atomic index, chunk size, locality awareness & Queue contention \\
+Privatised data & Final reduction, padding & Wrong result; false sharing \\
+Way prediction / pseudo-assoc. & Tolerance of variable hit time (L2 for pseudo) & Pipeline trouble \\
+Virtual-indexed cache & PIDs, anti-aliasing / page colouring, protection bits & Flush on switch; synonyms \\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\begin{multicols}{2}
+\subsection{Concept chains (connect every concept)}\label{sec:connect}
+One chain $=$ one paragraph: follow the arrows, say what you do at each.
+\begin{itemize}
+\item \textbf{More PEs} $\rightarrow$ more misses at once $\rightarrow$ shared BW/LLC contention $\rightarrow$ coherence on shared data $\rightarrow$ sync cost $\rightarrow$ Amdahl.
+\item \textbf{Wider issue} $\rightarrow$ needs ILP $\rightarrow$ limited by chains/branches $\rightarrow$ predictor + window $\rightarrow$ more outstanding misses $\rightarrow$ MSHRs $\rightarrow$ power/clock.
+\item \textbf{DLP} $\rightarrow$ many operands/cycle $\rightarrow$ bandwidth + coalescing $\rightarrow$ branches become masks $\rightarrow$ latency hidden by warps (occupancy).
+\item \textbf{Deeper pipe} $\rightarrow$ higher clock $\rightarrow$ bigger penalties $\rightarrow$ prediction/forwarding $\rightarrow$ power.
+\item \textbf{Multithreading} $\rightarrow$ hides latency $\rightarrow$ shares caches $\rightarrow$ capacity/associativity $\rightarrow$ single thread slower.
+\item \textbf{Bigger/assoc.\ cache} $\rightarrow$ fewer misses $\rightarrow$ slower hit/clock, power $\rightarrow$ keep L1 small, grow L2/L3 $\rightarrow$ judge by AMAT.
+\item \textbf{Static} $\rightarrow$ needs predictability $\rightarrow$ cheap/low power; \textbf{dynamic} $\rightarrow$ adapts $\rightarrow$ overhead.
+\end{itemize}
+
+\subsection*{Conflict resolution}
+\small
+\begin{tabularx}{\linewidth}{L{2.6cm}X}
+\toprule
+\tblhead{\textbf{Conflict} & \textbf{Resolve by}}\\
+\midrule
+Clock vs.\ CPI & Product IC$\times$CPI$\times T_{clk}$ \\
+Miss rate vs.\ hit time & Small DM L1 + big assoc.\ L2; victim cache \\
+Throughput vs.\ latency & MT with priority; heterogeneous cores \\
+Performance vs.\ power & TLP/DLP over ILP; DVFS; energy/task \\
+Compiler vs.\ hardware & Compatibility $\Rightarrow$ superscalar; fixed $\Rightarrow$ VLIW \\
+Bandwidth vs.\ latency & Buy bandwidth; hide latency \\
+\bottomrule
+\end{tabularx}
+\normalsize
+\end{multicols}
+
+\subsection{Lab evidence you can cite}\label{sec:labs}
+\small
+\begin{longtable}{L{2.5cm}L{8.0cm}L{5.2cm}}
+\toprule
+\tblhead{\textbf{Lab} & \textbf{Observed} & \textbf{Use it to argue}}\\
+\midrule
+\endhead
+1: DM cache simulator & Sequential governed by block size; repeat by fit; aliasing gave 100\% misses with a tiny working set & Conflicts need associativity/padding, not size \\
+3: 3-level hierarchy & L1 associativity fixed a conflict storm, but L2/L3 miss \emph{rates} rose while AMAT and DRAM traffic improved & Misses move between levels; judge by AMAT \\
+4: victim, prefetch, MSHR & Stride prefetch: misses 57.4\%$\rightarrow$23.2\% yet slower (0\% timely, pollution); victim cache 61.6\% only on a conflict pattern; MSHRs: no gain on dependent chase, 8$\times$ on 8 streams, plateau at 8 & Fewer misses $\ne$ faster; MLP needs independent misses \\
+5: coherence & True sharing on 256\,B counters: CAS retries up, IPC collapsed, instructions/event flat; bandwidth, capacity, locks ruled out; per-thread tables fixed it & Privatise + reduce; rule out rivals explicitly \\
+6: x86 decoder & 6-instruction decode ceiling, not 32\,B/cycle; microcode instructions drop decode to 1 lane; fusion depends on alignment & Front end can bottleneck a wide core \\
+7: OoO allocation & Stalls from ROB/PRF/IQ/LQ/SQ/checkpoints; enlarging one moved the stall to the next; window limited by branch accuracy and true dependences & Size structures in balance \\
+8: OoO scheduler & Ready $\ne$ issued; longest chain sets time unless a class saturates; bigger scheduler/8-wide/4 ALUs: same 123 cycles; fixing loads moved the limit to IMUL & Add only the saturated class; bottleneck moves \\
+10: bypass/recurrence & One recurrence 0.27 IPC vs.\ $\approx$3 independent (11$\times$); $\approx$11 interleaved chains fill the ports & Break chains; FUs cannot fix a recurrence \\
+\bottomrule
+\end{longtable}
+\normalsize

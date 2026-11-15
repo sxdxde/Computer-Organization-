@@ -1,0 +1,86 @@
+\section{Data-Level Parallelism: Vector, SIMD and GPU (SIMT)}\label{ch:dlp}
+\textit{Source: Hennessy \& Patterson, Ch.~4 (not in the provided slide decks, but the professor named SIMT/DLP as examinable). Standard textbook material; no daggers used inside this section.}
+
+\subsection{Decision map}
+\small
+\begin{tabularx}{\textwidth}{L{4.4cm}L{4.3cm}X}
+\toprule
+\tblhead{\textbf{Scenario} & \textbf{Feature} & \textbf{Why}}\\
+\midrule
+Same operation on large regular arrays (image, matrix, signal, ML) & DLP hardware: vector unit, SIMD extension or GPU & One instruction fetch/decode controls many operations: far less control energy and area per operation than MIMD cores. \\
+Long vectors, scientific, need predictable bandwidth & Vector architecture (vector registers, lanes, chaining, many memory banks) & Deep pipelined lanes, strided/gather loads in hardware, compact code. \\
+General-purpose CPU, short vectors (media, crypto, small kernels) & SIMD extension (SSE/AVX/NEON) & Cheap to add to an existing core; no data transfer to another device. \\
+Massive parallelism (10$^5$+ independent elements), throughput over latency & GPU (SIMT, many SMs, many warps) & Thousands of lanes; memory latency hidden by switching warps instead of big caches/OoO. \\
+Branchy per-element code, pointer structures, little data & Multicore CPU (MIMD) & Each core has its own PC: no divergence penalty; caches and OoO handle irregularity. \\
+Data must be shipped to an accelerator for little work & Keep it on the CPU (SIMD) or batch the work & Transfer time can exceed compute time. \\
+\bottomrule
+\end{tabularx}
+\normalsize
+
+\subsection{Why DLP is efficient, and how to spot it in the workload}
+\begin{itemize}
+\item \textbf{Efficiency:} one instruction describes $N$ operations, so fetch, decode, dependence checking and scheduling are paid once per $N$ operations; elements of one vector instruction are independent by definition (no hazard checks between them); the memory access pattern is known, so it can be pipelined and banked.
+\item \textbf{Spotting DLP:} a loop whose iterations are \emph{independent} (\texttt{y[i] = a*x[i] + y[i]}). A \textbf{loop-carried dependence} (\texttt{a[i] = a[i-1] + b[i]}) blocks it, except two special cases: a \textbf{reduction} (\texttt{sum += a[i]}) is parallelised as a tree in $\log_2 N$ steps, and a \textbf{scan/prefix-sum} has parallel algorithms. Conditional code inside the loop becomes \emph{masked} execution.
+\item \textbf{Write in the answer:} ``the workload has DLP because iteration $i$ only touches element $i$; the order of execution between elements does not matter; the only ordering is the final reduction''.
+\end{itemize}
+
+\subsection{Vector architectures}
+\begin{itemize}
+\item \textbf{Vector registers} hold many elements (e.g.\ VMIPS: 8 registers $\times$ 64 elements $\times$ 64 bits). \textbf{Vector length register (VL)} handles $n<$ maximum vector length (MVL); \textbf{strip mining} handles $n>$ MVL by looping over MVL-sized chunks.
+\item \textbf{Lanes:} the functional unit is replicated $L$ times; element $i$ goes to lane $i \bmod L$. Doubling lanes halves time per vector instruction without changing the code.
+\item \textbf{Chaining:} a dependent vector instruction starts as soon as the first result element is ready (vector version of forwarding).
+\item \textbf{Timing model:} group instructions that can run together into \emph{convoys}; one convoy takes one \emph{chime} ($\approx n/L$ cycles). Time $\approx$ (number of convoys) $\times\, n/L$ + start-up latency.
+\item \textbf{Vector mask registers} implement \texttt{if} inside loops (operate only where the mask bit is 1; wasted lanes where it is 0).
+\item \textbf{Memory:} must deliver one element per lane per cycle, so use \textbf{many independent banks}. Unit stride: need $\#\text{banks} \ge$ bank busy time. Non-unit stride $s$ conflicts when $\#\text{banks}/\gcd(s,\#\text{banks}) <$ bank busy time. Sparse data uses \textbf{gather/scatter} (index-vector loads/stores), which are much slower than unit stride.
+\end{itemize}
+
+\subsection{SIMD multimedia extensions (SSE, AVX, NEON)}
+Fixed-width registers (128/256/512 bits) split into packed elements (e.g.\ 8 floats in 256 bits). \textbf{Pros:} small hardware cost, uses the existing caches and core, no transfer. \textbf{Cons:} width fixed in the instruction set (new instructions per generation), historically weak masking and gather (improved in AVX-512), alignment matters, compilers vectorise only simple loops. Peak speedup $\le$ number of elements per register.
+
+\subsection{GPUs and SIMT (Single Instruction, Multiple Threads)}\label{sec:simt}
+\textbf{Programming model:} the programmer writes code for \emph{one} scalar thread; thousands of threads are launched as a \textbf{grid} of \textbf{thread blocks}. \textbf{Hardware:} each block runs on one \textbf{streaming multiprocessor (SM)}; the SM groups 32 threads into a \textbf{warp} that executes one instruction at a time across 32 SIMD lanes in lock-step. Each thread has its own registers and can take its own branch; the hardware handles this with masks.
+\begin{itemize}
+\item \textbf{Latency hiding by multithreading, not by caches/OoO:} an SM keeps many warps resident (registers of all of them stay in a very large register file). When a warp waits for memory (hundreds of cycles), the \textbf{warp scheduler} issues from another ready warp in the next cycle at zero switch cost. This is \emph{fine-grained multithreading} (\S\ref{ch:tlp}) at large scale. It needs many warps in flight.
+\item \textbf{Occupancy} $=$ resident warps / maximum warps per SM. Limited by registers per thread, shared memory per block, and threads per block. Low occupancy $\Rightarrow$ not enough warps to hide latency $\Rightarrow$ SM idles.
+\item \textbf{Memory coalescing:} if the 32 threads of a warp access consecutive addresses, the hardware merges them into a few wide transactions. Strided or random addresses become up to 32 separate transactions $\Rightarrow$ bandwidth wasted. Fix: thread $i$ accesses element $i$; struct-of-arrays layout; stage awkward accesses through shared memory.
+\item \textbf{Shared memory:} a software-managed scratchpad per SM (static on-chip placement). Use it to load a tile once and reuse it many times (stencils, matrix multiply), raising arithmetic intensity.
+\item \textbf{Synchronisation:} barrier \emph{within a block} (\texttt{\_\_syncthreads}); \emph{no} cheap barrier across blocks (end the kernel, or use atomics). Global atomics on one address serialise: privatise in shared memory, then merge (histogram pattern).
+\item \textbf{Host--device transfer:} discrete GPUs receive data over PCIe, which is far slower than GPU memory. If compute per byte transferred is small, the transfer dominates: keep data resident on the GPU across kernels, batch work, and overlap transfer with compute (double buffering / streams).
+\end{itemize}
+
+\subsubsection*{Branch divergence (the main SIMT inefficiency)}\label{sec:divergence}
+If threads of one warp take different paths, the warp executes \emph{both} paths one after the other, masking off the lanes not on that path, and reconverges after the branch.
+\[
+\text{SIMD efficiency}=\frac{\text{average active lanes}}{32},\qquad
+T_{warp}\approx T_{if}+T_{else}\ \text{ (if any lane takes each side)}
+\]
+\begin{ex}[Divergence in numbers]
+30\% of pixels (randomly placed) need a 50-instruction path, the rest a 5-instruction path. Probability a warp has \emph{no} expensive pixel: $0.7^{32}\approx 10^{-5}$, so essentially every warp pays $50+5=55$ instructions, against an average useful work of $0.3\times50+0.7\times5=18.5$. Efficiency $\approx 34\%$. \textbf{Fixes:} (1) \emph{compaction}: a first pass writes the indices of expensive pixels into a list; a second kernel processes only that list with full warps (dynamic, data-dependent decision); (2) sort/bin data so a warp's threads branch the same way; (3) predication for short branches (static, compiler).
+\end{ex}
+
+\subsection{Comparison table}
+\small
+\begin{longtable}{L{2.3cm}L{3.2cm}L{3.2cm}L{3.4cm}L{3.4cm}}
+\toprule
+\tblhead{\textbf{} & \textbf{Vector} & \textbf{SIMD extension} & \textbf{GPU (SIMT)} & \textbf{Multicore CPU (MIMD)}}\\
+\midrule
+\endhead
+Control & One instr, VL elements & One instr, fixed width & One instr per warp of 32 threads & One PC per core \\
+Hides memory latency by & Deep pipelining, banks & Caches, OoO core & Switching among many warps & Caches, OoO, SMT \\
+Branches in data loop & Mask registers & Masks/blend & Masks + reconvergence (divergence cost) & Free (independent PCs) \\
+Irregular memory & Gather/scatter & Limited gather & Uncoalesced = slow & Caches tolerate it \\
+Best for & Long regular vectors & Short vectors on CPU & Huge, regular, throughput & Irregular, branchy, task-parallel \\
+Weak at & Short vectors & Width/ISA churn & Transfer, divergence, small problems & Ops per watt on regular data \\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\begin{trap}[DLP traps]
+\begin{itemize}
+\item A GPU is often fast because of its \emph{memory bandwidth}, not its FLOPs: SAXPY ($y=ax+y$) has AI $= 2$\,FLOP$/12$\,B and is memory-bound on every device (\S\ref{sec:roofline}).
+\item More lanes do not fix divergence or uncoalesced access; the waste grows with the width.
+\item Loop-carried dependences cannot be vectorised (except reductions/scans, which need a tree and a final sync).
+\item GPU caches are small per thread; GPUs rely on parallel slack (many warps), so a GPU with too little work runs badly.
+\item Offloading small problems: transfer + launch overhead exceed the compute.
+\end{itemize}
+\end{trap}

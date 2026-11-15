@@ -1,0 +1,79 @@
+\section{Primer: How the Machine Works (read once before the exam)}\label{sec:primer}
+\begin{multicols}{2}
+\subsection*{1. The classic 5-stage pipeline}
+\textbf{IF} fetch instruction at PC from I-cache; predict next PC. \textbf{ID} decode, read registers, (early) branch compare. \textbf{EX} ALU / address calculation. \textbf{MEM} D-cache access for loads/stores. \textbf{WB} write the register file. One instruction enters per cycle; hazards insert bubbles (\cp{P1}--\cp{P6}).
+
+\subsection*{2. A modern out-of-order core (Labs 6--10)}
+\begin{enumerate}[label=\arabic*.]
+\item \textbf{Fetch}: predictor + BTB choose the next fetch block (e.g.\ 32\,B/cycle).
+\item \textbf{Decode}: x86 bytes $\rightarrow$ uops (6-wide; microcode for complex instructions; Lab 6).
+\item \textbf{Rename/allocate}: map architectural to physical registers (removes WAR/WAW); each uop takes a ROB entry, a physical register, an issue-queue slot, and LQ/SQ slots for memory ops. If any is full, the front end stalls (Lab 7).
+\item \textbf{Schedule}: a uop waits until its operands are ready (wakeup), then competes for a free unit of \emph{its class} (select), oldest first (Lab 8).
+\item \textbf{Execute + bypass}: result forwarded to dependants; extra cycles between some unit types (Lab 10).
+\item \textbf{Retire (commit)}: in program order at the ROB head; frees the old physical register. A mispredicted branch flushes younger uops.
+\end{enumerate}
+
+\subsection*{3. Tomasulo + ROB in detail (\cp{I4} \cp{I5})}
+\textbf{Reservation station:} Op, $V_j,V_k$ (operand values), $Q_j,Q_k$ (tag of the producer; 0 = ready), Dest (ROB entry), Busy. \textbf{Register status:} which ROB entry will write each register. \textbf{ROB entry:} type (branch/store/register), destination, value, ready bit.
+\textbf{Issue}: needs a free RS \emph{and} ROB entry; copy ready operands, else record tags. \textbf{Execute}: when $Q_j=Q_k=0$. \textbf{Write result}: broadcast value + tag on the CDB; waiting RSs capture it; ROB entry ready. \textbf{Commit}: head entry ready $\Rightarrow$ write register/memory; mispredicted branch $\Rightarrow$ flush everything younger and refetch; exceptions are taken here (precise).
+
+\subsection*{4. How a cache finds data (\cp{M1}--\cp{M7})}
+Address $=$ \textbf{tag $|$ index $|$ offset}. $\#\text{sets}=\text{size}/(\text{block}\times\text{ways})$; offset $=\log_2(\text{block})$ bits; index $=\log_2(\#\text{sets})$ bits; tag $=$ the rest.
+\textbf{Example:} 32\,KB, 8-way, 64\,B lines: 64 sets; offset 6, index 6, tag 20 bits (32-bit address). The index picks a set; all 8 tags are compared (or one, with way prediction); a match is a hit. \textbf{Why power-of-2 strides conflict:} addresses that differ by a multiple of sets$\times$block (here 4\,KB; for a 32\,KB direct-mapped cache, 32\,KB) share an index and compete for the same set.
+\textbf{Miss:} allocate an MSHR, request the block from the next level, refill, evict a victim (write it back if dirty).
+
+\subsection*{5. Virtual memory path (\cp{M19} \cp{M15})}
+Virtual address $\rightarrow$ \textbf{TLB} (cache of page-table entries) $\rightarrow$ physical address $\rightarrow$ cache tag compare. TLB miss $\Rightarrow$ walk the page table in memory; invalid entry $\Rightarrow$ \textbf{page fault} (OS loads from disk). To keep L1 fast, index the cache with page-offset bits in parallel with the TLB. A purely virtual cache has 4 problems: protection bits, flush on process switch (fix: PID in tag), synonyms (fix: anti-aliasing / page colouring), I/O uses physical addresses.
+
+\columnbreak
+\subsection*{6. A multicore memory system (\cp{T4} \cp{T6} \cp{C1}--\cp{C9})}
+\begin{center}\small\rowcolors{1}{white}{white}
+\begin{tabular}{|c|c|c|c|}
+\hline
+Core 0 & Core 1 & Core 2 & Core 3\\
+L1 I/D, L2 & L1 I/D, L2 & L1 I/D, L2 & L1 I/D, L2\\
+\hline
+\multicolumn{4}{|c|}{Interconnect: bus / ring / mesh (coherence messages)}\\
+\hline
+\multicolumn{4}{|c|}{Shared LLC (L3) in banks; directory or snoop filter}\\
+\hline
+\multicolumn{2}{|c|}{Memory controller 0} & \multicolumn{2}{c|}{Memory controller 1}\\
+\multicolumn{2}{|c|}{DRAM channels/banks} & \multicolumn{2}{c|}{DRAM channels/banks}\\
+\hline
+\end{tabular}
+\end{center}
+Every arrow in this picture is a place a parallel program can bottleneck: private caches (capacity), interconnect (coherence traffic), LLC (sharing/thrashing), controllers/channels (bandwidth), remote socket (NUMA).
+
+\subsection*{7. MESI transitions (\cp{C1})}
+\small
+\begin{tabularx}{\linewidth}{L{3.1cm}X}
+\toprule
+\tblhead{\textbf{Event} & \textbf{Result}}\\
+\midrule
+Read miss, no other copy & Load block $\rightarrow$ \textbf{E} \\
+Read miss, others in S/E & $\rightarrow$ \textbf{S} (all copies S) \\
+Read miss, other has M & Owner supplies/writes back; both \textbf{S} \\
+Write hit in E or M & $\rightarrow$ \textbf{M}, no bus traffic \\
+Write hit in S & Invalidate others $\rightarrow$ \textbf{M} \\
+Write miss & Read-for-ownership, others \textbf{I} $\rightarrow$ \textbf{M} \\
+Another PE writes my line & $\rightarrow$ \textbf{I} (my next access misses) \\
+Evict an M line & Write back \\
+\bottomrule
+\end{tabularx}
+\normalsize
+\textbf{So:} one variable written by several PEs makes its line hop between caches on every write (true sharing); two variables in one line do the same (false sharing).
+
+\subsection*{8. How a GPU runs a kernel (\cp{D3}--\cp{D8})}
+\begin{enumerate}[label=\arabic*.]
+\item Host copies inputs over PCIe and launches a grid of blocks $\times$ threads.
+\item Blocks are placed on SMs while registers, shared memory and warp slots last (occupancy).
+\item Each cycle a warp scheduler picks a \emph{ready} warp and issues one instruction to its 32 lanes.
+\item Memory instruction: the coalescer merges the 32 addresses into as few transactions as possible; the warp waits; other warps run meanwhile.
+\item Branch: each thread computes its condition; if a warp is mixed, both paths run with masks, then reconverge.
+\item \texttt{\_\_syncthreads}: warps of one block wait at the barrier.
+\item Kernel ends; results copied back (or kept for the next kernel).
+\end{enumerate}
+
+\subsection*{9. The performance equations you always use}
+CPU time $=\text{IC}\times\CPI\times T_{clk}$ (IC: ISA/compiler; CPI: microarchitecture; $T_{clk}$: technology/pipeline depth). $\CPI=\CPI_{base}+$ branch stalls $+$ memory stalls. Amdahl, AMAT, roofline: \pg{sec:formulas}.
+\end{multicols}

@@ -1,0 +1,112 @@
+\documentclass[9pt,a4paper]{extarticle}
+\usepackage[margin=1.0cm,top=1.3cm,bottom=1.2cm,headsep=0.25cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage[dvipsnames,table]{xcolor}
+\usepackage{booktabs,longtable,array,tabularx}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{multicol}
+\usepackage{etoolbox}
+\usepackage[colorlinks=true,linkcolor=NavyBlue,urlcolor=NavyBlue,citecolor=NavyBlue]{hyperref}
+
+\setlist{itemsep=1pt,topsep=2pt,parsep=0pt,leftmargin=*}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+\renewcommand{\arraystretch}{1.05}
+\setcounter{secnumdepth}{2}
+\emergencystretch=3em
+\setlength{\columnsep}{0.45cm}
+\setlength{\columnseprule}{0.3pt}
+\raggedcolumns
+
+% ---------- table columns (widths scaled to the 19 cm text width) ----------
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{\dimexpr#1*112/100\relax}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{\dimexpr#1*112/100\relax}}
+\setlength{\tabcolsep}{4pt}
+\rowcolors{2}{black!4}{white}
+
+% ---------- colours ----------
+\definecolor{pickc}{HTML}{1B7F3B}
+\definecolor{avoidc}{HTML}{B3261E}
+\definecolor{trapc}{HTML}{C26A00}
+\definecolor{exc}{HTML}{1F5FA8}
+\definecolor{keyc}{HTML}{555555}
+\definecolor{decc}{HTML}{6A2C91}
+\definecolor{hdrc}{HTML}{E8EEF7}
+\definecolor{profc}{HTML}{00695C}
+\definecolor{cardc}{HTML}{1F3A5F}
+\definecolor{fldc}{HTML}{1F3A5F}
+\definecolor{grpc}{HTML}{C9D6E8}
+
+% ---------- boxes ----------
+\newsavebox{\cboxbin}
+\setlength{\fboxsep}{3pt}
+\setlength{\fboxrule}{0.8pt}
+\newenvironment{cbox}[3]{%
+  \par\vspace{2pt}\noindent
+  \def\cboxfc{#1}\def\cboxbg{#2}%
+  \begin{lrbox}{\cboxbin}\begin{minipage}{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}
+  \setlength{\parskip}{2pt}\textbf{\textcolor{#1}{#3}}\ \ignorespaces
+}{%
+  \end{minipage}\end{lrbox}\fcolorbox{\cboxfc}{\cboxbg}{\usebox{\cboxbin}}\par\vspace{2pt}}
+\newenvironment{trap}[1][Exam trap]{\begin{cbox}{trapc}{trapc!7}{#1:}}{\end{cbox}}
+\newenvironment{ex}[1][Worked example]{\begin{cbox}{exc}{exc!5}{#1.}}{\end{cbox}}
+\newenvironment{key}[1][Key facts]{\begin{cbox}{keyc}{black!4}{#1.}}{\end{cbox}}
+\newenvironment{dec}[1][Decision rule]{\begin{cbox}{decc}{decc!5}{#1:}}{\end{cbox}}
+\newenvironment{prof}[1][From the professor]{\begin{cbox}{profc}{profc!6}{#1:}}{\end{cbox}}
+
+% ---------- concept cards ----------
+% \card{ID}{Title}{Static/Dynamic tag}
+\newcommand{\keepwith}[1]{\par\vskip 0pt plus #1\baselineskip\penalty-150\vskip 0pt plus -#1\baselineskip}
+\newcommand{\card}[3]{\keepwith{7}\vspace{4pt}\noindent
+  \colorbox{cardc}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\color{white}\textbf{#1\ \ #2}\hfill{\footnotesize #3}}}\label{card:#1}\par\nobreak\vspace{1pt}}
+\newcommand{\fld}[2]{\par\noindent\hangindent=0.9em\hangafter=1\textbf{\textcolor{fldc}{#1:}}~#2}
+\newcommand{\fx}[1]{\fld{Fixes}{#1}}
+\newcommand{\fh}[1]{\fld{How}{#1}}
+\newcommand{\fu}[1]{\fld{Use when}{#1}}
+\newcommand{\fw}[1]{\fld{Cost / weak}{#1}}
+\newcommand{\fb}[1]{\fld{Beats}{#1}}
+\newcommand{\fa}[1]{\fld{Avoid when}{#1}}
+\newcommand{\fn}[1]{\fld{Needs}{#1}}
+\newcommand{\fq}[1]{\fld{Numbers}{#1}}
+\newcommand{\fj}[1]{\par\noindent\hangindent=0.9em\hangafter=1\textbf{\textcolor{pickc}{Write:}}~\textit{#1}}
+% card reference with printed page number
+\newcommand{\cp}[1]{\textbf{#1}\textsuperscript{\,p\pageref{card:#1}}}
+% section page reference
+\newcommand{\pg}[1]{p\pageref{#1}}
+% group banner inside the card pages
+\newcommand{\group}[2]{\par\vspace{3pt}\noindent\colorbox{grpc}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\textbf{#1}\hfill{\footnotesize #2}}}\par\vspace{2pt}}
+
+% ---------- small helpers ----------
+\newcommand{\bs}{\textsuperscript{\textcolor{avoidc}{$\dagger$}}}
+\newcommand{\AMAT}{\mathrm{AMAT}}
+\newcommand{\CPI}{\mathrm{CPI}}
+\newcommand{\tblhead}[1]{\rowcolor{hdrc}#1}
+
+% ---------- header/footer ----------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\itshape Processor Design Exam Playbook}
+\fancyhead[R]{\small\itshape Start: p1 how to use $\cdot$ p\pageref{sec:clueidx} clue index $\cdot$ p\pageref{sec:symidx} symptom index}
+\fancyfoot[C]{\small\bfseries\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+
+\begin{document}
+\input{p0_howto}
+\input{p1_method}
+\input{p2_index}
+\input{x0_primer}
+\input{c1_power}
+\input{c2_pipe}
+\input{c3_ilp}
+\input{c4_mem}
+\input{c5_tlp}
+\input{c6_dlp}
+\input{c7_pe}
+\input{x1_cross}
+\input{x2_answers}
+\input{x3_formulas}
+\end{document}

@@ -1,0 +1,182 @@
+\section{Reference Designs and Model Answers}\label{sec:answers}
+
+\subsection{Reference designs by machine class (when the question names the class)}\label{sec:classes}
+{\footnotesize
+\begin{longtable}{L{1.45cm}L{2.8cm}L{2.8cm}L{2.8cm}L{2.8cm}L{2.8cm}}
+\toprule
+\tblhead{ & \textbf{Phone / PMD} & \textbf{Web/DB server} & \textbf{Desktop, 1 thread} & \textbf{Scientific FP} & \textbf{Embedded}}\\
+\midrule
+\endhead
+Goal & Energy per task, real-time & Throughput, availability, cost/request & Single-thread latency, price-performance & FP throughput, huge arrays & Price \\
+Core & 2-way in-order or modest OoO, 5--8 stages \cp{E3} & Moderate 4-issue OoO, or simpler fine-grained MT cores \cp{T2} & 4-wide Tomasulo + ROB \cp{I5} \cp{I6} & Pipelined FP units \cp{P4}; unrolling/SW pipelining \cp{I1} or Tomasulo if latencies vary & 5-stage in-order, forwarding, branch in ID \cp{P6} \\
+Branch & Small 2-bit BHT + BTB + RAS \cp{P9} & Good dynamic predictor & Two-level/gshare + BTB + RAS \cp{P10} & BTFNT or 2-bit (loops) & Static + 1 delay slot \cp{P7} \cp{P8} \\
+L1 & 32--64\,KB, 2-way + way prediction \cp{M6} & Private & 32--64\,KB, low assoc., 64\,B \cp{M15} & Blocking, interchange, fusion \cp{M14} \cp{M13} & Small DM I/D \\
+L2 / L3 & 256\,KB L2, no L3 & Large shared L3 16--64\,MB \cp{T6} & 256\,KB L2 + 8--32\,MB L3 & Stream prefetch \cp{M11}, non-blocking \cp{M10} & None / small \\
+Memory & Interleaved low-power DRAM & 32--256\,GB, banked, ECC \cp{M18} \cp{E4} & Non-blocking + HW prefetch & Wide / heavily interleaved \cp{M18} & Simple \\
+Threads, cores & Several small cores, no SMT & Many cores + 2--4 SMT/FGMT \cp{T5} & 2--4 cores, optional SMT with priority & Multicore + SIMD/vector/GPU \cp{D2} \cp{D3} & One core \\
+Power / other & DVFS, gating \cp{E1} \cp{E2} & Coherence-aware software & --- & Roofline first & VLIW only for fixed numeric firmware \\
+Rejected & Wide speculative core, trace cache, big L3, VLIW & Very wide single core, coarse MT only, deep speculation & VLIW, coarse MT, very wide issue & Big predictor, heavy speculation, SMT (FP gains least) & Tomasulo+ROB, BTB, trace/victim cache \\
+\bottomrule
+\end{longtable}}
+\textbf{Reasons to quote:} ILP is energy-inefficient (PMD); DB/web are the best multicore beneficiaries (server); 3--6 issue is the ILP sweet spot and a deep pipe needs a strong predictor (desktop); unrolling 9$\rightarrow$3.5 cycles/iter, interchange $-93.75\%$ misses (scientific); static techniques need no predictor memory (embedded).
+
+\subsection{Model answer A: multicore analytics that gets slower with more cores}\label{sec:modelA}
+\textbf{Given.} 8 cores, private 32\,KB L1, shared 8\,MB L2, MESI snooping bus, 64\,B lines. 80\,M independent events (16\,B each) streamed from memory; per event a core parses it and atomically increments one of 16 shared 8-byte counters. \textbf{Symptom:} 1 core 10\,s, 4 cores 6\,s, 8 cores 7.7\,s.
+
+
+\textbf{1. Assumptions.} A1 events cost the same. A2 input read once. A3 counters contiguous: 128\,B $=$ 2 lines.
+
+\textbf{2. Workload.} Per-event work independent (TLP/DLP, $f\approx1$). The counter update is a \emph{reduction} (associative, commutative): its order does not matter, so it can be done privately and combined later. Memory: 1.28\,GB streamed once; counters tiny.
+
+\textbf{3. Why not ideal.} Each increment needs the counter line in M state; with 8 writers on 2 lines nearly every increment is a coherence miss (invalidate, transfer, retry the atomic). Updates to a line serialise, so the effective serial fraction \emph{grows} with cores (true sharing + false sharing of 8 counters per line). Ruled out: capacity (128\,B), bandwidth (1.28\,GB/7.7\,s $\approx$0.17\,GB/s), locks (none). Same signature as Lab 5.
+
+\textbf{4. Proposed architecture.}
+{\small
+\begin{longtable}{L{2.3cm}L{6.4cm}L{1.3cm}L{5.6cm}}
+\toprule
+\tblhead{\textbf{Layer} & \textbf{Change} & \textbf{S/D} & \textbf{Why for this workload}}\\
+\midrule
+\endhead
+Distribution & Block split: core $k$ takes events $[10k, 10k{+}10)$\,M \cp{W1} & Static & Equal costs, contiguous, zero overhead \\
+Aggregation & Private 16-counter array per core, padded to own lines \cp{W5} \cp{C3} & Static & Hits in own L1 in M/E: no coherence traffic in the loop \\
+Sync & One barrier, then tree reduction (3 steps) \cp{C6} & Static & 80\,M atomics $\rightarrow$ 1 barrier + 7 merges \\
+Coherence & MESI unchanged; E makes first write silent \cp{C1} & --- & Sharing removed, so protocol cost vanishes \\
+Memory & Hardware stream prefetch \cp{M11} & Dynamic & Sequential input keeps bus busy \\
+Core & Unchanged: no wider core, no SMT & --- & Not ILP-bound \\
+\bottomrule
+\end{longtable}}
+
+\textbf{5. Why better.} Coherence transfers $O(\text{events})\rightarrow O(p)$. Rejected: a lock (serialises all, worse); padding alone (all cores still write the \emph{same} counters); faster interconnect/directory (cheaper transfers, still 80\,M); more cores (more contention).
+
+\textbf{6. Demerits / next.} $8\times128$\,B extra, merge step, code change. Expect $\approx$8$\times$ (1.3\,s) until input bandwidth ($\approx$1\,GB/s, still fine).
+
+\subsection{Model answer B: GPU image filter at 8\% of peak}\label{sec:modelB}
+\textbf{Given.} GPU, 40 SMs, 32-thread warps, PCIe 16\,GB/s. Per frame: 3840$\times$2160 RGBA image (4\,B/pixel, $\approx$33\,MB, row-major); thread $i$ processes row $i$ across its columns; 30\% of pixels (random ``edges'') need 50 instructions, others 5; frame copied in and out each time. \textbf{Symptom:} 8\% of peak; kernel 6\,ms, copies $\approx$2\,ms each way.
+
+\textbf{1. Assumptions.} A1 up to 48 resident warps/SM. A2 $3\times3$ neighbourhood.
+
+\textbf{2. Workload.} Pure DLP (pixels independent, no order); neighbourhoods overlap (reuse); data-dependent branch.
+
+\textbf{3. Why not ideal.} (a) \emph{Occupancy} \cp{D8}: 2160 threads $=68$ warps on 40 SMs ($<$2 per SM vs.\ 48): latency not hidden. (b) \emph{Uncoalesced} \cp{D4}: warp threads read 32 rows 15\,KB apart $\Rightarrow$ up to 32 transactions. (c) \emph{Divergence} \cp{D5}: $0.7^{32}\approx0$, every warp runs 55 instr.\ for 18.5 useful (34\%). (d) \emph{Transfer} \cp{D7}: 4\,ms copies per 6\,ms kernel.
+
+\textbf{4. Proposed architecture.}
+{\small
+\begin{longtable}{L{2.3cm}L{6.4cm}L{1.3cm}L{5.6cm}}
+\toprule
+\tblhead{\textbf{Layer} & \textbf{Change} & \textbf{S/D} & \textbf{Why for this workload}}\\
+\midrule
+\endhead
+Work mapping & One thread per pixel, \texttt{threadIdx.x} along the row, $16\times16$ blocks & Static & 8.3\,M threads $\Rightarrow$ full occupancy; neighbours read neighbouring addresses \\
+On-chip memory & Tile + 1-pixel halo into shared memory \cp{D6} & Static & Each pixel reused 9$\times$ on chip: higher AI \\
+Divergence & Classify pass writes compacted edge list (prefix sum); second kernel runs the 50-instr.\ path on full warps & Dynamic & Data-dependent, known only at run time; warps become uniform \\
+Latency hiding & Hardware warp scheduler with many warps \cp{D3} & Dynamic & Fine-grained MT covers DRAM latency \\
+Host link & Double buffering; keep intermediates on GPU & Static & Copies overlap compute \\
+Sync & Barrier only inside a block; list-counter atomics aggregated per warp \cp{C7} & Static & No cross-block barrier \\
+\bottomrule
+\end{longtable}}
+
+\textbf{5. Why better.} Rejected: bigger GPU (same waste per warp); predication alone (still pays both paths); 8-core CPU with 8-wide SIMD (64 lanes vs.\ thousands; right only for small images because it avoids PCIe).
+
+\textbf{6. Demerits / next.} Extra pass and list memory; one frame of added latency; kernel becomes bandwidth-bound (roofline).
+
+\subsection{Model answer C: wide core, low IPC, the bottleneck moves}\label{sec:modelC}
+\textbf{Given.} 4-wide OoO at 3\,GHz, 2 pipelined FMA units (latency 4), 32\,KB L1, 1\,MB L2, DRAM 20\,GB/s. \texttt{for i: sum += a[i]*b[i]} over two 64\,M-element double arrays (512\,MB each). \textbf{Symptom:} IPC $\approx$1.25; vendor proposes an 8-wide core.
+
+\textbf{Diagnosis.} 5 instructions/iteration; each FMA waits for the previous \texttt{sum}: 4 cycles/iteration $\Rightarrow$ $5/4=1.25$ IPC whatever the width \cp{I8} (Lab 8, Lab 10). The 8-wide core changes nothing \cp{I9}.
+
+\textbf{Fix, step by step.} (1) \emph{Static}: unroll with $4\times2=8$ partial sums (state the rounding change) $\Rightarrow$ 6\,G iterations/s possible. (2) \emph{Memory check}: 16\,B/iteration at 20\,GB/s allows only 1.25\,G/s (before: 0.75\,G/s) $\Rightarrow$ gain $\approx1.7\times$, not 8$\times$; now \textbf{bandwidth-bound} (AI $=0.125$); SIMD adds nothing. (3) \emph{Whole architecture}: more channels/banks \cp{M18}, stream prefetch \cp{M11}, split across cores/sockets with private partial sums + reduction \cp{W5} \cp{W6}; caches cannot help (1\,GB read once) unless fused with other passes to raise AI \cp{M13}.
+
+\textbf{Why better:} attacks the binding terms in order (recurrence, then bandwidth). Rejected: 8-wide core (neither term), bigger cache (no reuse), SMT alone (breaks the chain but shares the bandwidth).
+
+\subsection{Model answer D: phone SoC with poor battery life}\label{sec:modelD}
+\textbf{Given.} 4 identical 6-wide OoO cores at a fixed 3\,GHz, 64\,KB 8-way L1 (all tags compared in parallel), 8\,MB L3, trace cache. Workload: UI thread (bursty, 16\,ms frame deadline), background sync (mostly waiting on the network), music decode (steady, light). \textbf{Symptom:} 5\,h battery vs.\ 12\,h target; thermal throttling in games.
+
+\textbf{1. Assumptions.} A1 one core can meet the UI deadline at full speed. A2 background tasks need $<$10\% of one big core.
+
+\textbf{2. Workload.} One latency-critical bursty thread; two light, latency-tolerant threads; long idle periods. Little ILP in background code; the class is PMD (energy per task, real-time).
+
+\textbf{3. Why not ideal.} Every task runs on a 6-wide core at max $V$/$f$: dynamic power $\tfrac12CV^2f$ is paid even for idle-heavy work; wide OoO switches transistors at the peak issue rate while sustained IPC is low (ILP is energy-inefficient); 8 tags compared on every access; a large L3 and trace cache leak static power all day.
+
+\textbf{4. Proposed architecture.}
+{\small
+\begin{longtable}{L{2.3cm}L{6.4cm}L{1.3cm}L{5.6cm}}
+\toprule
+\tblhead{\textbf{Layer} & \textbf{Change} & \textbf{S/D} & \textbf{Why for this workload}}\\
+\midrule
+\endhead
+Cores & 1--2 big 4-wide cores + 4 small in-order cores \cp{E3} \cp{W9} & Static & UI meets deadline on a big core; background/music need little ILP \\
+Placement & OS moves bursty UI to big core, rest to small cores & Dynamic & Load changes at run time \\
+Voltage/clock & Per-cluster DVFS \cp{E1} & Dynamic & Lower $V$ between UI bursts: energy via $V^2$ ($0.8f\Rightarrow0.51P$) \\
+Idle units & Power-gate idle cores and unused cache ways \cp{E2} & Dynamic & Removes leakage during long idle periods \\
+L1 & 32--64\,KB 2-way with way prediction \cp{M6} & Dynamic & One tag compared per access \\
+L2/L3 & 256\,KB--1\,MB L2, no L3 (PMD hierarchy) & Static & Less leakage and area \\
+Front end & Remove trace cache \cp{M16}; 2-bit BHT on small cores \cp{P9}; keep two-level + BTB on big core & Static & Energy; small cores run simple code \\
+\bottomrule
+\end{longtable}}
+
+\textbf{5. Why better.} Rejected: lowering the clock of the same cores (cuts power, not energy per task, and misses UI deadlines); fewer cores (background work then competes with UI); SMT on the big core (keeps a power-hungry core awake for light threads).
+
+\textbf{6. Demerits / next.} Task migration latency, scheduler complexity; games may still throttle, so cap the big-core frequency at the thermal design power.
+
+\subsection{Model answer E: key-value server that stops scaling at one socket}\label{sec:modelE}
+\textbf{Given.} 2 sockets $\times$ 16 cores, 4-wide OoO, no SMT, private 1\,MB L2, 32\,MB shared L3 per socket, snooping between sockets, 4 DRAM channels per socket. Workload: millions of independent GET requests; each hashes a key and follows 3--5 pointer hops in a 200\,GB hash table; 5\% are updates guarded by \emph{one global lock}; the table was allocated by one start-up thread. \textbf{Symptom:} throughput scales to 16 cores, then flat; 70\% stall cycles; IPC 0.3.
+
+\textbf{1. Assumptions.} A1 DRAM hop $\approx$100\,ns local, $\approx$1.5--2$\times$ remote\bs. A2 keys roughly uniform.
+
+\textbf{2. Workload.} Requests are independent (abundant TLP); within a request each hop depends on the previous load (no ILP/MLP); working set 200\,GB $\gg$ 32\,MB L3 (caches cannot hold it); writes are rare but serialised by one lock.
+
+\textbf{3. Why not ideal.} (a) Dependent misses: one outstanding miss per thread (MLP $=1$), so the OoO window is idle (IPC 0.3). (b) First-touch put all 200\,GB on socket 0: socket-1 cores make remote accesses and socket 0's 4 channels carry all traffic, so scaling stops at one socket. (c) The global lock serialises updates (Amdahl). (d) Cross-socket snooping broadcasts every miss.
+
+\textbf{4. Proposed architecture.}
+{\small
+\begin{longtable}{L{2.3cm}L{6.4cm}L{1.3cm}L{5.6cm}}
+\toprule
+\tblhead{\textbf{Layer} & \textbf{Change} & \textbf{S/D} & \textbf{Why for this workload}}\\
+\midrule
+\endhead
+Threads/core & 2-way SMT \cp{T3} (cores are OoO already) & Dynamic & Second request's misses overlap the first's; cheap ($\approx$24\% area) \\
+Data placement & Shard the table by key hash across sockets; route each request to its owner \cp{W6} & Static & All hops local; both sockets' channels used \\
+Dispatch & Per-socket request queue \cp{W3} & Dynamic & Absorbs request-cost variation \\
+Locking & Per-bucket locks \cp{C5}; reads lock-free & Static & 5\% updates no longer serialise all cores \\
+Coherence & Directory between sockets \cp{C2} & Dynamic & No broadcast of every miss \\
+Memory & Keep 4 channels/socket interleaved \cp{M18}; non-blocking caches \cp{M10} & --- & SMT raises outstanding misses \\
+Software & Batch $k$ lookups per thread and interleave their hops (software prefetch) \cp{M12} & Static & Raises MLP to $k$ without more threads \\
+\bottomrule
+\end{longtable}}
+
+\textbf{5. Why better.} Rejected: bigger L3 (200\,GB cannot fit); wider cores (IPC is low from dependent misses, not width; Lab 8); more cores without sharding (socket 0's bandwidth and remote latency remain); coarse-grained MT on OoO cores (SMT exists cheaply there).
+
+\textbf{6. Demerits / next.} SMT threads share L1/L2 (watch thrashing, \cp{T3}); skewed keys unbalance shards (re-shard or steal); next limit is DRAM channel bandwidth.
+
+\subsection{Model answer F: branchy interpreter on a deep pipeline}\label{sec:modelF}
+\textbf{Given.} One 20-stage core at 4\,GHz, 512-entry 2-bit BHT, BTB without indirect-target prediction, no return stack, misprediction penalty 18 cycles. Workload: bytecode interpreter: an indirect dispatch jump every $\sim$8 instructions, many calls/returns, data-dependent branches. 25\% of instructions are branches. \textbf{Symptom:} CPI 2.4 (target $\approx$1.0); 30\% of branches mispredict.
+
+\textbf{Diagnosis.} Branch CPI $=0.25\times0.30\times18=1.35$, so $1.0+1.35\approx2.4$: \emph{the branches are the whole problem}. Dispatch jumps go to a different handler each time (a direction predictor cannot predict a target); returns have no stack; bytecode-dependent branches correlate with recent history, which a 2-bit counter ignores.
+
+\textbf{Fix (whole front end).} Target-predicting BTB for indirect jumps, indexed with history\bs{} \cp{P11}; return-address stack \cp{P12}; 4K-entry gshare \cp{P10}; predication for short data-dependent \texttt{if}s \cp{P13}; \emph{static}: replicate the dispatch jump at the end of each handler (``threaded code''\bs) so each jump has its own predictor entry and history.
+
+\textbf{Numbers.} If misprediction falls to 8\%: $0.25\times0.08\times18=0.36$, CPI 1.36, \textbf{1.75$\times$ faster}. Alternative, a shallower 14-stage pipe (penalty 12) at 3.3\,GHz: CPI $1+0.25\times0.08\times12=1.24$; time $\propto$ CPI$/f$: $1.36/4=0.34$ vs.\ $1.24/3.3=0.376$ $\Rightarrow$ keep the deep pipe \emph{once prediction is fixed} (decide by IC$\times$CPI$\times T_{clk}$).
+
+\textbf{Why better:} attacks each kind of misprediction with the matching predictor. Rejected: a bigger 2-bit BHT (beyond 4K entries accuracy saturates, and it cannot predict targets); wider issue (front end already starved).
+
+\begin{ex}[Numeric drill: L1 choice (penalty 40, hit 1)]
+A: 16\,KB DM, miss 3.0\% $\Rightarrow$ $1+0.03\times40=2.20$. B: 2-way, miss 2.6\%, clock $\times1.10$ $\Rightarrow$ $1.10+0.026\times40=2.14$, but every other instruction is 10\% slower: net loss. C: A + 4-entry victim cache removing 40\% of misses $\Rightarrow$ $1+0.03\times0.6\times40=1.72$. \textbf{Choose C} \cp{M5}: keeps DM hit time, removes conflicts cheaply.
+\end{ex}
+
+\subsection{Final checklist (last minutes of each question)}\label{sec:checklist}
+\begin{multicols}{2}
+\begin{enumerate}[label=$\square$]
+\item Every part of the question has a row in my breakdown grid.
+\item Numbered assumptions for missing values.
+\item Root cause = mechanism + number + one rival ruled out.
+\item Parallelism present? Which kind? Order of execution? Serial part?
+\item Will the memory hierarchy work? Bandwidth (roofline) checked?
+\item Work distribution over PEs, with timing; communication and sync named.
+\item Each choice tagged static/dynamic with a reason.
+\item Every layer the question touches is addressed; knock-on rows added.
+\item Each choice beats $\ge$2 named alternatives, for \emph{this} scenario.
+\item Costs/demerits stated; next bottleneck named; one lab cited.
+\item Machine class/priority stated; no VLIW if compatibility is needed.
+\item Layer $|$ Change $|$ S/D $|$ Why table drawn.
+\end{enumerate}
+\end{multicols}

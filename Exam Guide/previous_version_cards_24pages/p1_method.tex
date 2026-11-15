@@ -1,0 +1,111 @@
+\section{Method: From Question to Full-Marks Answer}\label{sec:method}
+
+\begin{multicols}{2}
+\subsection{The 8 steps (inside each part of the question)}
+\begin{enumerate}[label=\textbf{\arabic*.}]
+\item \textbf{Givens}: list architecture (cores/PEs, issue width, in-order/OoO, threads, caches, memory, interconnect), workload (operations, sizes, access pattern, dependences, branches), symptom (with its number).
+\item \textbf{Assumptions}: numbered A1, A2\ldots{} for anything missing; use typical values (\pg{sec:typical}).
+\item \textbf{Workload analysis}: which parallelism (ILP/DLP/TLP) and how much; \emph{order of execution} (dependences, critical path, serial part, reductions); memory behaviour (working set vs.\ cache, reuse, stride); sharing/communication; branches. Write ``parallelism present: yes/no, where''.
+\item \textbf{Diagnosis}: Symptom Index $\rightarrow$ root cause. Prove with one number and rule out one rival explanation.
+\item \textbf{Redesign every layer} the question touches (\pg{sec:layers}), one card per bottleneck.
+\item \textbf{Static or dynamic} for each choice, and why (card tag; \pg{sec:staticdyn}).
+\item \textbf{Justify}: card \emph{Beats} line (vs.\ $\ge$2 alternatives), \emph{Cost} accepted, \emph{Needs} added.
+\item \textbf{Outcome}: expected gain and where the bottleneck moves next.
+\end{enumerate}
+
+\subsection{Answer layout (copy these headings)}\label{sec:layout}
+\textbf{1. Given \& assumptions.} \textbf{2. Workload analysis} (parallelism, order of execution, memory, communication). \textbf{3. Why it is not ideal} (mechanism + number + rival ruled out). \textbf{4. Proposed architecture} (table: \emph{Layer $|$ Change $|$ S/D $|$ Why for this workload}). \textbf{5. Why this is better} (vs.\ alternatives, with numbers). \textbf{6. Demerits and next bottleneck.} Add one small diagram (PEs + caches + interconnect, or a timeline).
+
+\textbf{Time per question:} 10\% reading and grid, 15\% analysis and diagnosis, 45\% redesign, 20\% justification, 10\% checklist.
+
+\subsection{Make every answer specific, not generic}\label{sec:specific}
+\begin{enumerate}[label=\textbf{R\arabic*}]
+\item \textbf{Quote the given}: ``the 64\,MB table is 32$\times$ the 2\,MB L2''.
+\item \textbf{State the mechanism}: what physically happens on each access or instruction.
+\item \textbf{Quantify once}: AMAT, CPI, Amdahl, bandwidth, timeline.
+\item \textbf{Name the exact variant}: ``4K-entry gshare + BTB + return stack'', not ``a predictor''.
+\item \textbf{Reject two alternatives} with the reason each fails \emph{here}.
+\item \textbf{Accept a cost} and say why it is acceptable here.
+\item \textbf{Add the knock-on}: what else must change (card \emph{Needs}).
+\item \textbf{Static or dynamic}, and why for this workload.
+\end{enumerate}
+
+\begin{ex}[Generic vs.\ specific]
+\textbf{Generic (few marks):} ``Use multithreading to hide memory latency.''\\
+\textbf{Specific (full marks):} ``P2 follows hash chains in a 64\,MB table, 32$\times$ the 2\,MB L2, so nearly every hop is a DRAM miss ($\approx$200 cycles, A3), and each hop's address depends on the previous load, so neither a larger OoO window nor more MSHRs can overlap them (MLP $=1$; Lab 4: more MSHRs gave no gain on a dependent chase). I add 4 hardware threads per core with \emph{switch-on-miss} (coarse-grained) multithreading \cp{T1}: stalls are long, so a few-cycle refill is negligible against 200 cycles, and three other independent lookups run meanwhile ($\approx$4$\times$ busy cycles). I reject SMT because these cores are in-order and SMT's low cost relies on OoO renaming \cp{T3}, and a bigger L2 because 64\,MB will not fit on chip. Cost: 4 PCs and register files, more L1 pressure, so I raise L1 to 4-way \cp{M4}. Dynamic: the hardware switches on actual misses.''
+\end{ex}
+
+\subsection{What the professor's pointers mean}
+\small
+\begin{tabularx}{\linewidth}{L{2.6cm}X}
+\toprule
+\tblhead{\textbf{He said} & \textbf{You write}}\\
+\midrule
+Mention assumptions & Numbered list, few and plausible \\
+Why is it occurring & Mechanism + number (Symptom Index) \\
+Static/dynamic & Tag each choice, with the reason \\
+SIMT, DLP & D cards: warps, masks, coalescing \\
+Multiple PEs, timing & W cards: split, timeline, $T_{par}$ \\
+Merits and demerits & Both, always (\pg{sec:paraproscons}) \\
+Order of execution & Dependence graph, critical path \\
+Parallel present or not & Fraction $f$, Amdahl \\
+Data/memory/comm. & Roofline, memory test, comm.\ cost \\
+Synchronisation & C cards: what sync, its cost, reduce it \\
+Why better & Card \emph{Beats} line, $\ge$2 rivals \\
+Lab aspects & Lab table (\pg{sec:labs}) \\
+Whole architecture & Every layer + knock-on (\pg{sec:knockon}) \\
+\bottomrule
+\end{tabularx}
+\normalsize
+
+\subsection{Phrase bank for justification}\label{sec:phrases}
+\begin{itemize}
+\item ``The clue `[\ldots]' shows that [\ldots], so the bottleneck is [\ldots], not [rival], because [number].''
+\item ``I choose X over Y because, in this workload, Y [fails by mechanism] when [property of this scenario], whereas X [mechanism].''
+\item ``This is a \emph{static} decision: [\ldots] is known before run time'' / ``\emph{dynamic}: [\ldots] is only known at run time.''
+\item ``The cost is [\ldots]; it is acceptable here because [constraint].''
+\item ``After this change the binding limit becomes [\ldots]; I address it with [\ldots].''
+\item ``This matches Lab [n], where [\ldots].''
+\item ``A[n] assumed [\ldots]; if instead [\ldots], I would choose [\ldots].'' (shows depth)
+\end{itemize}
+\end{multicols}
+
+\subsection{Worked breakdown of a big multi-part question}\label{sec:breakdown}
+\textbf{Question (practice).} A 4-core chip (2-issue \emph{in-order} cores, one thread each; private 32\,KB direct-mapped L1; shared 2\,MB L2; snooping bus; one DRAM channel 12.8\,GB/s) runs a video-analytics service. \textbf{P1} a filter applies the same arithmetic to every pixel of each 1080p frame, with an \texttt{if} for edge pixels: it reaches 15\% of FP peak. \textbf{P2} a lookup stage follows linked hash chains in a 64\,MB table: cores are stalled most cycles. \textbf{P3} all cores increment shared per-category counters: 4 cores are slower than 2. \textbf{P4} per-frame tasks take 1--10\,ms and are split equally in advance: some cores sit idle. Redesign the processor.
+
+\small
+\begin{longtable}{L{0.6cm}L{3.6cm}L{4.3cm}L{3.4cm}L{2.9cm}}
+\toprule
+\tblhead{\textbf{Part} & \textbf{Clue words (underline)} & \textbf{Concept / root cause} & \textbf{Open cards} & \textbf{S/D}}\\
+\midrule
+\endhead
+P1 & ``same arithmetic on every pixel'', ``\texttt{if} for edges'', ``2-issue in-order'', ``15\% of peak'' & DLP not exploited by a scalar 2-issue core; branch per pixel; check bandwidth (roofline) & \cp{D2} SIMD (or \cp{D3} GPU), \cp{D5} masks, \cp{D4} layout, \cp{M11} prefetch & Static vectorisation; dynamic masks \\
+P2 & ``linked chains'', ``64\,MB'' vs.\ ``2\,MB L2'', ``stalled'' & Dependent DRAM misses, MLP $=1$, capacity far exceeded & \cp{T1}/\cp{T2} multithreading, \cp{M13} layout, \cp{M4} & Dynamic thread switch \\
+P3 & ``all cores increment shared counters'', ``4 slower than 2'' & True + false sharing: coherence ping-pong on counter lines & \cp{W5} privatise + reduce, \cp{C3} pad, \cp{C1} & Static \\
+P4 & ``1--10\,ms'', ``split equally in advance'', ``idle'' & Load imbalance from static split of unequal tasks & \cp{W3} dynamic queue, chunk size & Dynamic \\
+All & ``one DRAM channel'', ``snooping bus'' & SIMD + 4 threads/core raise memory demand & \cp{M18} banks/channels, \cp{M10} non-blocking & --- \\
+\bottomrule
+\end{longtable}
+\normalsize
+\textbf{Then connect them (whole architecture):} SIMD units \emph{and} 4 threads per core both raise memory traffic, so add a second DRAM channel and a non-blocking L1 (knock-on, \pg{sec:knockon}); multithreading on in-order cores means switch-on-miss or fine-grained, not SMT; privatised counters remove the bus traffic that would otherwise grow with the extra threads; the dynamic queue for P4 needs a cheap atomic fetch-and-add on a single queue index \cp{C7}. Finish with one table: \emph{Layer $|$ Change $|$ S/D $|$ Why}.
+
+\subsection{The layers of a processor (what you are allowed to change)}\label{sec:layers}
+\small
+\begin{longtable}{L{2.7cm}L{4.6cm}L{8.3cm}}
+\toprule
+\tblhead{\textbf{Layer} & \textbf{What it does} & \textbf{Cards}}\\
+\midrule
+\endhead
+Work distribution (software) & Splits the program and maps it onto PEs & \cp{W1}--\cp{W9}; compiler: \cp{I1} \cp{I2} \cp{I8} \cp{M13} \cp{M14} \\
+Front end & Fetches the right instructions & \cp{P6} \cp{P7} \cp{P8} \cp{P9} \cp{P10} \cp{P11} \cp{P12} \cp{P13} \cp{M16} \\
+Pipeline and execution & Executes instructions & \cp{P1} \cp{P2} \cp{P4} \cp{P5}; \cp{I3} \cp{I4} \cp{I5} \cp{I6} \cp{I7} \cp{I9} \\
+Threads per core & Hides stalls using other threads & \cp{T1} \cp{T2} \cp{T3} \\
+Data-parallel units & One instruction, many data & \cp{D1} \cp{D2} \cp{D3} \cp{D4} \cp{D5} \cp{D6} \cp{D7} \cp{D8} \\
+Number/kind of PEs & More or different workers & \cp{T4} \cp{T5} \cp{T6} \cp{E3} \cp{W9} \\
+Caches & Keep data close & \cp{M1}--\cp{M16}, \cp{M20}, \cp{T6} \\
+Main memory, VM & Bandwidth, latency, protection & \cp{M17} \cp{M18} \cp{M19} \\
+Interconnect, coherence, sync & Lets PEs share and order data & \cp{C1}--\cp{C9} \\
+Power and reliability & Energy budget, uptime & \cp{E1} \cp{E2} \cp{E3} \cp{E4} \\
+\bottomrule
+\end{longtable}
+\normalsize

@@ -1,0 +1,115 @@
+\section{Primer: How the Machine Works (read once before the exam)}\label{sec:primer}
+{\small\renewcommand{\arraystretch}{1.3}
+\begin{longtable}{L{2.6cm}L{9.6cm}L{3.4cm}}
+\toprule
+\tblhead{\textbf{Classic 5-stage pipeline} & \textbf{What happens} & \textbf{Problems / concepts}}\\
+\midrule
+\endhead
+IF (fetch) & Read the instruction at PC from the I-cache; predict the next PC & Control hazards \cp{P7}--\cp{P12} \\
+ID (decode) & Decode, read registers; early branch compare & \cp{P6} \\
+EX (execute) & ALU operation or address calculation & RAW hazards, forwarding \cp{P2} \\
+MEM (memory) & D-cache access for loads/stores & Load-use bubble \cp{P3}; misses \\
+WB (write back) & Write the result to the register file & Write-port conflicts \cp{P4} \\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}{L{2.6cm}L{9.6cm}L{3.4cm}}
+\toprule
+\tblhead{\textbf{Modern OoO core} & \textbf{What happens} & \textbf{Stalls when / lab}}\\
+\midrule
+\endhead
+1. Fetch & Predictor + BTB choose the next fetch block (e.g.\ 32\,B/cycle) & Mispredict, I-miss \\
+2. Decode & Instruction bytes $\rightarrow$ uops (6-wide; microcode for complex instructions) & Decode ceiling (Lab 6) \\
+3. Rename / allocate & Map architectural to physical registers (removes WAR/WAW); each uop takes a ROB entry, a physical register, an issue-queue slot, LQ/SQ slots for memory ops & Any structure full (Lab 7) \\
+4. Schedule & Wait for operands (wakeup), then compete for a free unit of \emph{its class} (select), oldest first & Unit class busy (Lab 8) \\
+5. Execute + bypass & Result forwarded to dependants; some unit pairs add a cycle & Recurrences (Lab 10) \\
+6. Retire (commit) & In program order at the ROB head; frees the old physical register; a mispredicted branch flushes younger uops & Long-latency op at head \\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}{L{2.6cm}L{13.0cm}}
+\toprule
+\tblhead{\textbf{Tomasulo + ROB} & \textbf{Detail (\cp{I4} \cp{I5})}}\\
+\midrule
+\endhead
+Reservation station & Op; $V_j,V_k$ (operand values); $Q_j,Q_k$ (tag of the producer, 0 = ready); Dest (ROB entry); Busy \\
+Register status & Which ROB entry will write each register \\
+ROB entry & Type (branch / store / register op), destination, value, ready bit \\
+1. Issue & Needs a free RS \emph{and} a free ROB entry; copy ready operands, otherwise record the producers' tags \\
+2. Execute & When $Q_j=Q_k=0$ \\
+3. Write result & Broadcast value + tag on the CDB; waiting RSs capture it; the ROB entry becomes ready \\
+4. Commit & Head entry ready $\Rightarrow$ write register/memory. Mispredicted branch $\Rightarrow$ flush everything younger and refetch. Exceptions are taken here (precise) \\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}{L{2.6cm}L{13.0cm}}
+\toprule
+\tblhead{\textbf{How a cache finds data} & \textbf{Detail (\cp{M1}--\cp{M7})}}\\
+\midrule
+\endhead
+Address split & \textbf{tag $|$ index $|$ offset}. $\#\text{sets}=\text{size}/(\text{block}\times\text{ways})$; offset $=\log_2(\text{block})$ bits; index $=\log_2(\#\text{sets})$ bits; tag $=$ the rest \\
+Example & 32\,KB, 8-way, 64\,B lines $\Rightarrow$ 64 sets; offset 6, index 6, tag 20 bits (32-bit address) \\
+Hit & The index picks a set; all 8 tags are compared (one with way prediction); a match is a hit \\
+Why power-of-2 strides conflict & Addresses that differ by a multiple of sets $\times$ block (here 4\,KB; for a 32\,KB direct-mapped cache, 32\,KB) share an index and compete for one set \\
+Miss & Allocate an MSHR, request the block from the next level, refill, evict a victim (write it back if dirty) \\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}{L{2.6cm}L{13.0cm}}
+\toprule
+\tblhead{\textbf{Virtual memory} & \textbf{Detail (\cp{M19} \cp{M15})}}\\
+\midrule
+\endhead
+Path & Virtual address $\rightarrow$ TLB $\rightarrow$ physical address $\rightarrow$ cache tag compare. TLB miss $\Rightarrow$ walk the page table; invalid entry $\Rightarrow$ page fault (OS loads from disk) \\
+Keeping L1 fast & Index the cache with page-offset bits in parallel with the TLB lookup \\
+Pure virtual cache: problems and fixes & Protection bits copied and checked; flush on process switch (fix: PID in tag); synonyms (fix: anti-aliasing or page colouring); I/O uses physical addresses \\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}{L{3.4cm}L{12.2cm}}
+\toprule
+\tblhead{\textbf{MESI event} & \textbf{Result (\cp{C1})}}\\
+\midrule
+\endhead
+Read miss, no other copy & Load the block $\rightarrow$ \textbf{E} \\
+Read miss, others in S/E & $\rightarrow$ \textbf{S} (all copies S) \\
+Read miss, another has M & Owner supplies the data / writes back; both \textbf{S} \\
+Write hit in E or M & $\rightarrow$ \textbf{M}, no bus traffic \\
+Write hit in S & Invalidate the others $\rightarrow$ \textbf{M} \\
+Write miss & Read-for-ownership; others $\rightarrow$ \textbf{I}; mine $\rightarrow$ \textbf{M} \\
+Another PE writes my line & Mine $\rightarrow$ \textbf{I} (my next access misses) \\
+Evict an M line & Write back \\
+\multicolumn{2}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{So:} one variable written by several PEs makes its line hop between caches on every write (true sharing); two variables in one line do the same (false sharing).}\\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}{L{3.4cm}L{12.2cm}}
+\toprule
+\tblhead{\textbf{GPU kernel step} & \textbf{What happens (\cp{D3}--\cp{D8})}}\\
+\midrule
+\endhead
+1. Launch & Host copies inputs over PCIe and launches a grid of blocks $\times$ threads \\
+2. Block placement & Blocks go to SMs while registers, shared memory and warp slots last (occupancy) \\
+3. Issue & Each cycle a warp scheduler picks a \emph{ready} warp and issues one instruction to its 32 lanes \\
+4. Memory access & The coalescer merges the 32 addresses into as few transactions as possible; the warp waits; other warps run meanwhile \\
+5. Branch & Each thread computes its condition; a mixed warp runs both paths with masks, then reconverges \\
+6. Barrier & \texttt{\_\_syncthreads}: the warps of one block wait for each other \\
+7. Finish & Results copied back, or kept on the GPU for the next kernel \\
+\bottomrule
+\end{longtable}}
+
+\textbf{A multicore memory system} (\cp{T4} \cp{T6} \cp{C1}--\cp{C9}). Every boundary below is a place a parallel program can bottleneck: private caches (capacity), interconnect (coherence traffic), LLC (sharing/thrashing), controllers/channels (bandwidth), remote socket (NUMA).
+\begin{center}\small\rowcolors{1}{white}{white}\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|C{3.6cm}|C{3.6cm}|C{3.6cm}|C{3.6cm}|}
+\hline
+Core 0: L1 I/D, L2 & Core 1: L1 I/D, L2 & Core 2: L1 I/D, L2 & Core 3: L1 I/D, L2\\
+\hline
+\multicolumn{4}{|c|}{Interconnect: bus / ring / mesh (coherence messages)}\\
+\hline
+\multicolumn{4}{|c|}{Shared LLC (L3) in banks; directory or snoop filter}\\
+\hline
+\multicolumn{2}{|c|}{Memory controller 0 $\rightarrow$ DRAM channels/banks} & \multicolumn{2}{c|}{Memory controller 1 $\rightarrow$ DRAM channels/banks}\\
+\hline
+\end{tabular}
+\end{center}
+\textbf{Performance equation:} CPU time $=\text{IC}\times\CPI\times T_{clk}$ (IC: ISA/compiler; CPI: microarchitecture; $T_{clk}$: technology/pipeline depth); $\CPI=\CPI_{base}+$ branch stalls $+$ memory stalls.

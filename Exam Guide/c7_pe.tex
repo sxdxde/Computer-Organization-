@@ -1,0 +1,106 @@
+\section{Concepts W: Multiple PEs: Order of Execution, Work Distribution, Timing}\label{grp:work}
+\textbf{Order of execution: draw the dependence graph.} Work $T_1$ (total), span $T_\infty$ (critical path); parallelism $=T_1/T_\infty$; $T_p\ge\max(T_1/p,T_\infty)$. Amdahl $S=1/((1-f)+f/p)$; Gustafson $S=(1-f)+fp$; efficiency $S/p$. \textbf{Timing:} $T_{par}=T_{serial}+\max_i(W_i/\text{speed}_i)+T_{comm}+T_{sync}$; imbalance $=\max W_i/\text{avg }W_i$.
+
+\small
+\begin{tabularx}{\textwidth}{L{3.6cm}L{2.2cm}L{4.8cm}X}
+\toprule
+\tblhead{\textbf{Pattern in the workload} & \textbf{Parallel?} & \textbf{Execute as} & \textbf{Sync / bottleneck}}\\
+\midrule
+Independent items/requests & Fully & SIMD/GPU or block split \cp{W1} & End only; usually bandwidth \\
+Reduction (sum, max, histogram) & As a tree & Private partials + $\log_2p$ combine \cp{W5} & One combine; never a shared accumulator \\
+Recurrence $x_i=f(x_{i-1})$ & No & One PE; break chains \cp{I8} if associative & Critical path $=n\times$latency \\
+Producer $\rightarrow$ consumer stages & Pipeline & One stage per PE, queues \cp{W4} & Slowest stage sets throughput \\
+Phases with global steps & Fork--join & Parallel phase, barrier, next \cp{C6} & Barrier + imbalance per phase \\
+Irregular task graph & Partly & Dynamic: run any ready task \cp{W3} & Scheduler overhead, critical path \\
+Shared read-only / read-write data & Yes / limited & Replicate / partition ownership or lock & None / coherence + locks \\
+\bottomrule
+\end{tabularx}
+\normalsize
+{\small\renewcommand{\arraystretch}{1.3}\rowcolors{1}{white}{white}
+\begin{longtable}{L{2.3cm}L{4.7cm}L{2.9cm}L{3.0cm}L{2.8cm}}
+\toprule
+\rowcolor{hdrc}\textbf{Concept} & \textbf{What it fixes $\cdot$ how it works} & \textbf{Best scenario (use when)} & \textbf{Why it beats the alternatives} & \textbf{Weakness $\cdot$ avoid when}\\
+\midrule
+\endfirsthead
+\toprule
+\rowcolor{hdrc}\textbf{Concept} & \textbf{What it fixes $\cdot$ how it works} & \textbf{Best scenario (use when)} & \textbf{Why it beats the alternatives} & \textbf{Weakness $\cdot$ avoid when}\\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\textbf{\textcolor{cardc}{W1}}\label{card:W1}\newline\textbf{Static block partition}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Distributing equal, independent work with no overhead. \newline \textbf{How:} PE $k$ gets a contiguous chunk $[kN/p,(k{+}1)N/p)$. & Equal predictable costs; locality matters (contiguous, prefetch-friendly, no sharing). & Dynamic: zero run-time overhead, keeps locality. & \textbf{Avoid:} Unequal or unknown task costs, heterogeneous PEs. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{\textcolor{pickc}{Write:}} \textit{Events cost the same [given], so a block split gives each core [N/p] contiguous items with no scheduling overhead and prefetch-friendly access.}}\\
+\midrule
+\textbf{\textcolor{cardc}{W2}}\label{card:W2}\newline\textbf{Static cyclic / block-cyclic}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Imbalance when cost varies smoothly or heavy tasks cluster. \newline \textbf{How:} Item $i\rightarrow$ PE $i\bmod p$ (or blocks of $b$ dealt round-robin). & Cost rises or falls along the index (triangular loops), heavy items clustered. & Block: spreads heavy regions; still zero overhead. & Loses contiguity (worse locality, more false sharing). \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{\textcolor{pickc}{Write:}} \textit{Because the costly items are [the first ones], cyclic dealing gives each PE the same mix at zero run-time cost.}}\\
+\midrule
+\textbf{\textcolor{cardc}{W3}}\label{card:W3}\newline\textbf{Dynamic scheduling: work queue, work stealing, guided chunks}\newline{\footnotesize\textit{Dynamic}} & \textbf{Fixes:} Load imbalance with unequal/unknown task sizes. \newline \textbf{How:} Idle PE takes the next chunk from a shared queue (atomic index) or steals from another PE's queue; chunk sizes shrink over time (guided). & Input-dependent costs, irregular graphs, heterogeneous PEs, PEs slowed by other load. & Static split: adapts without knowing costs in advance. & Queue access per chunk (contention), lost locality. Chunk so overhead is a few \% of chunk time. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Needs:} Cheap atomic \cp{C7}; tuned chunk size. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{Task times vary [1--10\,ms] and are unknown in advance, so a static split leaves cores idle; a shared queue with [chunk] tasks lets idle cores take more, bringing $T_{par}$ near the average.}}\\
+\midrule
+\textbf{\textcolor{cardc}{W4}}\label{card:W4}\newline\textbf{Pipeline (task) parallelism}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Sequential per-item work with several stages. \newline \textbf{How:} Each stage on its own PE; items flow through bounded queues. & Each item passes through different stages (decode $\rightarrow$ filter $\rightarrow$ encode), stages suit different PEs. & --- & --- \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Needs:} Balanced stages (split or replicate the slowest); queue sync with flags/fences \cp{C8}. \enspace$\cdot$\enspace \textbf{Numbers:} Throughput $=1/$(slowest stage); latency $=$ sum of stages + queueing. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{Stages take [a, b, c]\,ms, so throughput is set by [b]; I split or replicate that stage to balance the pipeline.}}\\
+\midrule
+\textbf{\textcolor{cardc}{W5}}\label{card:W5}\newline\textbf{Privatisation + tree reduction}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} All PEs updating a shared result (counters, histogram, sum): coherence ping-pong and lock/atomic serialisation. \newline \textbf{How:} Each PE updates its own copy (padded to its own lines); combine at the end in $\log_2p$ steps after one barrier. & --- & Lock (serialises everything); padding alone (fixes false, not true, sharing); faster interconnect (each transfer cheaper, but still one per update). & $p\times$ memory; final reduction step; operation must be associative. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Numbers:} Coherence transfers $O(\text{updates})\rightarrow O(p)$. Lab 5: true sharing on a 256\,B table collapsed IPC; per-thread tables fixed it. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{All [p] cores write the same [2] lines, so every update is a coherence miss; private padded copies plus a [3]-step tree replace [N] transfers by [p].}}\\
+\midrule
+\textbf{\textcolor{cardc}{W6}}\label{card:W6}\newline\textbf{Owner-computes, NUMA-aware placement}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Remote memory accesses in multi-socket systems. \newline \textbf{How:} Allocate data on the node of the PE that uses it; pin threads; partition by owner. & Multi-socket, poor scaling past one socket. & Dynamic migration: keeps locality stable. & --- \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Numbers:} Remote access several times slower than local\bs. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{Each socket works on its own partition, allocated in its local memory, so accesses stay local instead of crossing the inter-socket link.}}\\
+\midrule
+\textbf{\textcolor{cardc}{W7}}\label{card:W7}\newline\textbf{2D block partition (surface-to-volume)}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Communication on grids/stencils. \newline \textbf{How:} Give each PE a square block, not a strip. & --- & --- & --- \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Numbers:} $N\times N$ grid: strips exchange $\approx2N$ per PE; blocks $\approx4N/\sqrt p$. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{With [p] PEs on an $[N]\times[N]$ grid, square blocks exchange $4N/\sqrt p$ values per PE instead of $2N$ for strips.}}\\
+\midrule
+\textbf{\textcolor{cardc}{W8}}\label{card:W8}\newline\textbf{Overlap and batch communication}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Communication latency exposed. \newline \textbf{How:} Compute the interior while boundary data arrives (double buffering); send few large messages ($T=$ latency $+$ size/BW). & --- & --- & --- \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Needs:} Non-blocking communication/prefetch; buffers. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{Boundary exchange takes [t]; computing the interior meanwhile hides it, and one large message replaces [k] small latency-bound ones.}}\\
+\midrule
+\textbf{\textcolor{cardc}{W9}}\label{card:W9}\newline\textbf{Split by PE speed (heterogeneous PEs, CPU + GPU)}\newline{\footnotesize\textit{Static / Dynamic}} & \textbf{Fixes:} Fast PEs idle while slow ones finish an equal share. \newline \textbf{How:} Give PE $i$ a share $\propto$ its speed ($W_i\propto s_i$), or use a dynamic queue; send data-parallel kernels to GPU/SIMD and serial/branchy parts to big cores. & big.LITTLE chips, CPU+GPU systems, PEs with different clocks or loads. & --- & --- \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Numbers:} 2 big cores (speed 2) + 4 small (speed 1): big get 2/8 each, small 1/8 each; equal split would leave big cores idle half the time. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{The [GPU] is [x]$\times$ faster on the data-parallel stage, so it gets that stage while the CPU runs the [serial/branchy] stage; shares proportional to speed equalise finish times.}}\\
+\end{longtable}}
+
+\begin{ex}[Static vs.\ dynamic timeline: write this calculation]
+4 PEs, 16 tasks: tasks 0--3 cost 4, tasks 4--15 cost 1; total 28, ideal 7. \textbf{Static block}: PE0 $=16$, others 4 $\Rightarrow T=16$, speedup 1.75. \textbf{Static cyclic}: each PE $4+1+1+1=7$ $\Rightarrow$ speedup 4.0. \textbf{Dynamic} (0.1 per fetch): $\approx7.4$, speedup 3.8. Cyclic wins only \emph{because we knew} where the heavy tasks are; with unknown costs dynamic is near-ideal at a small overhead.
+\end{ex}
+
+\section{Concepts C: Coherence, Synchronisation, Consistency}\label{grp:coh}
+\textbf{Coherence:} a read returns the latest write, and all PEs see writes to one location in the same order. Standard: \textbf{write-invalidate}. States: \textbf{M} only copy, dirty; \textbf{E} only copy, clean (write silently $\rightarrow$ M); \textbf{S} clean, maybe several copies (write must invalidate others); \textbf{I} invalid.
+{\small\renewcommand{\arraystretch}{1.3}\rowcolors{1}{white}{white}
+\begin{longtable}{L{2.3cm}L{4.7cm}L{2.9cm}L{3.0cm}L{2.8cm}}
+\toprule
+\rowcolor{hdrc}\textbf{Concept} & \textbf{What it fixes $\cdot$ how it works} & \textbf{Best scenario (use when)} & \textbf{Why it beats the alternatives} & \textbf{Weakness $\cdot$ avoid when}\\
+\midrule
+\endfirsthead
+\toprule
+\rowcolor{hdrc}\textbf{Concept} & \textbf{What it fixes $\cdot$ how it works} & \textbf{Best scenario (use when)} & \textbf{Why it beats the alternatives} & \textbf{Weakness $\cdot$ avoid when}\\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\textbf{\textcolor{cardc}{C1}}\label{card:C1}\newline\textbf{Snooping coherence (MSI/MESI)}\newline{\footnotesize\textit{Dynamic}} & \textbf{Fixes:} Keeping private caches consistent on a few cores. \newline \textbf{How:} Every cache watches a shared bus/broadcast and invalidates or supplies lines. & 2--8 cores on a bus. & Directory at small scale: simpler, lower latency. & Broadcast becomes the bottleneck as cores grow; every write to a shared line generates traffic. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Numbers:} MESI's E state lets private data be written without a bus upgrade. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{With [4] cores on one bus, snooping keeps the private L1s coherent at low latency; cost is acceptable because sharing is now rare after privatisation.}}\\
+\midrule
+\textbf{\textcolor{cardc}{C2}}\label{card:C2}\newline\textbf{Directory coherence}\newline{\footnotesize\textit{Dynamic}} & \textbf{Fixes:} Coherence traffic scaling to many cores/sockets. \newline \textbf{How:} Each block's home node keeps a sharer list; requests go point-to-point to home and only to sharers. & Many cores, NUMA, multi-socket. & Snooping: no broadcast to all. & Directory storage; extra hop latency. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{\textcolor{pickc}{Write:}} \textit{With [32] cores / [2] sockets, broadcasting every miss would saturate the interconnect; a directory sends invalidations only to actual sharers.}}\\
+\midrule
+\textbf{\textcolor{cardc}{C3}}\label{card:C3}\newline\textbf{Padding / alignment against false sharing}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Different variables in one line ping-ponging (false sharing). \newline \textbf{How:} Place each PE's data on its own cache line (pad to 64\,B). & --- & --- & Memory waste; does nothing for true sharing (\cp{W5}). \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Numbers:} Larger blocks increase false sharing. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{Per-thread counters packed [8] per line ping-pong although no data is shared; padding each to 64\,B removes these false-sharing misses.}}\\
+\midrule
+\textbf{\textcolor{cardc}{C4}}\label{card:C4}\newline\textbf{Spin locks: test-and-test-and-set, back-off, queue locks}\newline{\footnotesize\textit{Dynamic}} & \textbf{Fixes:} Lock spinning flooding the interconnect. \newline \textbf{How:} Spin on a cached (Shared) copy; attempt the atomic only when the lock looks free; back off after failure; queue locks\bs{} hand the lock over in order. & --- & Plain test-and-set: it writes the line on every spin $\Rightarrow$ invalidation storm. & Still a burst of misses at each release under contention. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{\textcolor{pickc}{Write:}} \textit{Waiting threads spin on their cached copy (Shared state) and try the atomic only when the lock reads free, so spinning creates no bus traffic.}}\\
+\midrule
+\textbf{\textcolor{cardc}{C5}}\label{card:C5}\newline\textbf{Fine-grained locks / shorter critical sections}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} A critical section is a serial fraction (Amdahl). \newline \textbf{How:} One lock per bucket/partition; move work outside the lock; or remove it (\cp{W5}, lock-free with CAS). & --- & --- & More locks, deadlock risk, complexity. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{\textcolor{pickc}{Write:}} \textit{[p] threads serialise on one lock held [c] per item; per-bucket locks divide contention by [buckets].}}\\
+\midrule
+\textbf{\textcolor{cardc}{C6}}\label{card:C6}\newline\textbf{Fewer barriers / point-to-point sync}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Every barrier makes all PEs wait for the slowest. \newline \textbf{How:} Merge small steps into larger phases; replace global barriers by flags between neighbours; asynchronous phases. & --- & --- & --- \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Numbers:} Cost $=$ (barrier latency + imbalance) $\times$ number of barriers. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{A barrier after each of [k] small steps pays latency plus imbalance [k] times; merging steps into [m] phases pays it [m] times.}}\\
+\midrule
+\textbf{\textcolor{cardc}{C7}}\label{card:C7}\newline\textbf{Atomic primitives (fetch-and-add, CAS, LL/SC)}\newline{\footnotesize\textit{Dynamic}} & \textbf{Fixes:} Correct concurrent updates without a lock. \newline \textbf{How:} Read-modify-write executed indivisibly (holds the line in M). & Queue indices, occasional updates, final merges, not every element. & A lock: no holder to wait for, no lock line plus data line. & Each atomic on a contended line is a coherence transaction (Lab 5: CAS retries rose with threads). \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{\textcolor{pickc}{Write:}} \textit{A single fetch-and-add on the queue index hands out work; it is cheap because it happens once per chunk, not once per element.}}\\
+\midrule
+\textbf{\textcolor{cardc}{C8}}\label{card:C8}\newline\textbf{Memory consistency and fences}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Reordered loads/stores breaking producer--consumer handshakes. \newline \textbf{How:} \emph{Sequential consistency}: one interleaving respecting each program order (simple, limits store buffers). Real machines are \emph{relaxed}: use fences / acquire--release around flags; data-race-free programs then behave as SC. & --- & --- & Fences stall the pipeline; use only at handoff points. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{\textcolor{pickc}{Write:}} \textit{The consumer must not read the buffer before the producer's flag; a release fence before setting the flag and an acquire after reading it guarantee order on a relaxed machine.}}\\
+\midrule
+\textbf{\textcolor{cardc}{C9}}\label{card:C9}\newline\textbf{Interconnect: bus, ring, mesh, crossbar\bs}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Bandwidth and latency of communication between PEs, caches and memory. \newline \textbf{How:} \emph{Bus}: shared broadcast, one transfer at a time (snooping). \emph{Ring}: point-to-point hops, tens of nodes. \emph{2D mesh / network-on-chip}: many transfers at once, scales to many cores (pairs with a directory). \emph{Crossbar}: any-to-any, cost $\propto p^2$ (few cores to many cache banks). & Bus $\le$8 cores; ring tens; mesh many cores; crossbar cores$\rightarrow$L2 banks. & --- & Bus saturates; mesh adds multi-hop latency and needs locality-aware placement. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{\textcolor{pickc}{Write:}} \textit{At [32] cores a shared bus serialises every miss and invalidation; a mesh with a directory lets [k] transfers proceed at once.}}\\
+\end{longtable}}
+\begin{trap}[Multi-PE traps]
+More PEs on memory-bound or lock-bound code: no faster, often slower. Padding fixes only \emph{false} sharing. Dynamic scheduling with equal tasks only adds overhead. Measure speedup against the best \emph{serial} program.
+\end{trap}

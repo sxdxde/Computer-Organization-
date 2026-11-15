@@ -1,0 +1,55 @@
+\section{Concepts E: Power, Energy, Area, Reliability}\label{grp:power}
+{\small\renewcommand{\arraystretch}{1.3}\rowcolors{1}{white}{white}
+\begin{longtable}{L{2.3cm}L{4.7cm}L{2.9cm}L{3.0cm}L{2.8cm}}
+\toprule
+\rowcolor{hdrc}\textbf{Concept} & \textbf{What it fixes $\cdot$ how it works} & \textbf{Best scenario (use when)} & \textbf{Why it beats the alternatives} & \textbf{Weakness $\cdot$ avoid when}\\
+\midrule
+\endfirsthead
+\toprule
+\rowcolor{hdrc}\textbf{Concept} & \textbf{What it fixes $\cdot$ how it works} & \textbf{Best scenario (use when)} & \textbf{Why it beats the alternatives} & \textbf{Weakness $\cdot$ avoid when}\\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\textbf{\textcolor{cardc}{E1}}\label{card:E1}\newline\textbf{DVFS (dynamic voltage-frequency scaling)}\newline{\footnotesize\textit{Dynamic}} & \textbf{Fixes:} Energy/power too high for battery or thermal budget. \newline \textbf{How:} Lower $V$ and $f$ when full speed is not needed. Dynamic power $=\tfrac12CV^2f$; energy per switch $=\tfrac12CV^2$. & Battery, thermal cap, bursty load, cores throttling. & Lowering clock alone: it cuts power but \emph{not} energy per task (slide); lowering $V$ cuts energy via $V^2$. & Slower at low settings; transition latency. \newline \textbf{Avoid:} Constant full load or hard real-time (use fixed V/f: static, predictable). \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Needs:} Per-core voltage/clock domains; OS/firmware governor. \enspace$\cdot$\enspace \textbf{Numbers:} If $V$ scales with $f$, power $\propto f^3$: $0.8\times$ clock $\Rightarrow\approx0.51\times$ power\bs. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{Because [load is bursty / battery-limited], DVFS lowers $V$ in idle phases, cutting energy per task by the $V^2$ term, which clock gating alone cannot.}}\\
+\midrule
+\textbf{\textcolor{cardc}{E2}}\label{card:E2}\newline\textbf{Power gating, turning off idle units/cores}\newline{\footnotesize\textit{Dynamic}} & \textbf{Fixes:} Static (leakage) power $=I_{static}\times V$, which grows with transistor count. \newline \textbf{How:} Cut supply to idle blocks/cores; low-power DRAM states. & Many cores often idle, PMD, large caches mostly unused. & DVFS for idle blocks: a block at low V still leaks; gating removes it. & Wake-up latency; state must be saved. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Needs:} Wake-up policy; save/restore of state. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{Idle [cores/units] still leak; gating them removes static power, which DVFS does not.}}\\
+\midrule
+\textbf{\textcolor{cardc}{E3}}\label{card:E3}\newline\textbf{Many small cores (or big + small) instead of one huge core}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Power wall, area cost, ILP saturation. \newline \textbf{How:} Spend transistors on several simpler cores; optionally a few big cores for serial parts and many small ones for parallel parts\bs. & Threaded/parallel software, area or power limit, throughput goal. & One wide core: ILP saturates at 3--6 issue and ILP hardware is energy-inefficient; big dies cost disproportionately more (yield). Two slower cores can beat one fast core on throughput per watt. & Serial phases run slower on small cores; coherence, sync and shared-bandwidth costs grow with core count. \newline \textbf{Avoid:} Software is serial (Amdahl): then keep one strong core. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Needs:} Threads/tasks to run; memory bandwidth and coherence for all cores. \enspace$\cdot$\enspace \textbf{Numbers:} Yield $\propto(1+\text{defects}\times\text{area})^{-N}$, $N=11.5$--15.5: bigger die $\Rightarrow$ much costlier. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{Because the workload has [N independent tasks] and the budget is [power/area], I use [k] small cores rather than one wide core whose extra issue slots would stay idle.}}\\
+\midrule
+\textbf{\textcolor{cardc}{E4}}\label{card:E4}\newline\textbf{Dependability: redundancy, ECC}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Downtime and memory errors (servers, 24/7). \newline \textbf{How:} Error-correcting codes on memory/caches; redundant components; fast repair. & Servers, 24/7 services, large DRAM capacity. & --- & Extra bits, area; ECC harder with wide memory (partial writes need read-modify-write). \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Numbers:} Availability $=\text{MTTF}/(\text{MTTF}+\text{MTTR})$. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{For 24/7 service, availability $=$ MTTF/(MTTF+MTTR); ECC and redundancy raise MTTF and cut MTTR.}}\\
+\end{longtable}}
+
+
+\subsection*{Arguments you can always use}
+{\small\renewcommand{\arraystretch}{1.3}
+\begin{longtable}{L{4.0cm}L{6.4cm}L{5.2cm}}
+\toprule
+\tblhead{\textbf{Trend / principle} & \textbf{Fact} & \textbf{So the design should\ldots}}\\
+\midrule
+\endhead
+Memory wall & Processor bandwidth improved 10{,}000--25{,}000$\times$, memory only 300--1200$\times$; latency 30--80$\times$ vs.\ 6--8$\times$ & Use caches, banks, latency hiding; bandwidth is easy to buy, latency is not \\
+Wires do not scale & Transistors get faster, wire delay does not & Avoid huge centralised structures (wide issue, big CDB, many ports); replicate smaller cores \\
+End of single-thread growth & Single-thread improvement ended $\sim$2003; ILP cannot be pushed further & Use explicit DLP / TLP / request-level parallelism \\
+Energy per task & Lower clock alone cuts power, not energy per task & Judge designs by energy per task; use DVFS \\
+Common case (Amdahl) & Overall gain limited by the part not improved & Speed up what dominates time \\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}{L{4.0cm}L{11.6cm}}
+\toprule
+\tblhead{\textbf{Machine class} & \textbf{What it optimises (full reference designs \pg{sec:classes})}}\\
+\midrule
+\endhead
+Personal mobile device & Energy efficiency, real-time response \\
+Desktop & Price-performance, single-thread speed \\
+Server & Availability, scalability, throughput \\
+Cluster / warehouse-scale & Request-level parallelism; cost and energy per request \\
+Supercomputer & Floating-point performance, fast internal network \\
+Embedded & Price \\
+\bottomrule
+\end{longtable}}

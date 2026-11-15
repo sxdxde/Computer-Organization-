@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.4.5)  9 NOV 2026 13:17
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.4.5)  10 NOV 2026 19:36
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -327,40 +327,77 @@ Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
 \f@nch@widthR=\skip76
 \@temptokenb=\toks31
 )
-(/usr/local/texlive/2026basic/texmf-dist/tex/latex/listings/listings.sty
-\lst@mode=\count314
-\lst@gtempboxa=\box64
-\lst@token=\toks32
-\lst@length=\count315
-\lst@currlwidth=\dimen190
-\lst@column=\count316
-\lst@pos=\count317
-\lst@lostspace=\dimen191
-\lst@width=\dimen192
-\lst@newlines=\count318
-\lst@lineno=\count319
-\lst@maxwidth=\dimen193
-
-(/usr/local/texlive/2026basic/texmf-dist/tex/latex/listings/lstpatch.sty
-File: lstpatch.sty 2025/11/14 1.11b (Carsten Heinz)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/tools/multicol.sty
+Package: multicol 2025/10/21 v2.0b multicolumn formatting (FMi)
+\c@tracingmulticols=\count314
+\mult@box=\box64
+\multicol@leftmargin=\dimen190
+\c@unbalance=\count315
+\c@collectmore=\count316
+\doublecol@number=\count317
+\multicoltolerance=\count318
+\multicolpretolerance=\count319
+\full@width=\dimen191
+\page@free=\dimen192
+\premulticols=\dimen193
+\postmulticols=\dimen194
+\multicolsep=\skip77
+\multicolbaselineskip=\skip78
+\partial@page=\box65
+\last@line=\box66
+\mc@boxedresult=\box67
+\maxbalancingoverflow=\dimen195
+\mult@rightbox=\box68
+\mult@grightbox=\box69
+\mult@firstbox=\box70
+\mult@gfirstbox=\box71
+\@tempa=\box72
+\@tempa=\box73
+\@tempa=\box74
+\@tempa=\box75
+\@tempa=\box76
+\@tempa=\box77
+\@tempa=\box78
+\@tempa=\box79
+\@tempa=\box80
+\@tempa=\box81
+\@tempa=\box82
+\@tempa=\box83
+\@tempa=\box84
+\@tempa=\box85
+\@tempa=\box86
+\@tempa=\box87
+\@tempa=\box88
+\@tempa=\box89
+\@tempa=\box90
+\@tempa=\box91
+\@tempa=\box92
+\@tempa=\box93
+\@tempa=\box94
+\@tempa=\box95
+\@tempa=\box96
+\@tempa=\box97
+\@tempa=\box98
+\@tempa=\box99
+\@tempa=\box100
+\@tempa=\box101
+\@tempa=\box102
+\@tempa=\box103
+\@tempa=\box104
+\@tempa=\box105
+\@tempa=\box106
+\@tempa=\box107
+\c@minrows=\count320
+\c@columnbadness=\count321
+\c@finalcolumnbadness=\count322
+\last@try=\dimen196
+\multicolovershoot=\dimen197
+\multicolundershoot=\dimen198
+\mult@nat@firstbox=\box108
+\colbreak@box=\box109
+\mc@col@check@num=\count323
+\g__mc_curr_col_int=\count324
 )
-(/usr/local/texlive/2026basic/texmf-dist/tex/latex/listings/lstmisc.sty
-File: lstmisc.sty 2025/11/14 1.11b (Carsten Heinz)
-\c@lstnumber=\count320
-\lst@skipnumbers=\count321
-\lst@framebox=\box65
-)
-(/usr/local/texlive/2026basic/texmf-dist/tex/latex/listings/listings.cfg
-File: listings.cfg 2025/11/14 1.11b listings configuration
-))
-Package: listings 2025/11/14 1.11b (Carsten Heinz)
-
-==> First Aid for listings.sty no longer applied!
-    Expected:
-        2024/09/23 1.10c (Carsten Heinz)
-    but found:
-        2025/11/14 1.11b (Carsten Heinz)
-    so I'm assuming it got fixed.
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/hyperref/hyperref.sty
 Package: hyperref 2026-01-29 v7.01p Hypertext links for LaTeX
 
@@ -403,15 +440,15 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/kvoptions/kvoptions.sty
 Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
 ))
-\c@section@level=\count322
+\c@section@level=\count325
 )
 (/usr/local/texlive/2026basic/texmf-dist/tex/generic/stringenc/stringenc.sty
 Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
 )
 )
-\@linkdim=\dimen194
-\Hy@linkcounter=\count323
-\Hy@pagecounter=\count324
+\@linkdim=\dimen199
+\Hy@linkcounter=\count326
+\Hy@pagecounter=\count327
 
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/hyperref/pd1enc.def
 File: pd1enc.def 2026-01-29 v7.01p Hyperref: PDFDocEncoding definition (HO)
@@ -421,7 +458,7 @@ Now handling font encoding PD1 ...
 (/usr/local/texlive/2026basic/texmf-dist/tex/generic/intcalc/intcalc.sty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 )
-\Hy@SavedSpaceFactor=\count325
+\Hy@SavedSpaceFactor=\count328
 
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/hyperref/puenc.def
 File: puenc.def 2026-01-29 v7.01p Hyperref: PDF Unicode definition (HO)
@@ -436,14 +473,14 @@ Package hyperref Info: Plain pages OFF on input line 4216.
 Package hyperref Info: Backreferencing OFF on input line 4221.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4468.
-\c@Hy@tempcnt=\count326
+\c@Hy@tempcnt=\count329
 
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/url/url.sty
 \Urlmuskip=\muskip18
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
 LaTeX Info: Redefining \url on input line 4807.
-\XeTeXLinkMargin=\dimen195
+\XeTeXLinkMargin=\dimen256
 
 (/usr/local/texlive/2026basic/texmf-dist/tex/generic/bitset/bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
@@ -452,9 +489,9 @@ Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
-\Fld@menulength=\count327
-\Field@Width=\dimen196
-\Fld@charsize=\dimen197
+\Fld@menulength=\count330
+\Field@Width=\dimen257
+\Fld@charsize=\dimen258
 Package hyperref Info: Hyper figures OFF on input line 6084.
 Package hyperref Info: Link nesting OFF on input line 6089.
 Package hyperref Info: Hyper index ON on input line 6092.
@@ -462,15 +499,15 @@ Package hyperref Info: backreferencing OFF on input line 6099.
 Package hyperref Info: Link coloring ON on input line 6102.
 Package hyperref Info: Link coloring with OCG OFF on input line 6109.
 Package hyperref Info: PDF/A mode OFF on input line 6114.
-\Hy@abspage=\count328
-\c@Item=\count329
-\c@Hfootnote=\count330
+\Hy@abspage=\count331
+\c@Item=\count332
+\c@Hfootnote=\count333
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
  (/usr/local/texlive/2026basic/texmf-dist/tex/latex/hyperref/hpdftex.def
 File: hpdftex.def 2026-01-29 v7.01p Hyperref driver for pdfTeX
-\Fld@listcount=\count331
-\c@bookmark@seq@number=\count332
+\Fld@listcount=\count334
+\c@bookmark@seq@number=\count335
 
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/rerunfilecheck/rerunfilechec
 k.sty
@@ -483,10 +520,10 @@ Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 84.
 )
-\Hy@SectionHShift=\skip77
+\Hy@SectionHShift=\skip79
 )
-\cboxbin=\box66
-LaTeX Font Info:    Trying to load font information for T1+lmr on input line 79
+\cboxbin=\box110
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 97
 .
  (/usr/local/texlive/2026basic/texmf-dist/tex/latex/lm/t1lmr.fd
 File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
@@ -494,28 +531,28 @@ File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/l3backend/l3backend-pdftex.d
 ef
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count333
+\l__color_backend_stack_int=\count336
 ) (./main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -525,22 +562,22 @@ LaTeX Font Info:    ... okay on input line 79.
 * layout: <same size as paper>
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
 * modes: 
-* h-part:(L,W,R)=(36.98866pt, 523.53055pt, 36.98866pt)
-* v-part:(T,H,B)=(39.83368pt, 765.37949pt, 39.83368pt)
+* h-part:(L,W,R)=(28.45274pt, 540.60239pt, 28.45274pt)
+* v-part:(T,H,B)=(36.98866pt, 773.91496pt, 34.14322pt)
 * \paperwidth=597.50787pt
 * \paperheight=845.04684pt
-* \textwidth=523.53055pt
-* \textheight=765.37949pt
-* \oddsidemargin=-35.28133pt
-* \evensidemargin=-35.28133pt
-* \topmargin=-69.43631pt
+* \textwidth=540.60239pt
+* \textheight=773.91496pt
+* \oddsidemargin=-43.81725pt
+* \evensidemargin=-43.81725pt
+* \topmargin=-54.3945pt
 * \headheight=12.0pt
-* \headsep=25.0pt
+* \headsep=7.11317pt
 * \topskip=9.0pt
 * \footskip=30.0pt
 * \marginparwidth=65.0pt
 * \marginparsep=10.0pt
-* \columnsep=10.0pt
+* \columnsep=12.80365pt
 * \skip\footins=8.0pt plus 4.0pt minus 2.0pt
 * \hoffset=0.0pt
 * \voffset=0.0pt
@@ -551,13 +588,13 @@ LaTeX Font Info:    ... okay on input line 79.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-LaTeX Info: Redefining \microtypecontext on input line 79.
-Package microtype Info: Applying patch `item' on input line 79.
-Package microtype Info: Applying patch `toc' on input line 79.
-Package microtype Info: Applying patch `eqnum' on input line 79.
-Package microtype Info: Applying patch `footnote' on input line 79.
-Package microtype Info: Applying patch `verbatim' on input line 79.
-LaTeX Info: Redefining \microtypesetup on input line 79.
+LaTeX Info: Redefining \microtypecontext on input line 97.
+Package microtype Info: Applying patch `item' on input line 97.
+Package microtype Info: Applying patch `toc' on input line 97.
+Package microtype Info: Applying patch `eqnum' on input line 97.
+Package microtype Info: Applying patch `footnote' on input line 97.
+Package microtype Info: Applying patch `verbatim' on input line 97.
+LaTeX Info: Redefining \microtypesetup on input line 97.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
@@ -574,56 +611,55 @@ File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman
 )
 (/usr/local/texlive/2026basic/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count334
-\scratchdimen=\dimen198
-\scratchbox=\box67
-\nofMPsegments=\count335
-\nofMParguments=\count336
-\everyMPshowfont=\toks33
-\MPscratchCnt=\count337
-\MPscratchDim=\dimen199
-\MPnumerator=\count338
-\makeMPintoPDFobject=\count339
-\everyMPtoPDFconversion=\toks34
+\scratchcounter=\count337
+\scratchdimen=\dimen259
+\scratchbox=\box111
+\nofMPsegments=\count338
+\nofMParguments=\count339
+\everyMPshowfont=\toks32
+\MPscratchCnt=\count340
+\MPscratchDim=\dimen260
+\MPnumerator=\count341
+\makeMPintoPDFobject=\count342
+\everyMPtoPDFconversion=\toks33
 )
-\c@lstlisting=\count340
-Package hyperref Info: Link coloring ON on input line 79.
+Package hyperref Info: Link coloring ON on input line 97.
  (./main.out) (./main.out)
 \@outlinefile=\write3
 \openout3 = `main.out'.
 
-LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 8
-1.
+ (./p0_howto.tex
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 9
+.
 
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 8
-1.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 9
+.
 
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-81.
+9.
 
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-81.
+9.
 
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 81.
+(Font)              <9> on input line 9.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 81.
+(Font)              <6> on input line 9.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 81.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 81.
-
+(Font)              <5> on input line 9.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 9.
 
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
@@ -631,8 +667,7 @@ File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/microtype/mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 81.
-
+LaTeX Font Info:    Trying to load font information for U+msb on input line 9.
 
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -640,120 +675,197 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/microtype/mt-msb.cfg
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 )
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 83.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 83.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <9> on input line 92.
+[1{/usr/local/texlive/2026basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/
+usr/local/texlive/2026basic/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local
+/texlive/2026basic/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}
 
-(./ch0_method.tex
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 19.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\rightarrow' on input line 19.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 19.
-
-
-ignored: Infinite glue shrinkage found in box being split [1
-
-{/usr/local/texlive/2026basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/us
-r/local/texlive/2026basic/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/t
-exlive/2026basic/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/local/texliv
-e/2026basic/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/2026bas
-ic/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}]) (./ch1_fundamentals.tex
-Underfull \hbox (badness 10000) in paragraph at lines 17--17
-[]|\T1/lmr/m/n/8 (+20) Multicore/multithreading, large caches, high mem-ory ban
-d-width,
- []
-
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 2
-3.
-(/usr/local/texlive/2026basic/texmf-dist/tex/latex/lm/ts1lmr.fd
-File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [2{/usr/local/texlive/2026basic/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}] [3
-{/usr/local/texlive/2026basic/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}])
-(./ch2_pipeline_branch.tex
-Overfull \hbox (1.24806pt too wide) in paragraph at lines 30--30
-\T1/lmr/m/n/8 (-20) (RAW/WAR/WAW)|  
- []
-
-[4] [5] [6]) (./ch3_ilp.tex
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 3
-7.
-
-(/usr/local/texlive/2026basic/texmf-dist/tex/latex/lm/t1lmtt.fd
+])
+(./p1_method.tex
+ignored: Infinite glue shrinkage found in box being split [2{/usr/local/
+texlive/2026basic/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}]
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1
+01.
+ (/usr/local/texlive/2026basic/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `lmtt' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
- [7] [8]
-[9]) (./ch4_memory.tex [10] [11] [12] [13] [14]
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 286.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\rightarrow' on input line 286.
+)
+(./p2_index.tex
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10.95> on input line 1.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 286.
+(hyperref)                removing `math shift' on input line 1.
 
-[15]) (./ch5_tlp.tex [16] [17]) (./ch6_scenarios.tex
-ignored: Infinite glue shrinkage fou
-nd in box being split [18]
-ignored: Infinite glue shrinkage found in box being split [19]
- [20])
-(./appA_formulas.tex [21]) (./appB_sources.tex) [22] (./main.aux)
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\rightarrow' on input line 1.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 1.
+
+[3{/usr/local/texlive/2026basic/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 60.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\rightarrow' on input line 60.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 60.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 60.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\rightarrow' on input line 60.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 60.
+
+
+ignored: Infinite glue shrinkage found in box being split [4]) (./x0_primer.tex
+ignored: Infinite 
+glue shrinkage found in box being split [5]) (./c1_power.tex [6]) (./c2_pipe.te
+x [7]
+ignored: Infinite glue shrinkage found in box being split [8])
+(./c3_ilp.tex
+Underfull \hbox (badness 10000) in paragraph at lines 69--1
+
+ []
+
+[9]
+ignored: Infinite glue shrinkage found in box being split [10]) (./c4_mem.tex [11]
+ignored: Inf
+inite glue shrinkage found in box being split [12]
+ignored: Infinite glue shrinkage found
+ in box being split [13]) (./c5_tlp.tex [14]) (./c6_dlp.tex
+Underfull \hbox (badness 10000) in paragraph at lines 48--1
+
+ []
+
+[15]
+ignored: Infinite glue shrinkage found in box being split [16]
+Underfull \hbox (badness 8170) in paragraph at lines 52--52
+[]|\T1/lmr/m/n/8 (+20) Irregular, branchy, task-
+ []
+
+) (./c7_pe.tex
+ignored: Infinite glue shrinkage found in box being split [17] [18] [19]) 
+(./x1_cross.tex
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 46.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 46.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathsurround' on input line 46.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\z@' on input line 46.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `superscript' on input line 46.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 46.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\dagger' on input line 46.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 46.
+
+[20] [21]) (./x2_answers.tex [22] [23] [24] [25]) (./x3_formulas.tex
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 4.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\rightarrow' on input line 4.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 4.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 4.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\rightarrow' on input line 4.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 4.
+
+
+ignored: Infinite glue shrinkage found in box being split [26] [27{/usr/local/texlive/20
+26basic/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}] [28]) [29] (./main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 26015695C1619A0DAA6B098D3223351C;13569.
+(rerunfilecheck)             Checksum: C58AEC0C8048B3CCA48C059D138F5299;13811.
  ) 
 Here is how much of TeX's memory you used:
- 15906 strings out of 469006
- 246689 string characters out of 5454814
- 729498 words of memory out of 5000000
- 43814 multiletter control sequences out of 15000+600000
- 728775 words of font info for 287 fonts, out of 8000000 for 9000
+ 14930 strings out of 469006
+ 231230 string characters out of 5454814
+ 789148 words of memory out of 5000000
+ 42778 multiletter control sequences out of 15000+600000
+ 738311 words of font info for 335 fonts, out of 8000000 for 9000
  319 hyphenation exceptions out of 8191
- 75i,13n,84p,1001b,632s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,16n,84p,1001b,656s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></u
 sr/local/texlive/2026basic/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/lo
-cal/texlive/2026basic/texmf-dist/fonts/type1/public/lm/lmbx8.pfb></usr/local/te
-xlive/2026basic/texmf-dist/fonts/type1/public/lm/lmbx9.pfb></usr/local/texlive/
-2026basic/texmf-dist/fonts/type1/public/lm/lmbxi10.pfb></usr/local/texlive/2026
-basic/texmf-dist/fonts/type1/public/lm/lmex10.pfb></usr/local/texlive/2026basic
-/texmf-dist/fonts/type1/public/lm/lmmi6.pfb></usr/local/texlive/2026basic/texmf
--dist/fonts/type1/public/lm/lmmi8.pfb></usr/local/texlive/2026basic/texmf-dist/
-fonts/type1/public/lm/lmmi9.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/
-type1/public/lm/lmr6.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/p
-ublic/lm/lmr8.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/l
-m/lmr9.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/lm/lmri7
-.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/lm/lmri8.pfb><
-/usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/lm/lmri9.pfb></usr/l
-ocal/texlive/2026basic/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/local/
-texlive/2026basic/texmf-dist/fonts/type1/public/lm/lmsy6.pfb></usr/local/texliv
-e/2026basic/texmf-dist/fonts/type1/public/lm/lmsy8.pfb></usr/local/texlive/2026
-basic/texmf-dist/fonts/type1/public/lm/lmsy9.pfb></usr/local/texlive/2026basic/
-texmf-dist/fonts/type1/public/lm/lmtt8.pfb></usr/local/texlive/2026basic/texmf-
-dist/fonts/type1/public/lm/lmtt9.pfb>
-Output written on main.pdf (22 pages, 534809 bytes).
+cal/texlive/2026basic/texmf-dist/fonts/type1/public/lm/lmbx6.pfb></usr/local/te
+xlive/2026basic/texmf-dist/fonts/type1/public/lm/lmbx7.pfb></usr/local/texlive/
+2026basic/texmf-dist/fonts/type1/public/lm/lmbx8.pfb></usr/local/texlive/2026ba
+sic/texmf-dist/fonts/type1/public/lm/lmbx9.pfb></usr/local/texlive/2026basic/te
+xmf-dist/fonts/type1/public/lm/lmex10.pfb></usr/local/texlive/2026basic/texmf-d
+ist/fonts/type1/public/lm/lmmi6.pfb></usr/local/texlive/2026basic/texmf-dist/fo
+nts/type1/public/lm/lmmi8.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/ty
+pe1/public/lm/lmmi9.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/pu
+blic/lm/lmr5.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/lm
+/lmr6.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/lm/lmr7.p
+fb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/lm/lmr8.pfb></us
+r/local/texlive/2026basic/texmf-dist/fonts/type1/public/lm/lmr9.pfb></usr/local
+/texlive/2026basic/texmf-dist/fonts/type1/public/lm/lmri7.pfb></usr/local/texli
+ve/2026basic/texmf-dist/fonts/type1/public/lm/lmri8.pfb></usr/local/texlive/202
+6basic/texmf-dist/fonts/type1/public/lm/lmri9.pfb></usr/local/texlive/2026basic
+/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2026basic/texm
+f-dist/fonts/type1/public/lm/lmsy6.pfb></usr/local/texlive/2026basic/texmf-dist
+/fonts/type1/public/lm/lmsy7.pfb></usr/local/texlive/2026basic/texmf-dist/fonts
+/type1/public/lm/lmsy8.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1
+/public/lm/lmsy9.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/publi
+c/lm/lmtt8.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/lm/l
+mtt9.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/lm/lmtti10
+.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/symbo
+ls/msam10.pfb>
+Output written on main.pdf (29 pages, 740781 bytes).
 PDF statistics:
- 556 PDF objects out of 1000 (max. 8388607)
- 482 compressed objects within 5 object streams
- 157 named destinations out of 1000 (max. 500000)
- 50601 words of extra memory for PDF output out of 51595 (max. 10000000)
+ 1324 PDF objects out of 1440 (max. 8388607)
+ 1077 compressed objects within 11 object streams
+ 130 named destinations out of 1000 (max. 500000)
+ 53121 words of extra memory for PDF output out of 61914 (max. 10000000)
 

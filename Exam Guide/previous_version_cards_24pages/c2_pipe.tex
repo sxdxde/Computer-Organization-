@@ -1,0 +1,133 @@
+\section{Cards P: Pipeline and Branch Handling}\label{grp:pipe}
+\begin{multicols}{2}
+\card{P1}{Pipelining}{Static (design)}
+\fx{Low instruction throughput.}
+\fh{Overlap stages (IF, ID, EX, MEM, WB) of successive instructions: throughput up to 1 instr/cycle; latency of one instruction unchanged.}
+\fw{Hazards: structural (same unit), data (RAW/WAR/WAW), control (next PC unknown). Longer pipes increase their impact.}
+\fn{Forwarding \cp{P2}, branch handling \cp{P6}--\cp{P12}.}
+\fj{Pipelining raises throughput towards 1 instruction/cycle; the [n]-stage pipe loses [x] CPI to hazards, which I remove with [forwarding / prediction / scheduling].}
+
+\card{P2}{Forwarding / bypassing}{Static (hardware)}
+\fx{RAW stalls between dependent ALU operations.}
+\fh{Route the EX/MEM result straight to the next instruction's input instead of waiting for write-back.}
+\fu{Always in a pipelined core.}
+\fb{Stalling to write-back: removes most RAW bubbles between back-to-back ALU ops with a few muxes.}
+\fw{Cannot remove the load-use bubble (data arrives after MEM); bypass network grows with issue width (Lab 10: extra bypass cycles between unit types).}
+\fj{Back-to-back dependent ALU ops [given] would stall until write-back; forwarding passes the EX result directly, leaving only the load-use slot for the compiler.}
+
+\card{P3}{Compiler fills load/branch delay slots}{Static}
+\fx{Load-use and branch bubbles.}
+\fh{Schedule an independent instruction into the slot after a load or branch.}
+\fu{In-order cores, known latencies, compiler available.}
+\fb{Hardware interlock stalls: same correctness, zero lost cycles when a slot is filled.}
+\fw{Needs independent instructions; deep pipes have too many slots.}
+\fq{FP pipeline latencies (cycles producer$\rightarrow$consumer): FP ALU$\rightarrow$FP ALU 3, FP ALU$\rightarrow$store 2, load$\rightarrow$FP ALU 1, load$\rightarrow$store 0.}
+\fj{The compiler moves an independent instruction into the [load/branch] slot, so the bubble does useful work instead of stalling.}
+
+\card{P4}{Pipelined or replicated FP units}{Static}
+\fx{Structural stalls on long-latency units.}
+\fh{Pipeline the adder/multiplier (initiation interval 1); pipeline or duplicate the divider.}
+\fu{FP-heavy code; divides close together.}
+\fb{Unpipelined divider: initiation interval 25 blocks every next divide for up to 24 cycles.}
+\fa{Divides rare: an unpipelined divider saves area and power.}
+\fw{Out-of-order completion $\Rightarrow$ WAW hazards; register-file write-port conflicts.}
+\fq{Int ALU lat.\ 0/II 1; load 1/1; FP add 3/1 (4 stages); mult 6/1 (7 stages); divide 24/25.}
+\fj{Divides are [frequent and back-to-back]; an unpipelined divider (II 25) stalls each next divide up to 24 cycles, so I pipeline or duplicate it; if divides were rare I would keep it unpipelined to save area.}
+
+\card{P5}{Deeper pipeline (superpipelining, MIPS R4000)}{Static}
+\fx{Clock rate too low.}
+\fh{Split stages (R4000: 8 stages IF IS RF EX DF DS TC WB; cache access takes 2 stages).}
+\fu{High-clock target, predictable branches, few load-use pairs, strong predictor affordable.}
+\fa{Branchy, low-ILP, low-power or small designs: stay shallow.}
+\fw{Load delay 2 cycles, branch delay 3 cycles; every stage raises misprediction and load penalty and power.}
+\fn{Strong dynamic prediction \cp{P10} + BTB \cp{P11}; small fast L1 \cp{M15}.}
+\fj{Deeper pipeline raises $f$ but adds [k] penalty cycles; decide by IC$\times$CPI$\times T_{clk}$, and pair with a [95\%] predictor so $f_{br}\times$miss$\times$penalty stays small.}
+
+\card{P6}{Early branch resolution (compare + target in ID)}{Static}
+\fx{Branch penalty in a short pipeline.}
+\fh{Move compare and target calculation into ID.}
+\fu{Cheap 5-stage in-order cores.}
+\fb{Resolving in EX (2 stalls) or MEM (3 stalls).}
+\fw{Comparator and adder in ID; extra stall for instructions producing the branch operand.}
+\fq{Stall per branch: resolve in MEM 3, EX 2, \textbf{ID 1}. Side effect: an ALU producer of the branch operand needs +1 stall, a load producer +2.}
+\fj{Moving the compare and target add into ID cuts the penalty from [3] to 1 cycle per branch, i.e.\ $[f_{br}]\times2$ CPI saved, with almost no hardware.}
+
+\card{P7}{Static prediction: not-taken, BTFNT, profile}{Static}
+\fx{Branch penalty without predictor hardware.}
+\fh{\emph{Not taken}: keep fetching fall-through, flush if taken. \emph{BTFNT}: backward branches (loops) taken, forward not taken. \emph{Profile}: compiler hint from earlier runs.}
+\fu{Cost-sensitive, embedded, fixed firmware, loop-dominated code, real-time.}
+\fb{Dynamic predictor when behaviour is known offline: zero area, deterministic.}
+\fa{Data-dependent branches, deep pipe; predict-not-taken alone fails on loops. ``Predict taken'' is useless unless the target is known early (BTB).}
+\fj{The firmware is fixed and loop-dominated, so BTFNT predicts the back-edges correctly with zero predictor area; a dynamic predictor's area is not justified in a price-driven design.}
+
+\card{P8}{Delayed branch; cancelling (branch-likely)}{Static}
+\fx{The 1 slot after a branch.}
+\fh{Slot instruction always executes. Fill it from \emph{before} (always safe), from the \emph{target} (branch usually taken, e.g.\ loops; must be harmless otherwise), or from \emph{fall-through} (usually not taken). Cancelling branch nullifies the slot if the prediction is wrong (MIPS branch-likely = cancel if not taken: ideal for loop back-edges).}
+\fb{Plain stall: about half the slots do useful work; cancelling lets the compiler fill from the target without being conservative.}
+\fa{Deep pipes (several slots, hard to fill).}
+\fq{Compiler fills $\approx$50\% of single slots usefully.}
+\fj{With one delay slot and loop back-edges [given], filling from the target with a branch-likely instruction turns the bubble into useful work on every taken iteration.}
+
+\card{P9}{2-bit BHT (saturating counters)}{Dynamic}
+\fx{Mispredictions of loops and biased branches.}
+\fh{Table indexed by low PC bits, no tags (a hint); prediction flips only after two wrong outcomes.}
+\fu{Small/cheap cores, loop code.}
+\fb{1-bit: a 10-iteration loop mispredicts twice (exit and re-entry) $\Rightarrow$ 80\%; 2-bit only once. $n$-bit gives little more.}
+\fa{Branches correlated with other branches (use \cp{P10}); deep/wide pipelines where 90\% is not enough.}
+\fq{4K-entry 2-bit BHT: 82--99\% accuracy (SPEC89), nearly an infinite table. Beyond 4K entries make it \emph{smarter}, not bigger.}
+\fj{A 4K-entry 2-bit BHT (1\,KB, no tags) gives 82--99\% accuracy; loops mispredict once per exit instead of twice.}
+
+\card{P10}{Correlating / two-level / gshare predictor}{Dynamic}
+\fx{Branches whose outcome depends on other recent branches (if-chains, control code).}
+\fh{Global history of last $m$ outcomes selects among $2^m$ counter tables: $(m,n)$ predictor; two-level = history register + pattern table; \textbf{gshare} indexes the table with PC XOR history (better table use\bs).}
+\fu{Branchy integer code, interpreters, compilers, deep or wide pipelines.}
+\fb{A small $(2,2)$ beats a same-size 2-bit table and often an \emph{unlimited} 2-bit table.}
+\fw{More area/energy; warm-up; aliasing.}
+\fq{$(2,2)$ with 64 entries: 6-bit index $=$ 2 history + 4 PC bits.}
+\fj{With [20\%] branches and a [3]-cycle penalty, raising accuracy from 90\% to 95\% cuts branch CPI from 0.06 to 0.03; correlated if-chains in [workload] justify a two-level predictor.}
+
+\card{P11}{Branch target buffer (BTB), target buffer, fetch unit}{Dynamic}
+\fx{Target address unknown in IF (bubble even if direction is right).}
+\fh{Cache of taken branches: tag + predicted target (+ bits), read in IF with the PC. Tag must match. Target-instruction buffer stores the instruction itself $\Rightarrow$ branch folding (0-cycle jumps). Integrated fetch unit = prediction + prefetch + buffering.}
+\fu{Any predicted-taken scheme; wide issue; deep pipe.}
+\fb{Direction-only predictor: removes the target bubble, so a correctly predicted taken branch costs 0 cycles.}
+\fw{Area; misprediction: kill, refetch, update.}
+\fn{Accurate direction predictor (\cp{P9}/\cp{P10}); recovery on mispredict.}
+\fj{Taken branches every [k] instructions [given] each lose a fetch cycle without the target; a BTB supplies it in IF, so predicted-taken branches cost nothing.}
+
+\card{P12}{Return-address stack}{Dynamic}
+\fx{Returns/indirect jumps whose target changes at run time.}
+\fh{Push on call, pop to predict the return.}
+\fu{Call-heavy code (OO, recursion, libraries).}
+\fb{BTB for returns: a return's target changes with the call site; the stack is exact for nested calls.}
+\fw{Overflow on very deep recursion\bs.}
+
+\card{P13}{Predication / branch-free code\bs}{Static}
+\fx{Unpredictable short branches; SIMT divergence.}
+\fh{Turn \texttt{if} into conditional moves/masked ops: both sides computed, result selected.}
+\fu{Short, data-dependent \texttt{if} bodies; GPUs/SIMD (masks).}
+\fb{Prediction when outcome is random (50/50): no flush penalty.}
+\fa{Long bodies: you always pay both sides.}
+\fw{Both sides always execute (energy, issue slots); needs predicated/select instructions.}
+\fj{The branch is data-dependent and close to 50/50 [given], so no predictor helps; converting the short \texttt{if} to a conditional select removes the [n]-cycle flush entirely.}
+
+\end{multicols}
+
+\begin{ex}[Branch numbers to quote: penalty 3, 20\% branches, 60\% taken, base CPI 1]
+Stall always $+0.60$ (CPI 1.60); predict-not-taken $0.2\times0.6\times3=+0.36$ (1.36); 2-bit+BTB 90\% $+0.06$ (1.06); two-level 95\% $+0.03$ (1.03). Speedup of dynamic over stall $\approx1.5\times$; two-level over 2-bit only $\approx1.03\times$ (diminishing returns: justify only for deep/wide pipes or high branch frequency). Even a 1-cycle penalty costs 10--30\% (slide).
+\end{ex}
+
+\small
+\begin{tabularx}{\textwidth}{L{5.0cm}L{4.4cm}X}
+\toprule
+\tblhead{\textbf{Scenario} & \textbf{Choose} & \textbf{Because}}\\
+\midrule
+Small/cheap core, loop code & 2-bit BHT \cp{P9} & Fixes the loop double-miss with 2 bits/entry, no tags \\
+Fixed firmware, no predictor area & BTFNT/profile + delay slot \cp{P7} \cp{P8} & Behaviour known offline; zero hardware \\
+Control-heavy integer, correlated if-chains & $(2,2)$/two-level/gshare \cp{P10} & Uses other branches' outcomes; small table beats a bigger 2-bit one \\
+Deep or wide pipeline & Two-level + BTB + RAS + speculation \cp{P10} \cp{P11} \cp{P12} \cp{I5} & Penalty large; wide issue needs a branch per cycle \\
+Many calls/returns, indirect jumps & Return stack + target-predicting BTB \cp{P12} \cp{P11} & Run-time targets \\
+Random 50/50 short branch & Predication \cp{P13} & No predictor can learn randomness \\
+\bottomrule
+\end{tabularx}
+\normalsize

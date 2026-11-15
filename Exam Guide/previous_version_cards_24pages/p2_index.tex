@@ -1,0 +1,96 @@
+\section{Clue Index: words in the question $\rightarrow$ cards to open}\label{sec:clueidx}
+Superscript = page. Open the \textbf{first} card listed first; the others are the supporting layers.
+\small
+\begin{longtable}{L{4.2cm}L{5.5cm}L{6.0cm}}
+\toprule
+\tblhead{\textbf{Clue in the question} & \textbf{What it tells you} & \textbf{Open these cards}}\\
+\midrule
+\endfirsthead
+\toprule
+\tblhead{\textbf{Clue in the question} & \textbf{What it tells you} & \textbf{Open these cards}}\\
+\midrule
+\endhead
+\multicolumn{3}{l}{\cellcolor{grpc}\textbf{Machine class / constraint}}\\
+battery, phone, mobile, thermal, energy & Goal is energy per task, not peak speed & \cp{E1} \cp{E2} \cp{E3} \cp{M6}; reject \cp{I9} \cp{M16}; class table \pg{sec:classes} \\
+low cost, embedded, fixed firmware & Minimum hardware; static techniques & \cp{P6} \cp{P7} \cp{P8} \cp{I1} \cp{I7} \cp{M13} \\
+server, many users/requests, database, web & Thread/request parallelism; throughput & \cp{T5} \cp{T4} \cp{T2} \cp{T6} \cp{M10} \cp{M18} \cp{E4} \\
+single program, latency, desktop, game & Single-thread ILP & \cp{I5} \cp{I6} \cp{P10} \cp{P11} \cp{P12} \cp{M15} \cp{M11} \\
+limited die area & Area-efficient parallelism & \cp{E3} \cp{T3} \cp{T4} \\
+24/7, availability, reliability & Dependability & \cp{E4} \\
+real-time, predictable timing & Avoid variable latency & \cp{P7} \cp{I1} \cp{I7} \cp{D6} (scratchpad) \\
+binary compatibility, legacy, next generation & Hardware must find the parallelism & \cp{I6} \cp{I5}; reject \cp{I7} \\
+high clock frequency, deep pipeline & Penalties grow with depth & \cp{P5} \cp{P10} \cp{P11} \cp{M15} \\
+\multicolumn{3}{l}{\cellcolor{grpc}\textbf{Workload shape}}\\
+same operation on every element / pixel / matrix entry & Data-level parallelism & \cp{D2} \cp{D3} \cp{D1} \cp{D4}; check roofline \pg{sec:roofline} \\
+\texttt{if}/else per element, data-dependent branch & Divergence (SIMT) or mispredictions (CPU) & \cp{D5} \cp{P13} \cp{P10} \\
+GPU, kernel, warps, thread blocks & SIMT efficiency & \cp{D3} \cp{D8} \cp{D4} \cp{D5} \cp{D6} \cp{D7} \\
+copy to accelerator each time, PCIe & Transfer may dominate & \cp{D7} \\
+loops over arrays, scientific, FP & Regular ILP/DLP, known latencies & \cp{I1} \cp{I2} \cp{P4} \cp{M14} \cp{M13} \cp{M11} \cp{M18} \\
+\texttt{sum += \ldots}, running total, recurrence & Loop-carried dependence chain & \cp{I8} \cp{W5}; reject \cp{I9} \\
+linked list, pointer, tree, hash chain & Dependent misses, MLP $=1$ & \cp{T1} \cp{T2} \cp{T3} \cp{M13}; not \cp{M10} alone \\
+streaming, read once, scan, huge data & Bandwidth-bound; caches give little & \cp{M18} \cp{M17} \cp{M11}; roofline \pg{sec:roofline} \\
+working set $>$ cache, matrix multiply & Capacity misses & \cp{M14} \cp{M3} \cp{M1} \\
+power-of-2 sizes/strides, direct-mapped, thrashing & Conflict misses & \cp{M4} \cp{M5} \cp{M7} \cp{M13} (padding) \\
+column walk, stride, array of structs & Poor spatial locality / uncoalesced & \cp{M13} \cp{D4} \\
+many branches, interpreter, compiler, control code & Prediction accuracy matters & \cp{P10} \cp{P11} \cp{P12} \cp{I5} \\
+function calls, returns, virtual calls & Indirect targets & \cp{P12} \cp{P11} \\
+FP divide/multiply heavy & Structural hazard on long units & \cp{P4} \cp{I4} \\
+cache misses, variable latency & Latency to hide at run time & \cp{I4} \cp{I5} \cp{M10} \cp{T3} \\
+few registers, WAR/WAW & Name dependences & \cp{I4} (renaming) \\
+precise exceptions, speculation & In-order commit & \cp{I5} \\
+write-heavy, write-through, same block rewritten & Write stalls / write traffic & \cp{M20} \cp{M9} \\
+fetch-bound, taken branch every few instructions & Fetch bandwidth & \cp{M16} \cp{P11} \\
+many processes, protection, context switches & Virtual memory & \cp{M19} \cp{M15} \\
+\multicolumn{3}{l}{\cellcolor{grpc}\textbf{Multiple processing elements}}\\
+shared counter, histogram, global sum, ``all threads update'' & Reduction + write sharing & \cp{W5} \cp{C3} \cp{C7} \cp{C1} \\
+lock, mutex, critical section & Serialisation & \cp{C5} \cp{C4} \cp{W5} \\
+barrier, phases, all threads wait & Sync + imbalance per phase & \cp{C6} \cp{W3} \\
+tasks of different/unknown size, irregular & Load imbalance & \cp{W3} \cp{W2} \\
+equal independent items & Static split is enough & \cp{W1} \\
+stages, producer/consumer, queue & Pipeline parallelism & \cp{W4} \cp{C8} \\
+grid, stencil, neighbours, halo & Communication surface & \cp{W7} \cp{W8} \cp{D6} \\
+multiple sockets, NUMA, remote memory & Data placement & \cp{W6} \cp{C2} \\
+many cores (16+), scalability, bus saturated & Coherence, interconnect and bandwidth scaling & \cp{C2} \cp{C9} \cp{M18} \cp{T6} \\
+one thread stalls on misses, core idle & Unused issue slots & \cp{T1} \cp{T2} \cp{T3} \\
+fast and slow cores, CPU + GPU & Heterogeneous split & \cp{W9} \cp{E3} \cp{W3} \cp{D7} \\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\section{Symptom Index: ``not working ideally'' $\rightarrow$ why $\rightarrow$ fix}\label{sec:symidx}
+The middle column is your ``why the problem is occurring''; the proof column is the number you compute.
+\small
+\begin{longtable}{L{3.4cm}L{5.3cm}L{3.5cm}L{3.5cm}}
+\toprule
+\tblhead{\textbf{Symptom given} & \textbf{Root cause (mechanism)} & \textbf{Prove it with} & \textbf{Fix: cards}}\\
+\midrule
+\endfirsthead
+\toprule
+\tblhead{\textbf{Symptom given} & \textbf{Root cause (mechanism)} & \textbf{Prove it with} & \textbf{Fix: cards}}\\
+\midrule
+\endhead
+Speedup flattens as PEs are added & Serial fraction; shared bandwidth saturated; sync/comm.\ grows with $p$. Some PEs idle $\Rightarrow$ serial/imbalance; all busy but stalled $\Rightarrow$ bandwidth & Amdahl $1/(1-f)$; bytes/s vs.\ peak & \cp{W5} \cp{W3} \cp{M14} \cp{M18} \cp{C6} \\
+Slower with more threads & Coherence ping-pong (true/false sharing), lock contention, shared-cache thrashing & Writes per line per second; Lab 5 signature (IPC down, instr.\ flat) & \cp{W5} \cp{C3} \cp{C5} \cp{T6} \\
+Some PEs idle, others busy & Static split of unequal tasks; waiting on dependences & $T_{par}=\max W_i$; imbalance ratio & \cp{W3} \cp{W2} \cp{W4} \\
+Low IPC on a wide core, few misses & Loop-carried dependence chain; one FU class saturated & IPC $\le$ instr.\ per iteration / chain latency & \cp{I8} \cp{T3}; reject \cp{I9} \\
+Wide back end starved & Decode/fetch limit, taken branches, I-cache misses & Lab 6 (6-instr decode ceiling) & \cp{P11} \cp{M16} \cp{P10} \\
+Many mispredictions & Data-dependent branches; penalty $\propto$ depth & $f_{br}\times$miss$\times$penalty & \cp{P10} \cp{P13} \cp{P5} (shallower) \\
+High miss rate, data $>$ cache & Capacity misses & Working set vs.\ size & \cp{M14} \cp{M3} \cp{M1} \\
+High miss rate, small data, power-of-2 stride & Conflict misses (same set) & Set index of the addresses & \cp{M4} \cp{M5} \cp{M13} \\
+Streaming code slow, more cores do not help & Memory-bandwidth bound, no reuse & Roofline: AI$\times$BW & \cp{M18} \cp{M17} \cp{M11} \cp{M13} (fusion) \\
+Pointer code stalls, MSHRs unused & Dependent misses, MLP $=1$ & Each address needs previous load & \cp{T1} \cp{T2} \cp{M13} \\
+Prefetcher cuts misses but slower & Untimely, pollution, steals bandwidth & Lab 4: 57.4\%$\rightarrow$23.2\% misses, slower & \cp{M11} (tune) \cp{M12} \\
+Associativity raised, no gain & Hit time/clock stretched; misses moved to next level & AMAT with $\times$1.10 clock; Lab 3 & \cp{M15} \cp{M1} \cp{M5} \\
+SMT speedup $<1$ & Threads thrash shared cache/TLB & Power5 FP pairs & \cp{T3} (avoid) \cp{T6} \cp{M4} \\
+Fast on small input, collapses on large & Working set crosses a cache level / TLB reach & Size at the cliff & \cp{M14} \cp{M19} \cp{M3} \\
+GPU / SIMD far below peak & Divergence, uncoalesced access, low occupancy, transfer, tiny kernels & SIMD efficiency; transactions per warp & \cp{D5} \cp{D4} \cp{D8} \cp{D7} \cp{D6} \\
+Time spent waiting at barriers & Barrier latency + imbalance per phase & Wait time $\times$ barriers & \cp{C6} \cp{W3} \\
+Poor scaling across sockets & Remote memory, data on one node & Remote vs.\ local latency & \cp{W6} \cp{C2} \\
+Throttles when all cores busy & Power cap ($P\propto CV^2f$) & TDP vs.\ demand & \cp{E1} \cp{E2} \cp{E3} \\
+Long FP ops stall an in-order pipe & RAW on long latencies; unpipelined divider & Latency/initiation table & \cp{P4} \cp{I1} \cp{I4} \\
+\bottomrule
+\end{longtable}
+\normalsize
+\begin{key}[The bottleneck principle (write it in your diagnosis)]
+$T \ge \max(\text{compute},\ \text{memory bytes}/\text{BW},\ \text{critical path},\ \text{serial part}) + T_{comm}+T_{sync}+T_{imbalance}$. The symptom is one term binding. Fix it, then say which term binds next (Lab 8: ``the bottleneck moves'').
+\end{key}

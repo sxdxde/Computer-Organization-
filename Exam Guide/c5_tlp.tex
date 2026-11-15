@@ -1,0 +1,49 @@
+\section{Concepts T: Multithreading and Multicore}\label{grp:tlp}
+ILP saturates (most units idle even on 8-wide; Tullsen). TLP is \emph{explicit}: each thread has its own PC, registers and (for separate programs) page table; a hardware thread switch costs far less than a process switch (100s--1000s of cycles).
+{\small\renewcommand{\arraystretch}{1.3}\rowcolors{1}{white}{white}
+\begin{longtable}{L{2.3cm}L{4.7cm}L{2.9cm}L{3.0cm}L{2.8cm}}
+\toprule
+\rowcolor{hdrc}\textbf{Concept} & \textbf{What it fixes $\cdot$ how it works} & \textbf{Best scenario (use when)} & \textbf{Why it beats the alternatives} & \textbf{Weakness $\cdot$ avoid when}\\
+\midrule
+\endfirsthead
+\toprule
+\rowcolor{hdrc}\textbf{Concept} & \textbf{What it fixes $\cdot$ how it works} & \textbf{Best scenario (use when)} & \textbf{Why it beats the alternatives} & \textbf{Weakness $\cdot$ avoid when}\\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\textbf{\textcolor{cardc}{T1}}\label{card:T1}\newline\textbf{Coarse-grained multithreading (switch on miss)}\newline{\footnotesize\textit{Dynamic}} & \textbf{Fixes:} Core idle during \emph{long} stalls (L2/L3 misses). \newline \textbf{How:} Run one thread until a costly stall, then switch; pipeline refilled on switch. & Simple/in-order cores, stalls rare and long, single-thread speed must not drop (IBM AS/400). & Fine-grained: no per-cycle switching hardware, does not slow a thread that is not stalling. & \textbf{Avoid:} Short frequent stalls: refill cost $\approx$ stall time. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Needs:} Per-thread PC and registers; cache capacity for all threads. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{The in-order core stalls [200] cycles per L2 miss; switching to another thread on each miss costs only a few refill cycles, so utilisation rises without slowing the running thread.}}\\
+\midrule
+\textbf{\textcolor{cardc}{T2}}\label{card:T2}\newline\textbf{Fine-grained multithreading (switch every cycle)}\newline{\footnotesize\textit{Dynamic}} & \textbf{Fixes:} Short \emph{and} long stalls on throughput-oriented cores. \newline \textbf{How:} Round-robin among ready threads each cycle, skipping stalled ones (Sun Niagara; GPU warps work this way). & Servers, web/DB, many threads, in-order cores, latency-bound code. & Coarse-grained: hides short stalls too, no refill. SMT: works on simple in-order cores. & Slows each individual thread; needs many threads; cache sharing. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{\textcolor{pickc}{Write:}} \textit{With [many] independent requests and frequent short and long stalls, cycle-by-cycle interleaving keeps the in-order pipeline busy; single-request latency rises, but throughput is the goal here.}}\\
+\midrule
+\textbf{\textcolor{cardc}{T3}}\label{card:T3}\newline\textbf{Simultaneous multithreading (SMT, hyper-threading)}\newline{\footnotesize\textit{Dynamic}} & \textbf{Fixes:} Unused issue slots of a wide OoO core (vertical \emph{and} horizontal waste). \newline \textbf{How:} Instructions from several threads issue in the same cycle. Cheap because renaming already gives unique physical registers; add per-thread PC, rename table, (logical) ROB. & Already wide OoO superscalar; memory-stall-heavy or mixed workloads. & Second core: $\approx$24\% area (Power5) for 16--23\% throughput, little design effort. & \textbf{Avoid:} Narrow in-order core; threads that thrash shared caches (FP pairs: least gain, speedup can be $<1$); one critical thread (unless priority). \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Needs:} Larger register file (Power5 152$\rightarrow$240), more associative L1/TLB, per-thread LQ/SQ, bigger L2/L3, priority control. \enspace$\cdot$\enspace \textbf{Numbers:} P4 SPECrate 1.01/1.07, pairs 0.90--1.58 (avg 1.20); Power5 1.23/1.16, pairs 0.89--1.41; ``up to 30\%''. Power5 stops at 2 threads: shared resources saturate. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{The [OoO] core issues on average [x] of [4] slots because of [misses]; SMT fills idle slots from a second thread for $\approx$24\% area, rather than a second core at $\approx$100\%.}}\\
+\midrule
+\textbf{\textcolor{cardc}{T4}}\label{card:T4}\newline\textbf{Multicore (chip multiprocessor)}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Throughput for independent threads; power/clock wall. \newline \textbf{How:} Several cores on one chip, each with private L1, sharing memory (shared-memory MIMD); OS schedules threads to cores. & DB/web servers, compilers, multimedia, scientific, CAD: anything threaded. & One big core: independent execution, easier to design, better energy/throughput. & No speedup for one thread; coherence, sync and shared bandwidth. \newline \textbf{Avoid:} One thread or hard-to-parallelise code (does nothing for it). \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Needs:} Bandwidth \cp{M18}, LLC \cp{T6}, coherence \cp{C1}/\cp{C2}, sync \cp{C4}--\cp{C7}, work split \cp{W1}--\cp{W3}. \enspace$\cdot$\enspace \textbf{\textcolor{pickc}{Write:}} \textit{The [N] independent [requests/tasks] map directly to [k] cores; ILP of each is low, so cores give near-linear throughput where a wider core would leave slots idle.}}\\
+\midrule
+\textbf{\textcolor{cardc}{T5}}\label{card:T5}\newline\textbf{Multicore + SMT}\newline{\footnotesize\textit{Static + Dynamic}} & \textbf{Fixes:} Maximum throughput per chip. \newline \textbf{How:} Each core runs 2--8 hardware threads (dual-core SMT runs 4 threads). & Servers, mixed multitasking, many stall-prone threads. & Either alone: cores give independent execution, SMT fills each core's idle slots. & Shared-cache contention per core; more threads for software to supply. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{Needs:} All of T3 and T4 needs.}\\
+\midrule
+\textbf{\textcolor{cardc}{T6}}\label{card:T6}\newline\textbf{Shared vs.\ private L2/LLC}\newline{\footnotesize\textit{Static}} & \textbf{Fixes:} Capacity use and interference among cores. \newline \textbf{How:} Private L1 always; L2 private or shared; memory always shared. & \emph{Shared}: unequal demand, data shared between threads (one copy). \emph{Private}: isolation, simple timing, little sharing. & Partitioned ways\bs: isolation with partial sharing (static QoS). & Shared: interference/thrashing. Private: duplicated data, wasted capacity when unbalanced. Both see coherence misses. \\*
+\rowcolor{black!4}\multicolumn{5}{p{\dimexpr\linewidth-2\tabcolsep\relax}}{\textbf{\textcolor{pickc}{Write:}} \textit{Threads share [read-mostly data / have unequal demand], so a shared LLC holds one copy and lets demand balance; private L2s would duplicate it.}}\\
+\end{longtable}}
+
+\small
+\begin{tabularx}{\textwidth}{L{2.3cm}L{4.0cm}L{4.0cm}X}
+\toprule
+\tblhead{\textbf{} & \textbf{Coarse-grained} & \textbf{Fine-grained} & \textbf{SMT}}\\
+\midrule
+Switches & On costly stall only & Every cycle & No switch: same-cycle issue \\
+Hides & Long stalls & Short + long & Short + long + empty slots \\
+Single thread & Not slowed & Slowed & Can be slowed (use priority) \\
+Core needed & Any, incl.\ in-order & Per-cycle switch hardware & Wide OoO with renaming \\
+\midrule
+\tblhead{\textbf{} & \textbf{Multicore} & \textbf{SMT} & \textbf{Choose}}\\
+Resources & Own copy per core & One copy shared & TLP abundant $\Rightarrow$ cores; idle slots on big core $\Rightarrow$ SMT \\
+Gain / cost & Up to $p\times$ / $\approx$100\% area per core & 1.0--1.4$\times$ / $\approx$24\% & Server: both. Desktop: strong core + few cores \\
+\bottomrule
+\end{tabularx}
+\normalsize

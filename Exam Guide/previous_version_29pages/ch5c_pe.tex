@@ -1,0 +1,141 @@
+\section{Multiple Processing Elements: Distribution, Timing, Communication, Synchronisation}\label{ch:pe}
+\textit{Source: Hennessy \& Patterson Ch.~5 and standard parallel-computing material (the slides cover only multicore basics and coherence misses; the professor named these topics). Lab 5 is direct evidence for this section.}
+
+\subsection{Decision map}
+\small
+\begin{tabularx}{\textwidth}{L{4.6cm}L{4.4cm}X}
+\toprule
+\tblhead{\textbf{Scenario} & \textbf{Choice} & \textbf{Why}}\\
+\midrule
+Independent equal-cost items & Static block partition & Zero scheduling overhead, contiguous data per PE (locality, no sharing). \\
+Unequal or unknown task costs & Dynamic work queue / work stealing & Idle PE takes more work; balances automatically. \\
+Cost pattern known (e.g.\ heavy tasks clustered at one end) & Static cyclic or block-cyclic & Spreads heavy tasks evenly at no run-time cost. \\
+All PEs update a shared result & Private partial results + tree reduction & Removes per-update coherence traffic and locking. \\
+Stages producer$\rightarrow$consumer & Pipeline across PEs with queues & Overlaps stages; throughput set by slowest stage, so balance stages. \\
+Few cores, shared bus & Snooping coherence (MSI/MESI) & Simple; every cache sees every miss. \\
+Many cores / multi-socket & Directory coherence, NUMA-aware placement & Broadcast does not scale; point-to-point messages do. \\
+Grid/stencil computation & 2D block partition (not strips) & Less boundary per PE $\Rightarrow$ less communication. \\
+Heterogeneous PEs (big + small, CPU + GPU) & Split proportional to speed, or dynamic & Equal split leaves fast PEs idle. \\
+\bottomrule
+\end{tabularx}
+\normalsize
+
+\subsection{Order of execution: read it from the workload}\label{sec:order}
+Draw the \textbf{dependence (task) graph}: nodes are tasks/instructions, edges are ``must happen before'' (true data dependence, RAW). Then:
+\begin{itemize}
+\item \textbf{Work} $T_1$ = total time on one PE; \textbf{span} $T_\infty$ = longest path (critical path). \textbf{Available parallelism} $=T_1/T_\infty$. With $p$ PEs: $T_p \ge \max(T_1/p,\ T_\infty)$. More PEs than $T_1/T_\infty$ are wasted.
+\item \textbf{Amdahl} (fixed problem): $S(p)=\dfrac{1}{(1-f)+f/p}$, limit $1/(1-f)$. \textbf{Gustafson} (problem grows with $p$): $S(p)=(1-f)+f\,p$. \textbf{Efficiency} $E=S/p$.
+\item Within one core the same idea sets ILP: the recurrence (loop-carried chain) bounds IPC regardless of width (Lab 10: 0.27 IPC vs.\ $\approx$3 for independent chains).
+\end{itemize}
+\small
+\begin{longtable}{L{3.3cm}L{3.0cm}L{4.4cm}L{4.6cm}}
+\toprule
+\tblhead{\textbf{Pattern in workload} & \textbf{Parallel?} & \textbf{How to execute} & \textbf{Sync / bottleneck}}\\
+\midrule
+\endhead
+Independent iterations / requests & Fully (DLP/TLP) & SIMD/GPU or block partition over PEs & Only at the end; usually memory bandwidth \\
+Reduction (sum, max, histogram) & Yes, as a tree & Private partials, combine in $\log_2 p$ steps & One combine phase; never a shared accumulator \\
+Loop-carried recurrence ($x_i=f(x_{i-1})$) & No (serial) & One PE; ILP only; restructure the algorithm if possible & Critical path $=n\times$ latency \\
+Producer $\rightarrow$ consumer stages & Pipeline parallel & One stage per PE, bounded queues & Throughput $=1/$slowest stage; queue sync \\
+Phases separated by global steps & Fork--join & Parallel phase, barrier, next phase & Barrier cost + imbalance per phase \\
+Irregular task DAG & Partly & Dynamic scheduler: run any ready task & Scheduler overhead, critical path \\
+Shared read-only data & Yes & Replicate in caches & None (Shared state) \\
+Shared read-write data & Limited & Partition ownership or lock & Coherence + lock contention \\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\subsection{Distributing the work and its timing}\label{sec:distrib}
+\[
+T_{par}=\underbrace{T_{serial}}_{\text{Amdahl}}+\max_{i}\Big(\frac{W_i}{\text{speed}_i}\Big)+T_{comm}+T_{sync},\qquad
+\text{load imbalance}=\frac{\max_i W_i}{\text{avg}_i W_i}
+\]
+\begin{itemize}
+\item \textbf{Decomposition:} \emph{data} (split the data, every PE runs the same code: SPMD, matches DLP), \emph{task/functional} (different PEs do different jobs), \emph{pipeline} (stages).
+\item \textbf{Mapping:} \emph{block} (contiguous chunk per PE: best locality), \emph{cyclic} (item $i\rightarrow$ PE $i \bmod p$: best balance when cost varies smoothly), \emph{block-cyclic} (compromise).
+\item \textbf{Static vs.\ dynamic:} static is free at run time and keeps locality but needs predictable costs; dynamic (shared queue, work stealing, guided chunks) adapts but costs a queue access per chunk and may lose locality.
+\item \textbf{Granularity:} fine tasks balance well but pay more overhead per unit of work; coarse tasks have low overhead but risk imbalance. Pick chunks so overhead is a few \% of chunk time.
+\end{itemize}
+
+\begin{ex}[Static vs.\ dynamic timeline: write this kind of calculation]
+4 PEs, 16 tasks: tasks 0--3 cost 4 units, tasks 4--15 cost 1 unit. Total $=28$, ideal $=7$ per PE.
+\begin{center}\small
+\begin{tabular}{L{4.4cm}L{5.4cm}C{1.3cm}C{1.6cm}}
+\toprule
+\tblhead{\textbf{Policy} & \textbf{PE loads} & \textbf{$T_{par}$} & \textbf{Speedup}}\\
+\midrule
+Static block (4 consecutive each) & PE0: 4+4+4+4$=$16; PE1--3: 4 each & 16 & 1.75 \\
+Static cyclic ($i \bmod 4$) & each PE: 4+1+1+1$=$7 & 7 & 4.0 \\
+Dynamic queue (0.1 overhead/fetch) & heavy tasks first, then 3 unit tasks each & $\approx$7.4 & 3.8 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\textbf{Reading:} cyclic is best \emph{only because} we knew where the heavy tasks are (static knowledge). If costs are unknown or input-dependent, dynamic gives near-ideal time without that knowledge, at a small overhead. Write this reasoning in the exam.
+\end{ex}
+
+\subsection{Communication}\label{sec:comm}
+\begin{itemize}
+\item \textbf{Shared memory} (multicore): communicate by loads/stores; hardware coherence moves the data; cheap to program, hidden traffic. \textbf{Message passing} (clusters, some accelerators): explicit send/receive; cost visible, scales further.
+\item \textbf{Cost model:} $T_{msg}=$ latency $+$ size/bandwidth. Many small messages are latency-bound: batch them.
+\item \textbf{Communication-to-computation ratio} decides if parallelism pays. For an $N\times N$ grid on $p$ PEs: strips exchange $\approx 2N$ boundary values per PE; square blocks exchange $\approx 4N/\sqrt{p}$ (\emph{surface-to-volume}). Prefer blocks for large $p$.
+\item \textbf{Overlap} communication with computation (prefetch the next boundary while computing the interior; double buffering).
+\item \textbf{NUMA:} memory is attached to sockets; remote access is slower. Allocate data on the node of the PE that uses it (owner computes).
+\end{itemize}
+
+\subsection{Cache coherence}\label{sec:coh}
+\textbf{Problem:} private caches may hold different values of the same address. \textbf{Coherence} guarantees (1) a read returns the latest write, and (2) all PEs see writes to one location in the same order. Standard approach: \textbf{write-invalidate} (a writer gets the only copy; other copies are invalidated).
+\small
+\begin{center}
+\begin{tabular}{L{2.3cm}L{13.2cm}}
+\toprule
+\tblhead{\textbf{State} & \textbf{Meaning (MSI; MESI adds E)}}\\
+\midrule
+M (Modified) & Only copy, dirty; this cache must supply the data and write it back \\
+E (Exclusive) & Only copy, clean; can be written \emph{silently} (no bus transaction) $\rightarrow$ M. Saves traffic for private data \\
+S (Shared) & Clean, possibly in several caches; a write must first invalidate the others \\
+I (Invalid) & Not usable; a read or write causes a miss \\
+\bottomrule
+\end{tabular}
+\end{center}
+\normalsize
+\begin{itemize}
+\item \textbf{Snooping:} every cache watches a shared bus/broadcast. Simple and fast for a few cores; the broadcast becomes the bottleneck as cores grow.
+\item \textbf{Directory:} each memory block has an entry listing its sharers (at its home node); requests go point-to-point to the home and only to sharers. Scales to many cores and sockets; costs directory storage and an extra hop.
+\item \textbf{Coherence misses} (4th C): \textbf{true sharing} (PEs really exchange the data) and \textbf{false sharing} (different variables in the same cache line, so the line ping-pongs although no data is shared). Fix false sharing by padding/aligning per-PE data to the line size; fix true sharing by privatisation + reduction.
+\item \textbf{Larger blocks} increase false sharing; more cores increase invalidation traffic.
+\end{itemize}
+
+\subsection{Synchronisation}\label{sec:sync}
+\begin{itemize}
+\item \textbf{Hardware primitives:} atomic read-modify-write: test-and-set, fetch-and-add, compare-and-swap (CAS), load-linked/store-conditional (LL/SC). Locks, barriers and lock-free updates are built from them.
+\item \textbf{Spin lock cost:} spinning with test-and-set writes the lock line repeatedly $\Rightarrow$ coherence storm. \textbf{Test-and-test-and-set} spins on a cached (Shared) copy and attempts the atomic only when the lock looks free. Under contention, $n$ waiting PEs still cause bursts of invalidations at every release; queue locks\bs{} or less sharing fix it.
+\item \textbf{A critical section is a serial fraction:} if each of $p$ PEs holds a lock for time $c$ per item, the locked part runs one PE at a time (Amdahl). Shorten it, split the lock (finer granularity: one lock per bucket), or remove it (privatise).
+\item \textbf{Barriers} make every PE wait for the slowest: cost $=$ barrier latency $+$ imbalance, paid at every barrier. Use fewer, larger phases.
+\item \textbf{Reductions:} each PE accumulates privately; combine in a tree ($\log_2 p$ steps) at the end. One sync instead of one per update.
+\item \textbf{Memory consistency:} \emph{sequential consistency} (all PEs see memory operations in one interleaving that respects each program's order) is simple but limits hardware reordering (store buffers). Real machines use \emph{relaxed} models and provide \textbf{fences}/acquire--release; correctly synchronised (data-race-free) programs behave as if sequentially consistent.
+\end{itemize}
+
+\begin{center}
+\small
+\begin{tabular}{L{4.4cm}L{5.4cm}L{5.6cm}}
+\toprule
+\tblhead{\textbf{Sync problem} & \textbf{Technique} & \textbf{Why better / cost}}\\
+\midrule
+Global counter updated by all & Per-PE counters (padded) + final reduction & $O(\text{updates})$ coherence transfers $\rightarrow O(p)$; more memory \\
+One lock protects a big table & One lock per bucket / per partition & Contention divided by number of locks; more lock storage \\
+Spinning PEs flood the bus & Test-and-test-and-set, back-off & Spins hit in local cache; slight extra latency \\
+Barrier after every small step & Merge steps into larger phases; point-to-point flags & Fewer waits; more complex code \\
+Ordering between producer and consumer & Bounded queue with flags + fences & Consumer starts as soon as data is ready \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{trap}[Multi-PE traps]
+\begin{itemize}
+\item Adding PEs to a memory-bound or lock-bound program makes it no faster, and often slower.
+\item Atomics are not free: each one is a coherence transaction on a contended line (Lab 5: CAS retries rose with threads).
+\item Padding fixes \emph{false} sharing only; true sharing needs privatisation.
+\item Dynamic scheduling is not always better: with equal tasks it adds overhead and loses locality.
+\item Speedup must be measured against the best \emph{serial} program, not the parallel program on one PE.
+\end{itemize}
+\end{trap}
